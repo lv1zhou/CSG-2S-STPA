@@ -1,0 +1,2874 @@
+{
+  "judge_meta": {
+    "timestamp": "2026-04-07T12:59:59",
+    "model": "qwen3-max",
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_tokens_item": 900,
+    "max_tokens_dedup": 3600,
+    "max_retries": 6,
+    "dedup_batch_size": 20,
+    "dedup_max_items_total": 300,
+    "dashscope_base_url": "https://dashscope.aliyuncs.com/api/v1"
+  },
+  "action_key": "lateral_control",
+  "facts": {
+    "system": {
+      "system_type": "联网自动驾驶汽车(CAV) - 自动代客泊车(AVP)系统"
+    },
+    "control_action": {
+      "action_description": "AVP系统提供转向/横向控制指令",
+      "controller": "控制器-AVP横向规划与控制模块",
+      "controlled_process": "车辆横向位置、航向角与轨迹跟踪状态"
+    },
+    "uca_list": [
+      {
+        "uca_id": "UCA-1",
+        "description": "横向控制被不安全地提供，导致车辆擦碰边界或障碍物。"
+      },
+      {
+        "uca_id": "UCA-2",
+        "description": "应提供横向控制时未提供，导致无法对准车位或轨迹偏离。"
+      },
+      {
+        "uca_id": "UCA-3",
+        "description": "横向控制时机不当，导致轨迹偏差累积或调整过晚。"
+      },
+      {
+        "uca_id": "UCA-4",
+        "description": "横向控制持续时间不当，导致位置失准或非预期运动。"
+      }
+    ],
+    "control_algorithm_description": [
+      {
+        "id": "CA-AVP-LAT-1",
+        "description": "系统依据目标轨迹与位姿误差计算转向命令，并持续进行轨迹跟踪。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "CA-AVP-LAT-2",
+        "description": "接近边界或侧向障碍物时，系统应限制转角与横向推进，避免擦碰和越界。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "CA-AVP-LAT-3",
+        "description": "若转向执行回读异常或路径状态不一致，系统应保持/停止横向控制并进入保守模式。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      }
+    ],
+    "process_model_description": [
+      {
+        "id": "PM-AVP-LAT-1",
+        "description": "自车横向位姿与航向误差信念：系统相信其能正确估计横向偏差与姿态。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "PM-AVP-LAT-2",
+        "description": "目标轨迹曲率、边界位置与安全裕度信念：系统相信目标轨迹和边界约束是准确的。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "PM-AVP-LAT-3",
+        "description": "转向执行效果已被正确跟踪的信念：系统相信执行链路与车身响应保持一致。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      }
+    ],
+    "feedback_path_description": [
+      {
+        "id": "FB-AVP-LAT-1",
+        "description": "环视摄像头提供停车线、边界与路缘识别信息。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "FB-AVP-LAT-2",
+        "description": "转向角回读、执行ACK与故障状态反馈。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "FB-AVP-LAT-3",
+        "description": "偏航率、横向位移与位姿估计反馈。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "FB-AVP-LAT-4",
+        "description": "侧向障碍物近距测距反馈。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      }
+    ]
+  },
+  "facts_compact": {
+    "system_type": "联网自动驾驶汽车(CAV) - 自动代客泊车(AVP)系统",
+    "control_action": "AVP系统提供转向/横向控制指令",
+    "controller": "控制器-AVP横向规划与控制模块",
+    "uca_list": [
+      {
+        "uca_id": "UCA-1",
+        "description": "横向控制被不安全地提供，导致车辆擦碰边界或障碍物。"
+      },
+      {
+        "uca_id": "UCA-2",
+        "description": "应提供横向控制时未提供，导致无法对准车位或轨迹偏离。"
+      },
+      {
+        "uca_id": "UCA-3",
+        "description": "横向控制时机不当，导致轨迹偏差累积或调整过晚。"
+      },
+      {
+        "uca_id": "UCA-4",
+        "description": "横向控制持续时间不当，导致位置失准或非预期运动。"
+      }
+    ],
+    "CA": [
+      {
+        "id": "CA-AVP-LAT-1",
+        "description": "系统依据目标轨迹与位姿误差计算转向命令，并持续进行轨迹跟踪。"
+      },
+      {
+        "id": "CA-AVP-LAT-2",
+        "description": "接近边界或侧向障碍物时，系统应限制转角与横向推进，避免擦碰和越界。"
+      },
+      {
+        "id": "CA-AVP-LAT-3",
+        "description": "若转向执行回读异常或路径状态不一致，系统应保持/停止横向控制并进入保守模式。"
+      }
+    ],
+    "PM": [
+      {
+        "id": "PM-AVP-LAT-1",
+        "description": "自车横向位姿与航向误差信念：系统相信其能正确估计横向偏差与姿态。"
+      },
+      {
+        "id": "PM-AVP-LAT-2",
+        "description": "目标轨迹曲率、边界位置与安全裕度信念：系统相信目标轨迹和边界约束是准确的。"
+      },
+      {
+        "id": "PM-AVP-LAT-3",
+        "description": "转向执行效果已被正确跟踪的信念：系统相信执行链路与车身响应保持一致。"
+      }
+    ],
+    "FB": [
+      {
+        "id": "FB-AVP-LAT-1",
+        "description": "环视摄像头提供停车线、边界与路缘识别信息。"
+      },
+      {
+        "id": "FB-AVP-LAT-2",
+        "description": "转向角回读、执行ACK与故障状态反馈。"
+      },
+      {
+        "id": "FB-AVP-LAT-3",
+        "description": "偏航率、横向位移与位姿估计反馈。"
+      },
+      {
+        "id": "FB-AVP-LAT-4",
+        "description": "侧向障碍物近距测距反馈。"
+      }
+    ],
+    "note": "评分只看 candidate_scenario 的逻辑质量；facts 仅用于核对UCA/CA/PM/FB锚点是否具体且一致。"
+  },
+  "summary": {
+    "file_tag": "zero_shot_lateral_control",
+    "input_path": "C:\\Users\\32401\\PycharmProjects\\PythonProject\\scenario_zero_shot_lateral_control_20260407_112315.json",
+    "filename": "scenario_zero_shot_lateral_control_20260407_112315.json",
+    "action_key": "lateral_control",
+    "file_format": {
+      "top_type": "dict",
+      "format": "runs_dict"
+    },
+    "meta_in_file": {
+      "method": "zero_shot",
+      "generator_type": "qwen_generation",
+      "task_type": "Scenario",
+      "action_key": "lateral_control",
+      "model": "qwen2.5-32b-instruct",
+      "num_shots": 0,
+      "temperature": 0.1,
+      "top_p": 0.8,
+      "max_tokens": 4000,
+      "timestamp": "2026-04-07T11:21:38",
+      "messages_count": 2,
+      "prompt_chars": 3677,
+      "target_scenarios": 10,
+      "max_gen_retries_per_iter": 6
+    },
+    "source_meta": {
+      "job_source": "manifest",
+      "manifest_index": 12,
+      "file_tag": "zero_shot_lateral_control",
+      "input_path": "C:\\Users\\32401\\PycharmProjects\\PythonProject\\scenario_zero_shot_lateral_control_20260407_112315.json",
+      "action_key": "lateral_control",
+      "filename": "scenario_zero_shot_lateral_control_20260407_112315.json",
+      "manifest_entry": {
+        "method": "zero_shot",
+        "action_key": "lateral_control",
+        "output_file": ".\\scenario_zero_shot_lateral_control_20260407_112315.json"
+      }
+    },
+    "counts": {
+      "total_runs_in_file": 5,
+      "total_records": 50,
+      "scenario_parse_failed": 0,
+      "scenario_parse_failed_reasons": {},
+      "judge_failed": 0,
+      "num_scored": 50,
+      "合理可用": 32,
+      "合理不可用": 16,
+      "不合理不可用": 2,
+      "label_mismatch": 3,
+      "usable_before_dedup": 32,
+      "coverage_count_after_dedup": 8
+    },
+    "dedup_ok": true,
+    "dedup_debug": {
+      "mode": "batched",
+      "rounds": [
+        {
+          "round": 1,
+          "input_size": 32,
+          "batches": [
+            {
+              "batch_index": 0,
+              "size": 20,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "e95d31a2-0458-9f31-9135-44ee7ec2cbc9",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1\",\n      \"summary\": \"环视摄像头误识别致边界判断错误\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=视觉边界误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-3\",\n      \"summary\": \"偏航与位姿估计误差致轨迹偏离\",\n      \"mechanism_signature\": \"algorithm|anchors=FB-AVP-FD-2,PM-AVP-FD-1|key=位姿估计偏差\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-4\",\n      \"summary\": \"侧向测距丢失致擦碰风险上升\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=超声波失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-5\",\n      \"summary\": \"轨迹曲率评估错误致转向时机不当\",\n      \"mechanism_signature\": \"algorithm|anchors=PM-AVP-FD-2|key=曲率误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-2\",\n      \"summary\": \"转向角回读异常未检测致控制失准\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-2,FB-AVP-FD-3|key=执行回读异常\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-8\",\n      \"summary\": \"横向位姿与航向误差致转向不准\",\n      \"mechanism_signature\": \"algorithm|anchors=PM-AVP-FD-1,FB-AVP-FD-2|key=位姿航向偏差\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-10\",\n      \"summary\": \"环视信息处理错误致转向时机不当\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=视觉处理错误\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup2\",\n      \"summary\": \"执行效果跟踪不准致故障未发现\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-3,PM-AVP-FD-3|key=执行跟踪失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-6__dup2\",\n      \"summary\": \"轨迹与边界信息不准致擦碰\",\n      \"mechanism_signature\": \"algorithm|anchors=PM-AVP-FD-2|key=路径边界错误\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\", \"UCA-4\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-2__dup2\",\n      \"kept_scenario_id\": \"CS-2\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-1__dup2\",\n      \"kept_scenario_id\": \"CS-1\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-4__dup2\",\n      \"kept_scenario_id\": \"CS-4\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3__dup2\",\n      \"kept_scenario_id\": \"CS-3\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-6__dup3\",\n      \"kept_scenario_id\": \"CS-2\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-1__dup3\",\n      \"kept_scenario_id\": \"CS-1\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-2__dup3\",\n      \"kept_scenario_id\": \"CS-2\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3__dup3\",\n      \"kept_scenario_id\": \"CS-3\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-10__dup3\",\n      \"kept_scenario_id\": \"CS-10\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-1__dup4\",\n      \"kept_scenario_id\": \"CS-1\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3__dup4\",\n      \"kept_scenario_id\": \"CS-3\",\n      \"reason\": \"semantic_equivalent\"\n    }\n  ],\n  \"coverage_count\": 9\n}",
+                "parse": "strict"
+              }
+            },
+            {
+              "batch_index": 1,
+              "size": 12,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "911fcdc9-8d6e-9367-8a81-d5e8c79c50e8",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-2__dup4\",\n      \"summary\": \"转向角回读异常未检出致控制失效\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-2,FB-AVP-FD-3|key=回读异常\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup4\",\n      \"summary\": \"侧向障碍物测距延迟致擦碰\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=测距延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-6__dup4\",\n      \"summary\": \"横向偏差估计错误致轨迹累积偏移\",\n      \"mechanism_signature\": \"process_model|anchors=PM-AVP-FD-1|key=位姿误估\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-5__dup4\",\n      \"summary\": \"目标轨迹曲率与边界不准致擦碰\",\n      \"mechanism_signature\": \"algorithm|anchors=PM-AVP-FD-2|key=轨迹失准\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup4\",\n      \"summary\": \"通信时延致转向回读滞后位置失准\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2|key=回读滞后\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-1__dup5\",\n      \"summary\": \"环视识别丢失致边界判断错误\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-1|key=视觉失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup5\",\n      \"summary\": \"偏航率与位姿反馈误差致控制不当\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-FD-2,PM-AVP-FD-1|key=状态误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-10__dup4\",\n      \"kept_scenario_id\": \"CS-2__dup4\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-2__dup5\",\n      \"kept_scenario_id\": \"CS-2__dup4\",\n      \"reason\": \"same_text_diff_uca_merge\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-5__dup5\",\n      \"kept_scenario_id\": \"CS-5__dup4\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-6__dup5\",\n      \"kept_scenario_id\": \"CS-2__dup4\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-10__dup5\",\n      \"kept_scenario_id\": \"CS-5__dup4\",\n      \"reason\": \"semantic_equivalent\"\n    }\n  ],\n  \"coverage_count\": 7\n}",
+                "parse": "strict"
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "final_size": 16,
+          "ok": true,
+          "debug": {
+            "status_code": 200,
+            "request_id": "89fb5679-aecf-95a8-aaf9-c72b555f7d37",
+            "message": "",
+            "attempt": 1,
+            "base_url": "https://dashscope.aliyuncs.com/api/v1",
+            "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1\",\n      \"summary\": \"环视摄像头误识别边界导致不安全转向\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=视觉误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-3\",\n      \"summary\": \"位姿估计误差致轨迹偏离\",\n      \"mechanism_signature\": \"algorithm|anchors=PM-AVP-FD-1|key=状态误估\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-4\",\n      \"summary\": \"侧向测距丢失或延迟致擦碰\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=测距失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-5\",\n      \"summary\": \"目标轨迹曲率不准致指令错误\",\n      \"mechanism_signature\": \"process_model|anchors=PM-AVP-FD-2|key=轨迹失准\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-2\",\n      \"summary\": \"转向角回读异常未检测致失准\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2|key=回读异常\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-8\",\n      \"summary\": \"横向位姿与航向误差评估错误\",\n      \"mechanism_signature\": \"algorithm|anchors=PM-AVP-FD-1|key=位姿误评\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-10\",\n      \"summary\": \"环视信息处理错误致转向时机不当\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=视觉处理错\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup2\",\n      \"summary\": \"执行效果跟踪不准致故障未发现\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-3,PM-AVP-FD-3|key=执行跟踪失\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-4\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-6__dup2\",\n      \"kept_scenario_id\": \"CS-5\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-2__dup4\",\n      \"kept_scenario_id\": \"CS-2\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-4__dup4\",\n      \"kept_scenario_id\": \"CS-4\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-6__dup4\",\n      \"kept_scenario_id\": \"CS-8\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-5__dup4\",\n      \"kept_scenario_id\": \"CS-5\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-7__dup4\",\n      \"kept_scenario_id\": \"CS-7__dup2\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-1__dup5\",\n      \"kept_scenario_id\": \"CS-1\",\n      \"reason\": \"same_text_diff_uca_merge\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3__dup5\",\n      \"kept_scenario_id\": \"CS-3\",\n      \"reason\": \"semantic_equivalent\"\n    }\n  ],\n  \"coverage_count\": 8\n}",
+            "parse": "strict"
+          }
+        }
+      ]
+    },
+    "perf": {
+      "max_workers": 6,
+      "max_tokens_item": 900,
+      "max_tokens_dedup": 3600
+    },
+    "thresholds": {
+      "USABLE_MIN_TOTAL": 9,
+      "USABLE_MIN_B1": 1,
+      "USABLE_MIN_B2": 2,
+      "USABLE_MIN_B3": 1,
+      "USABLE_MIN_B4": 1
+    },
+    "prompt_version": "v2026-02-15.logic_quality_only"
+  },
+  "per_item_evaluations": [
+    {
+      "scenario_id": "CS-1",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "明确环视摄像头为上下文",
+        "B2": "链条：摄像头误识别→误判位置→错误转向→UCA",
+        "B3": "锚定FB-AVP-LAT-1，解释其导致PM错误",
+        "B4": "UCA-1/2/3均与横向控制错误相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1",
+        "scenario_id_raw": "CS-1",
+        "description": "环视摄像头未能正确识别停车线和边界，导致系统误判横向位置，提供不正确的转向指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "65ecf856-a046-94f6-8846-700596ba1f2a",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头为上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：摄像头误识别→误判位置→错误转向→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-1，解释其导致PM错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与横向控制错误相关\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，含因果描述",
+        "B1": "提到偏航率/位姿估计，但未说明来源或触发条件",
+        "B2": "含(a)反馈误差→(b)错误数据→(c)错误指令→(e)多UCA",
+        "B3": "明确锚定FB-AVP-LAT-3（偏航率/位姿反馈）导致PM错误",
+        "B4": "UCA-1/2/3均与轨迹偏离/控制错误一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3",
+        "scenario_id_raw": "CS-3",
+        "description": "偏航率和位姿估计反馈存在较大误差，系统基于错误数据提供转向指令，导致轨迹偏离。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "bcef5994-48e5-98a9-80ac-7e817c5f97f6",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，含因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到偏航率/位姿估计，但未说明来源或触发条件\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含(a)反馈误差→(b)错误数据→(c)错误指令→(e)多UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确锚定FB-AVP-LAT-3（偏航率/位姿反馈）导致PM错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与轨迹偏离/控制错误一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "提到侧向障碍物测距反馈，但未指明具体传感器类型",
+        "B2": "链条清晰：反馈丢失→未调转向→擦碰→UCA-1/3/4",
+        "B3": "锚定FB-AVP-LAT-4（侧向障碍物测距），解释其缺失影响决策",
+        "B4": "链接UCA-1/3/4均与擦碰、时机、持续时间相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-4",
+        "scenario_id_raw": "CS-4",
+        "description": "侧向障碍物测距反馈丢失，系统未能及时调整转向指令，导致擦碰障碍物。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "2ab0e0b2-f289-9fdf-96b0-a5d79f68bf5f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到侧向障碍物测距反馈，但未指明具体传感器类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：反馈丢失→未调转向→擦碰→UCA-1/3/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-4（侧向障碍物测距），解释其缺失影响决策\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"链接UCA-1/3/4均与擦碰、时机、持续时间相关\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到目标轨迹曲率和边界位置，但未指明具体传感器或通信路径",
+        "B2": "链条清晰：错误评估→指令时机不当→偏差累积→多UCA",
+        "B3": "锚定PM-AVP-LAT-2（轨迹/边界信念）并解释其导致控制错误",
+        "B4": "UCA-1/3/4均与轨迹偏差、时机、持续性问题一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-5",
+        "scenario_id_raw": "CS-5",
+        "description": "系统未能正确评估目标轨迹曲率和边界位置，导致转向指令时机不当，轨迹偏差累积。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "cc18eeab-4045-9db6-baf0-4da8942d34ec",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到目标轨迹曲率和边界位置，但未指明具体传感器或通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：错误评估→指令时机不当→偏差累积→多UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-LAT-2（轨迹/边界信念）并解释其导致控制错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与轨迹偏差、时机、持续性问题一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA链接和基本因果描述",
+        "B1": "提到转向角回读异常，但未说明具体反馈通道或触发条件",
+        "B2": "链条清晰：回读异常→未检测→继续指令→位置失准→UCA-1/4",
+        "B3": "锚定FB-AVP-LAT-2（转向角回读）并解释其失效影响决策",
+        "B4": "UCA-1/2/4均与位置失准、控制持续不当一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2",
+        "scenario_id_raw": "CS-2",
+        "description": "转向角回读出现异常，但系统未能检测到并继续提供转向指令，导致车辆位置失准。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "d750d4fd-e4a9-96e1-b3fe-b13695452639",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA链接和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到转向角回读异常，但未说明具体反馈通道或触发条件\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→未检测→继续指令→位置失准→UCA-1/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向角回读）并解释其失效影响决策\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与位置失准、控制持续不当一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到转向回读异常但未说明具体反馈通道",
+        "B2": "链条清晰：回读异常→继续指令→位置失准→UCA",
+        "B3": "提及回读异常但未锚定FB/CA/PM编号或具体通道",
+        "B4": "UCA-1/2/4均与位置失准或控制错误相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确转向回读异常来自FB-AVP-LAT-2，并关联CA-AVP-LAT-3的保守模式失效",
+      "candidate_scenario": {
+        "scenario_id": "CS-6",
+        "scenario_id_raw": "CS-6",
+        "description": "系统未能正确处理转向执行回读异常，继续提供转向指令，导致位置失准。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "f2b2e17f-cd14-9826-b3ed-341217dce0ae",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到转向回读异常但未说明具体反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→继续指令→位置失准→UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及回读异常但未锚定FB/CA/PM编号或具体通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与位置失准或控制错误相关\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确转向回读异常来自FB-AVP-LAT-2，并关联CA-AVP-LAT-3的保守模式失效\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，含因果描述",
+        "B1": "提到位姿误差但未指明具体传感器或条件",
+        "B2": "含(a)(b)(c)(e)四层清晰因果链",
+        "B3": "锚定PM-AVP-LAT-1（位姿信念）并解释其作用",
+        "B4": "UCA-1/2/3均与轨迹偏离/控制缺失一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-8",
+        "scenario_id_raw": "CS-8",
+        "description": "系统未能正确评估横向位姿与航向误差，导致转向指令不准确，轨迹偏离。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "7e176e69-688f-9a6b-b178-c8675bc0293f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，含因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到位姿误差但未指明具体传感器或条件\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含(a)(b)(c)(e)四层清晰因果链\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-LAT-1（位姿信念）并解释其作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与轨迹偏离/控制缺失一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，含基本因果",
+        "B1": "明确提到环视摄像头，上下文具体",
+        "B2": "环视信息错误→转向时机不当→轨迹偏离→UCA-1/2/3",
+        "B3": "锚定FB-AVP-LAT-1（环视摄像头），解释其影响决策",
+        "B4": "UCA-1/2/3均与轨迹偏离/控制缺失/时机不当一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-10",
+        "scenario_id_raw": "CS-10",
+        "description": "系统未能正确处理环视摄像头识别信息，导致转向指令时机不当，轨迹偏离。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "fec27ded-4431-9164-9abe-6e79105f126d",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，含基本因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提到环视摄像头，上下文具体\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环视信息错误→转向时机不当→轨迹偏离→UCA-1/2/3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-1（环视摄像头），解释其影响决策\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与轨迹偏离/控制缺失/时机不当一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 0,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，描述含因果",
+        "B1": "无具体上下文，仅泛称'未能正确跟踪'",
+        "B2": "有因果但缺中间环节，如未说明为何跟踪失败",
+        "B3": "隐含FB-AVP-LAT-2/PM-AVP-LAT-3但未明确锚定",
+        "B4": "UCA-1/2/4与'持续时间不当/位置失准'一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "B1=0",
+        "B2<2",
+        "B3<2"
+      ],
+      "suggested_fix": "明确转向执行反馈来源（如CAN回读异常）及如何导致PM错误和CA失效",
+      "candidate_scenario": {
+        "scenario_id": "CS-9",
+        "scenario_id_raw": "CS-9",
+        "description": "系统未能正确跟踪转向执行效果，导致转向指令持续时间不当，位置失准。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "95a34aa0-580d-9a45-b49f-32e6a2414b2a",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，描述含因果\"},\n    \"B1\": {\"score\": 0, \"rationale\": \"无具体上下文，仅泛称'未能正确跟踪'\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"有因果但缺中间环节，如未说明为何跟踪失败\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含FB-AVP-LAT-2/PM-AVP-LAT-3但未明确锚定\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4与'持续时间不当/位置失准'一致\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"B1=0\", \"B2<2\", \"B3<2\"],\n  \"suggested_fix\": \"明确转向执行反馈来源（如CAN回读异常）及如何导致PM错误和CA失效\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果描述",
+        "B1": "提到侧向障碍物测距反馈，但未指明具体传感器类型或触发条件",
+        "B2": "链条清晰：反馈未及时响应→转向指令时机不当→擦碰障碍物（覆盖a/b/d/e）",
+        "B3": "提及侧向障碍物测距反馈（对应FB-AVP-LAT-4），但未说明如何影响PM/CA决策",
+        "B4": "linked UCA与描述一致：UCA-1（擦碰）、UCA-3（时机不当）、UCA-4（持续时间可能隐含）"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足2分",
+        "B3锚定解释不充分"
+      ],
+      "suggested_fix": "明确侧向障碍物测距来源（如超声波/环视）及如何导致PM错误或CA失效",
+      "candidate_scenario": {
+        "scenario_id": "CS-7",
+        "scenario_id_raw": "CS-7",
+        "description": "系统未能及时响应侧向障碍物测距反馈，导致转向指令时机不当，擦碰障碍物。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "64c7f9e7-21b2-9127-9aa9-05c729fb29e2",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到侧向障碍物测距反馈，但未指明具体传感器类型或触发条件\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：反馈未及时响应→转向指令时机不当→擦碰障碍物（覆盖a/b/d/e）\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及侧向障碍物测距反馈（对应FB-AVP-LAT-4），但未说明如何影响PM/CA决策\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked UCA与描述一致：UCA-1（擦碰）、UCA-3（时机不当）、UCA-4（持续时间可能隐含）\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足2分\", \"B3锚定解释不充分\"],\n  \"suggested_fix\": \"明确侧向障碍物测距来源（如超声波/环视）及如何导致PM错误或CA失效\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup2",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA链接和因果描述",
+        "B1": "提到'转向角回读异常/ACK延迟'但未说明具体通道或阈值",
+        "B2": "链条清晰：(a)执行反馈异常→(b)未调整策略→(d)轨迹偏差累积→(e)UCA-1/2/4",
+        "B3": "锚定FB-AVP-LAT-2（转向回读/ACK）并解释其导致控制失效",
+        "B4": "UCA-1/2/4均与轨迹偏差/控制缺失/持续错误一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup2",
+        "scenario_id_raw": "CS-2",
+        "description": "转向角回读异常或执行ACK延迟，导致系统未能及时调整横向控制策略，造成轨迹偏差累积。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "4a3344fb-85fd-9e09-bba7-cf2baede337d",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA链接和因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'转向角回读异常/ACK延迟'但未说明具体通道或阈值\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：(a)执行反馈异常→(b)未调整策略→(d)轨迹偏差累积→(e)UCA-1/2/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向回读/ACK）并解释其导致控制失效\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与轨迹偏差/控制缺失/持续错误一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup2",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "明确环视摄像头信息丢失/误识别",
+        "B2": "链条：摄像头失效→边界误判→错误横向指令→UCA",
+        "B3": "锚定FB-AVP-LAT-1（环视摄像头）并说明其作用",
+        "B4": "UCA-1/3/4均与错误/不当控制一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup2",
+        "scenario_id_raw": "CS-1",
+        "description": "环视摄像头识别信息丢失或误识别，导致系统无法准确判断边界位置，从而提供不正确的横向控制指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "72ab4d15-4a6f-992e-9f94-b913241b01ba",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup2\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含触发、因果和UCA链接\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确环视摄像头信息丢失/误识别\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条：摄像头失效→边界误判→错误横向指令→UCA\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-LAT-1（环视摄像头）并说明其作用\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/3/4均与错误/不当控制一致\"\n    }\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup2",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确'侧向障碍物测距反馈失效'",
+        "B2": "反馈失效→未限转角→擦碰风险（a-b-c-d-e）",
+        "B3": "锚定FB-AVP-LAT-4，解释其失效影响CA-AVP-LAT-2",
+        "B4": "UCA-1/3/4均与横向控制不当相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup2",
+        "scenario_id_raw": "CS-4",
+        "description": "侧向障碍物测距反馈失效，导致系统未能及时限制转角与横向推进，增加了擦碰风险。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "2d77d06e-317a-93cf-b49e-f6eb16fb1188",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确'侧向障碍物测距反馈失效'\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"反馈失效→未限转角→擦碰风险（a-b-c-d-e）\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-4，解释其失效影响CA-AVP-LAT-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与横向控制不当相关\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup2",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，描述含因果机制",
+        "B1": "提到偏航率与位姿估计，但未说明具体来源或触发条件",
+        "B2": "反馈不准→位姿估计偏差→控制指令错误→多UCA，链条清晰",
+        "B3": "明确锚定FB-AVP-LAT-3（偏航率/位姿反馈），影响PM-AVP-LAT-1",
+        "B4": "UCA-1/2/3均与横向控制失准/缺失/时机相关，一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup2",
+        "scenario_id_raw": "CS-3",
+        "description": "偏航率与位姿估计反馈不准确，导致系统对当前横向位置的估计出现偏差，进而影响横向控制指令的准确性。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "fa36b9c7-d6f3-98f1-9fb0-2d8fee205e4a",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup2\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，linked_uca_ids有效，描述含因果机制\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到偏航率与位姿估计，但未说明具体来源或触发条件\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"反馈不准→位姿估计偏差→控制指令错误→多UCA，链条清晰\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"明确锚定FB-AVP-LAT-3（偏航率/位姿反馈），影响PM-AVP-LAT-1\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/2/3均与横向控制失准/缺失/时机相关，一致\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup2",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，含因果描述",
+        "B1": "提到目标轨迹与边界信息，但未指明来源",
+        "B2": "信息不准→控制错误→导致UCA，链条清晰",
+        "B3": "锚定PM-AVP-LAT-2（轨迹/边界信念）和FB-AVP-LAT-1/4",
+        "B4": "UCA-1/3/4均与控制不当致擦碰/偏差一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup2",
+        "scenario_id_raw": "CS-6",
+        "description": "目标轨迹曲率与边界位置信息不准确，导致系统提供的横向控制指令未能有效避免擦碰。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "d1b28683-098a-9f21-bff4-8e699f1fe1de",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，含因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到目标轨迹与边界信息，但未指明来源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"信息不准→控制错误→导致UCA，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-LAT-2（轨迹/边界信念）和FB-AVP-LAT-1/4\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与控制不当致擦碰/偏差一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup2",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 0,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "无具体上下文，仅泛称‘未能正确估计’",
+        "B2": "有因果但缺中间环节，未说明如何导致UCA",
+        "B3": "隐含PM-AVP-LAT-1但未明确锚定或解释",
+        "B4": "linked UCA-1/2/3与描述逻辑一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "B1=0",
+        "B2<2",
+        "B3<2"
+      ],
+      "suggested_fix": "明确位姿估计失效的具体来源（如FB-AVP-LAT-3失效）及如何引发错误控制决策",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup2",
+        "scenario_id_raw": "CS-5",
+        "description": "系统未能正确估计横向偏差与姿态，导致横向控制指令未能有效纠正轨迹偏差。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "7fbecf87-8b96-99c1-a8e0-556bd144dc37",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 0, \"rationale\": \"无具体上下文，仅泛称‘未能正确估计’\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"有因果但缺中间环节，未说明如何导致UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含PM-AVP-LAT-1但未明确锚定或解释\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked UCA-1/2/3与描述逻辑一致\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"B1=0\", \"B2<2\", \"B3<2\"],\n  \"suggested_fix\": \"明确位姿估计失效的具体来源（如FB-AVP-LAT-3失效）及如何引发错误控制决策\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup2",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到'转向执行回读异常'但未说明具体反馈通道",
+        "B2": "链条清晰：回读异常→控制未调→轨迹偏离→多UCA",
+        "B3": "提及回读异常但未锚定FB-AVP-LAT-2或PM/CA",
+        "B4": "UCA-1/2/4均与轨迹偏离/控制缺失一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确转向回读来自FB-AVP-LAT-2，并关联PM-AVP-LAT-3信念失效",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup2",
+        "scenario_id_raw": "CS-8",
+        "description": "系统未能及时检测到转向执行回读异常，导致横向控制指令未能及时调整，造成轨迹偏离。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ef846cfa-604b-9cb2-a384-355223b02c92",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'转向执行回读异常'但未说明具体反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→控制未调→轨迹偏离→多UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及回读异常但未锚定FB-AVP-LAT-2或PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与轨迹偏离/控制缺失一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确转向回读来自FB-AVP-LAT-2，并关联PM-AVP-LAT-3信念失效\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup2",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到执行器故障但未指明具体反馈通道",
+        "B2": "链条清晰：跟踪不准→未发现故障→继续下发不安全指令",
+        "B3": "锚定FB-AVP-LAT-2（转向回读）与PM-AVP-LAT-3（执行跟踪信念）",
+        "B4": "UCA-1/2/4均与不安全或缺失控制相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup2",
+        "scenario_id_raw": "CS-7",
+        "description": "转向执行效果跟踪不准确，导致系统未能及时发现执行器故障，继续提供不安全的横向控制指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "cb511baa-b350-9272-9836-f70884cc4e09",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup2\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含触发、因果和UCA链接\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到执行器故障但未指明具体反馈通道\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：跟踪不准→未发现故障→继续下发不安全指令\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-LAT-2（转向回读）与PM-AVP-LAT-3（执行跟踪信念）\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/2/4均与不安全或缺失控制相关\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup2",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 0,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 5,
+      "label": "不合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果描述",
+        "B1": "无具体上下文，仅泛称“路径状态不一致”",
+        "B2": "仅有一段跳跃：未处理不一致→控制无效，缺中间环节",
+        "B3": "未锚定任何CA/PM/FB或具体反馈通道",
+        "B4": "链接UCA-1/2/3与描述逻辑一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "缺乏具体上下文",
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "明确路径状态不一致来源（如FB-AVP-LAT-2回读异常），并说明如何导致PM错误及CA失效。",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup2",
+        "scenario_id_raw": "CS-9",
+        "description": "系统未能正确处理路径状态不一致的情况，导致横向控制指令未能有效纠正轨迹偏差。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "0b3fab3f-8931-9da6-b2ed-5529b961c2ec",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和基本因果描述\"},\n    \"B1\": {\"score\": 0, \"rationale\": \"无具体上下文，仅泛称“路径状态不一致”\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅有一段跳跃：未处理不一致→控制无效，缺中间环节\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB或具体反馈通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"链接UCA-1/2/3与描述逻辑一致\"}\n  },\n  \"total_score\": 5,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"缺乏具体上下文\", \"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"明确路径状态不一致来源（如FB-AVP-LAT-2回读异常），并说明如何导致PM错误及CA失效。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup3",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果、UCA",
+        "B1": "明确环视摄像头失效",
+        "B2": "摄像头失效→误判边界→不安全控制→UCA",
+        "B3": "锚定FB-AVP-LAT-1，影响PM-AVP-LAT-2",
+        "B4": "UCA-1/3/4均与横向控制不当相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup3",
+        "scenario_id_raw": "CS-1",
+        "description": "环视摄像头识别信息丢失或误识别，导致系统无法准确判断边界和障碍物位置，从而提供不安全的横向控制指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ae476a67-d229-944a-81d4-2eebed1ef59f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果、UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头失效\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"摄像头失效→误判边界→不安全控制→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-1，影响PM-AVP-LAT-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与横向控制不当相关\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup3",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果、UCA",
+        "B1": "提到转向角回读异常，但未说明具体反馈通道",
+        "B2": "链条清晰：回读异常→未检测故障→指令未执行→多UCA",
+        "B3": "锚定FB-AVP-LAT-2（转向角回读）并解释其作用",
+        "B4": "UCA-1/2/4均与控制缺失/错误执行一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup3",
+        "scenario_id_raw": "CS-2",
+        "description": "转向角回读异常，系统未能及时检测到执行器故障，导致横向控制指令未能正确执行。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "2245514d-5c17-979e-98ac-8a425268d526",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果、UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到转向角回读异常，但未说明具体反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→未检测故障→指令未执行→多UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向角回读）并解释其作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与控制缺失/错误执行一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup2",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，description含因果",
+        "B1": "提到侧向障碍物但未指明传感器类型或触发条件",
+        "B2": "仅'未能检测→指令无效→擦碰'，缺中间环节",
+        "B3": "隐含FB-AVP-LAT-4但未明确锚定或解释机制",
+        "B4": "UCA-1/3/4均与擦碰、时机、持续相关，一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B2因果链不完整",
+        "B3未明确锚定FB/PM/CA"
+      ],
+      "suggested_fix": "明确障碍物检测依赖FB-AVP-LAT-4（如环视/超声波），并说明因反馈缺失导致PM-AVP-LAT-2错误，进而使CA-AVP-LAT-2未激活。",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup2",
+        "scenario_id_raw": "CS-10",
+        "description": "系统未能及时检测到侧向障碍物，导致横向控制指令未能有效避免擦碰。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "1797b179-b73a-9f2c-8fec-46c1ccb79300",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到侧向障碍物但未指明传感器类型或触发条件\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'未能检测→指令无效→擦碰'，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含FB-AVP-LAT-4但未明确锚定或解释机制\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与擦碰、时机、持续相关，一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B2因果链不完整\", \"B3未明确锚定FB/PM/CA\"],\n  \"suggested_fix\": \"明确障碍物检测依赖FB-AVP-LAT-4（如环视/超声波），并说明因反馈缺失导致PM-AVP-LAT-2错误，进而使CA-AVP-LAT-2未激活。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup3",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，描述含因果与UCA",
+        "B1": "提到偏航率和位姿估计，但未说明具体来源或触发条件",
+        "B2": "链条清晰：反馈误差→错误状态信息→不适当控制→多UCA",
+        "B3": "明确锚定FB-AVP-LAT-3（偏航率、位姿反馈）导致PM错误",
+        "B4": "UCA-1/2/3均与横向控制不当相关，链接合理"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup3",
+        "scenario_id_raw": "CS-3",
+        "description": "偏航率和位姿估计反馈出现较大误差，系统基于错误的状态信息提供了不适当的横向控制指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "d13d7b32-5816-98e1-b381-4b27f99074ea",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup3\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，linked_uca_ids有效，描述含因果与UCA\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到偏航率和位姿估计，但未说明具体来源或触发条件\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：反馈误差→错误状态信息→不适当控制→多UCA\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"明确锚定FB-AVP-LAT-3（偏航率、位姿反馈）导致PM错误\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/2/3均与横向控制不当相关，链接合理\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup3",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，描述含因果",
+        "B1": "提到'侧向障碍物测距反馈'但未指明传感器类型",
+        "B2": "反馈延迟→未调整策略→擦碰，链条清晰",
+        "B3": "提及反馈延迟但未锚定具体FB或PM/CA",
+        "B4": "UCA-1/3/4均与控制不当导致擦碰一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1未明确传感器类型（如超声波/环视）",
+        "B3未锚定具体FB/PM/CA"
+      ],
+      "suggested_fix": "明确'侧向障碍物测距'来自FB-AVP-LAT-4，并说明延迟如何影响PM-AVP-LAT-2或CA-AVP-LAT-2",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup3",
+        "scenario_id_raw": "CS-4",
+        "description": "侧向障碍物测距反馈延迟，系统未能及时调整横向控制策略，导致车辆擦碰障碍物。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "52187226-0902-9c41-9f9e-b12c3ced0b0c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，描述含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'侧向障碍物测距反馈'但未指明传感器类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"反馈延迟→未调整策略→擦碰，链条清晰\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及反馈延迟但未锚定具体FB或PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与控制不当导致擦碰一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1未明确传感器类型（如超声波/环视）\", \"B3未锚定具体FB/PM/CA\"],\n  \"suggested_fix\": \"明确'侧向障碍物测距'来自FB-AVP-LAT-4，并说明延迟如何影响PM-AVP-LAT-2或CA-AVP-LAT-2\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup3",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA列表和基本因果描述",
+        "B1": "提到'转向执行回读异常'但未说明具体反馈通道",
+        "B2": "链条清晰：回读异常→继续控制→位置失准→UCA-1/4",
+        "B3": "锚定FB-AVP-LAT-2（转向回读）和CA-AVP-LAT-3（异常应停控）",
+        "B4": "UCA-1/2/4均与位置失准或控制不当一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup3",
+        "scenario_id_raw": "CS-6",
+        "description": "系统未能正确处理转向执行回读异常，继续提供横向控制指令，导致车辆位置失准。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "877d104e-88de-9510-910f-a799f3210052",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA列表和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'转向执行回读异常'但未说明具体反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→继续控制→位置失准→UCA-1/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向回读）和CA-AVP-LAT-3（异常应停控）\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与位置失准或控制不当一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup3",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果机制",
+        "B1": "提到目标轨迹曲率和边界位置，但未指明具体传感器或反馈源",
+        "B2": "链条清晰：PM错误→控制指令失效→导致UCA-1/3/4",
+        "B3": "隐含PM-AVP-LAT-2错误，但未明确锚定FB或CA",
+        "B4": "UCA链接与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足2",
+        "B3未明确锚定FB/CA"
+      ],
+      "suggested_fix": "明确环视摄像头(FB-AVP-LAT-1)误检边界，导致PM-AVP-LAT-2错误，进而引发UCA-1/3/4",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup3",
+        "scenario_id_raw": "CS-5",
+        "description": "系统未能正确评估目标轨迹曲率和边界位置，导致横向控制指令未能有效避免擦碰。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "4b825f5b-a48f-9e57-b48c-9927c3eeb3ac",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup3\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果机制\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到目标轨迹曲率和边界位置，但未指明具体传感器或反馈源\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：PM错误→控制指令失效→导致UCA-1/3/4\"\n    },\n    \"B3\": {\n      \"score\": 1,\n      \"rationale\": \"隐含PM-AVP-LAT-2错误，但未明确锚定FB或CA\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA链接与描述一致\"\n    }\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足2\", \"B3未明确锚定FB/CA\"],\n  \"suggested_fix\": \"明确环视摄像头(FB-AVP-LAT-1)误检边界，导致PM-AVP-LAT-2错误，进而引发UCA-1/3/4\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup3",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，描述含因果",
+        "B1": "提到侧向障碍物距离但未指明传感器类型",
+        "B2": "仅'未能评估→未避免擦碰'，缺中间环节",
+        "B3": "隐含FB-AVP-LAT-4但未明确锚定或解释",
+        "B4": "UCA-1/3/4均与擦碰/时机/持续相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "上下文不够具体",
+        "FB锚定弱"
+      ],
+      "suggested_fix": "明确使用环视/超声波（FB-AVP-LAT-4），说明距离误判如何导致PM错误及CA失效",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup3",
+        "scenario_id_raw": "CS-8",
+        "description": "系统未能正确评估侧向障碍物距离，导致横向控制指令未能有效避免擦碰。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "31011453-3572-9152-82f1-02d6c0db1c9b",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，描述含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到侧向障碍物距离但未指明传感器类型\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'未能评估→未避免擦碰'，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含FB-AVP-LAT-4但未明确锚定或解释\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与擦碰/时机/持续相关\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"上下文不够具体\", \"FB锚定弱\"],\n  \"suggested_fix\": \"明确使用环视/超声波（FB-AVP-LAT-4），说明距离误判如何导致PM错误及CA失效\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup3",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，description含因果",
+        "B1": "提到位姿误差但未指明具体传感器或反馈源",
+        "B2": "有触发→中间环节→控制失效→UCA的清晰链条",
+        "B3": "提及位姿误差信念但未锚定PM/FB具体ID或通道",
+        "B4": "UCA-1/2/3均与控制缺失/延迟/偏差一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2",
+        "total_score<9"
+      ],
+      "suggested_fix": "明确位姿误差来源（如FB-AVP-LAT-3）及对应PM（如PM-AVP-LAT-1）",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup3",
+        "scenario_id_raw": "CS-7",
+        "description": "系统未能及时检测到车辆横向位姿与航向误差，导致横向控制指令未能及时调整。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "f5b95911-7632-9675-829d-95635d5fa1cb",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到位姿误差但未指明具体传感器或反馈源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"有触发→中间环节→控制失效→UCA的清晰链条\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及位姿误差信念但未锚定PM/FB具体ID或通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与控制缺失/延迟/偏差一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\", \"total_score<9\"],\n  \"suggested_fix\": \"明确位姿误差来源（如FB-AVP-LAT-3）及对应PM（如PM-AVP-LAT-1）\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup3",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 0,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 5,
+      "label": "不合理不可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，含基本因果",
+        "B1": "未说明具体故障类型或上下文",
+        "B2": "仅'故障→控制失败'，缺中间环节",
+        "B3": "未锚定任何CA/PM/FB具体要素",
+        "B4": "UCA链接合理且一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1=0",
+        "B2<2",
+        "B3=0"
+      ],
+      "suggested_fix": "明确转向执行器故障类型（如FB-AVP-LAT-2缺失ACK），并构建从故障到UCA的完整因果链。",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup3",
+        "scenario_id_raw": "CS-9",
+        "description": "系统未能正确处理转向执行器故障，导致横向控制指令未能正确执行。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3d495cd9-a155-96f9-915d-172d065ccc7a",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，含基本因果\"},\n    \"B1\": {\"score\": 0, \"rationale\": \"未说明具体故障类型或上下文\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'故障→控制失败'，缺中间环节\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB具体要素\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA链接合理且一致\"}\n  },\n  \"total_score\": 5,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"B1=0\", \"B2<2\", \"B3=0\"],\n  \"suggested_fix\": \"明确转向执行器故障类型（如FB-AVP-LAT-2缺失ACK），并构建从故障到UCA的完整因果链。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup3",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，含因果描述",
+        "B1": "提到目标轨迹曲率和边界位置，但未指明具体传感器或通信路径",
+        "B2": "包含上下文→PM错误→控制失效→多UCA的清晰链条",
+        "B3": "锚定PM-AVP-LAT-2（轨迹/边界信念）并解释其导致控制失效",
+        "B4": "UCA-1/3/4均与擦碰、时机、持续时间问题一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup3",
+        "scenario_id_raw": "CS-10",
+        "description": "系统未能正确评估目标轨迹曲率和边界位置，导致横向控制指令未能有效避免擦碰。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "17e95c74-8558-92d5-8746-adfb907169df",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，含因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到目标轨迹曲率和边界位置，但未指明具体传感器或通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"包含上下文→PM错误→控制失效→多UCA的清晰链条\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-LAT-2（轨迹/边界信念）并解释其导致控制失效\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与擦碰、时机、持续时间问题一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup4",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确环视摄像头信息丢失/误识别",
+        "B2": "摄像头失效→边界误判→不安全横向控制",
+        "B3": "锚定FB-AVP-LAT-1，影响PM-AVP-LAT-2",
+        "B4": "UCA-1/3/4均与横向控制不当相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup4",
+        "scenario_id_raw": "CS-1",
+        "description": "环视摄像头识别信息丢失或误识别，导致系统无法准确判断边界位置，从而提供不安全的横向控制指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "96ccaa59-92f0-9387-b3f8-7f7850b12785",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头信息丢失/误识别\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"摄像头失效→边界误判→不安全横向控制\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-1，影响PM-AVP-LAT-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与横向控制不当相关\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup4",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "提到偏航率与位姿估计，但未说明来源",
+        "B2": "含(a)(b)(c)(e)四层清晰因果链",
+        "B3": "明确锚定FB-AVP-LAT-3，影响PM-AVP-LAT-1",
+        "B4": "UCA-1/2/3均与轨迹偏离相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup4",
+        "scenario_id_raw": "CS-3",
+        "description": "偏航率与位姿估计反馈出现较大误差，系统基于错误的位姿信息提供横向控制指令，导致轨迹偏离。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "1ab8df36-80fc-9eaa-a3be-a4b9f640cd29",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到偏航率与位姿估计，但未说明来源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含(a)(b)(c)(e)四层清晰因果链\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确锚定FB-AVP-LAT-3，影响PM-AVP-LAT-1\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与轨迹偏离相关\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup4",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到转向角回读异常，但未说明具体触发条件或通道",
+        "B2": "链条清晰：回读异常→未检测故障→指令未正确执行→UCA",
+        "B3": "锚定FB-AVP-LAT-2（转向角回读），解释其失效影响控制",
+        "B4": "UCA-1/2/4均与横向控制失效或错误执行一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup4",
+        "scenario_id_raw": "CS-2",
+        "description": "转向角回读异常，系统未能及时检测到执行器故障，导致横向控制指令未能正确执行。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "5dc57a31-7549-9772-9010-a3d00a6f4798",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到转向角回读异常，但未说明具体触发条件或通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→未检测故障→指令未正确执行→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向角回读），解释其失效影响控制\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与横向控制失效或错误执行一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup4",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，描述含因果与UCA",
+        "B1": "明确‘侧向障碍物测距反馈延迟’，对应FB-AVP-LAT-4",
+        "B2": "链条：反馈延迟→未及时调整策略→擦碰（UCA-1/3/4）",
+        "B3": "锚定FB-AVP-LAT-4，解释其延迟导致控制失效",
+        "B4": "UCA-1/3/4均与横向控制不当致擦碰一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup4",
+        "scenario_id_raw": "CS-4",
+        "description": "侧向障碍物测距反馈延迟，系统未能及时调整横向控制策略，导致擦碰障碍物。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "484ac21a-686d-9587-a411-4981b2864141",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup4\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，linked_uca_ids有效，描述含因果与UCA\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确‘侧向障碍物测距反馈延迟’，对应FB-AVP-LAT-4\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条：反馈延迟→未及时调整策略→擦碰（UCA-1/3/4）\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-LAT-4，解释其延迟导致控制失效\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/3/4均与横向控制不当致擦碰一致\"\n    }\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup4",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA列表和基本因果描述",
+        "B1": "提到横向偏差估计但未指明具体传感器或反馈源",
+        "B2": "链条清晰：PM错误→控制时机不当→轨迹偏差累积→UCA-3等",
+        "B3": "锚定PM-AVP-LAT-1（横向位姿信念错误）并影响控制决策",
+        "B4": "linked UCA-1/2/3均与轨迹偏差/控制缺失/时机不当一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup4",
+        "scenario_id_raw": "CS-6",
+        "description": "系统未能正确估计横向偏差与姿态，导致横向控制指令时机不当，轨迹偏差累积。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "2ca9a612-fbd3-9f1e-83c9-d8eb8754bc97",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA列表和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到横向偏差估计但未指明具体传感器或反馈源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：PM错误→控制时机不当→轨迹偏差累积→UCA-3等\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-LAT-1（横向位姿信念错误）并影响控制决策\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked UCA-1/2/3均与轨迹偏差/控制缺失/时机不当一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup4",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "提到目标轨迹与边界信息不准确，但未指明来源（如环视/超声波）",
+        "B2": "链条清晰：错误轨迹→错误控制→擦碰（覆盖a-b-c-d-e）",
+        "B3": "锚定PM-AVP-LAT-2（目标轨迹/边界信念）和FB-AVP-LAT-1（边界识别）",
+        "B4": "UCA-1/3/4均与轨迹错误导致的控制问题一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup4",
+        "scenario_id_raw": "CS-5",
+        "description": "目标轨迹曲率与边界位置信息不准确，系统基于错误的目标轨迹提供横向控制指令，导致车辆擦碰边界。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "710a7cb2-18ea-9cae-b777-a942133cb014",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup4\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含有效UCA和因果描述\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到目标轨迹与边界信息不准确，但未指明来源（如环视/超声波）\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：错误轨迹→错误控制→擦碰（覆盖a-b-c-d-e）\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定PM-AVP-LAT-2（目标轨迹/边界信念）和FB-AVP-LAT-1（边界识别）\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/3/4均与轨迹错误导致的控制问题一致\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup4",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "提到通信时延但未指明通道",
+        "B2": "时延→回读滞后→未调整→失准，链条清晰",
+        "B3": "锚定FB-AVP-LAT-2（转向角回读）并说明作用",
+        "B4": "UCA-1/2/4均与位置失准/控制缺失一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup4",
+        "scenario_id_raw": "CS-7",
+        "description": "通信时延导致转向角回读信息滞后，系统未能及时调整横向控制指令，导致位置失准。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3c80a91d-a7ea-93cd-8208-13195664e507",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到通信时延但未指明通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"时延→回读滞后→未调整→失准，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向角回读）并说明作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与位置失准/控制缺失一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup4",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "提到侧向障碍物但未指明传感器类型",
+        "B2": "仅'未检测→时机不当→偏离'两跳",
+        "B3": "提及障碍物检测但未锚定FB/PM/CA",
+        "B4": "UCA-1/3/4均与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "未锚定具体FB/PM/CA"
+      ],
+      "suggested_fix": "明确环视摄像头(FB-AVP-LAT-4)失效导致PM-AVP-LAT-2错误，进而引发UCA-3",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup4",
+        "scenario_id_raw": "CS-9",
+        "description": "系统未能及时检测到侧向障碍物，导致横向控制时机不当，轨迹偏离。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "379d89f6-d4de-9051-bb8e-0e53c62d18c0",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到侧向障碍物但未指明传感器类型\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'未检测→时机不当→偏离'两跳\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及障碍物检测但未锚定FB/PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与描述一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定具体FB/PM/CA\"],\n  \"suggested_fix\": \"明确环视摄像头(FB-AVP-LAT-4)失效导致PM-AVP-LAT-2错误，进而引发UCA-3\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup4",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到'转向执行回读异常'但未说明具体通道或条件",
+        "B2": "链条清晰：回读异常→指令未正确执行→轨迹偏离→UCA",
+        "B3": "锚定FB-AVP-LAT-2（转向回读）并影响CA执行",
+        "B4": "UCA-1/2/4均与控制缺失/错误执行一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup4",
+        "scenario_id_raw": "CS-10",
+        "description": "系统未能正确处理转向执行回读异常，导致横向控制指令未能正确执行，轨迹偏离。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "060ade5c-cc81-9869-aae1-c60117b75b0e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'转向执行回读异常'但未说明具体通道或条件\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→指令未正确执行→轨迹偏离→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向回读）并影响CA执行\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与控制缺失/错误执行一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup4",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 0,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，描述含因果和UCA",
+        "B1": "无具体上下文，仅泛称'未能正确跟踪'",
+        "B2": "有因果但缺中间环节，未说明如何导致持续时间不当",
+        "B3": "隐含FB-AVP-LAT-2/PM-AVP-LAT-3但未明确锚定",
+        "B4": "UCA-1/2/4与'非预期运动/控制不当'一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "B1=0",
+        "B2<2",
+        "total_score<=5? no, but A=2 and total=6 => 不合理不可用"
+      ],
+      "suggested_fix": "明确转向回读异常（如FB-AVP-LAT-2丢ACK）→ PM-AVP-LAT-3错误信念 → 持续下发转向指令 → UCA-4",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup4",
+        "scenario_id_raw": "CS-8",
+        "description": "系统未能正确跟踪转向执行效果，导致横向控制持续时间不当，引起非预期运动。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "12d81cd4-a7bc-9505-911e-d40f032fd791",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，描述含因果和UCA\"},\n    \"B1\": {\"score\": 0, \"rationale\": \"无具体上下文，仅泛称'未能正确跟踪'\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"有因果但缺中间环节，未说明如何导致持续时间不当\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含FB-AVP-LAT-2/PM-AVP-LAT-3但未明确锚定\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4与'非预期运动/控制不当'一致\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"B1=0\", \"B2<2\", \"total_score<=5? no, but A=2 and total=6 => 不合理不可用\"],\n  \"suggested_fix\": \"明确转向回读异常（如FB-AVP-LAT-2丢ACK）→ PM-AVP-LAT-3错误信念 → 持续下发转向指令 → UCA-4\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup5",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到转向角回读异常，但未说明具体触发条件或通道",
+        "B2": "链条清晰：回读异常→未检测故障→指令未正确执行→UCA",
+        "B3": "锚定FB-AVP-LAT-2（转向角回读），解释其失效影响控制",
+        "B4": "UCA-1/2/4均与横向控制失效或错误执行一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup5",
+        "scenario_id_raw": "CS-2",
+        "description": "转向角回读异常，系统未能及时检测到执行器故障，导致横向控制指令未能正确执行。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "841bb40f-20bc-9e66-bb79-a4844fa09c16",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到转向角回读异常，但未说明具体触发条件或通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→未检测故障→指令未正确执行→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向角回读），解释其失效影响控制\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与横向控制失效或错误执行一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup5",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "明确指出环视摄像头信息丢失/误识别",
+        "B2": "链条：传感器失效→边界误判→不安全横向控制→UCA",
+        "B3": "锚定FB-AVP-LAT-1（环视摄像头）并说明其作用",
+        "B4": "链接UCA-1/3/4与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup5",
+        "scenario_id_raw": "CS-1",
+        "description": "环视摄像头识别信息丢失或误识别，导致系统无法准确判断边界和障碍物位置，从而提供不安全的横向控制指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e3c800f9-4eb5-996a-9b0c-226ee949ad34",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确指出环视摄像头信息丢失/误识别\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：传感器失效→边界误判→不安全横向控制→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-1（环视摄像头）并说明其作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"链接UCA-1/3/4与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup5",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到偏航率/位姿估计，但未说明来源或条件",
+        "B2": "反馈误差→错误控制→导致多UCA，链条清晰",
+        "B3": "明确锚定FB-AVP-LAT-3（偏航率/位姿反馈）",
+        "B4": "UCA-1/2/3均与横向控制错误相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup5",
+        "scenario_id_raw": "CS-3",
+        "description": "偏航率和位姿估计反馈出现较大误差，系统基于错误的状态信息提供了不合适的横向控制指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "1f7ffb47-d9a1-914e-bb19-1f01de7b50d7",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到偏航率/位姿估计，但未说明来源或条件\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"反馈误差→错误控制→导致多UCA，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确锚定FB-AVP-LAT-3（偏航率/位姿反馈）\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与横向控制错误相关\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup5",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，description含因果机制",
+        "B1": "提到目标轨迹曲率和边界位置，但未指明具体传感器或触发条件",
+        "B2": "包含上下文→PM错误→控制失效→多UCA的清晰链条",
+        "B3": "锚定PM-AVP-LAT-2（目标轨迹与边界信念），解释其错误导致控制偏差",
+        "B4": "UCA-1/3/4均与轨迹跟踪失败、时机/持续性错误一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup5",
+        "scenario_id_raw": "CS-5",
+        "description": "系统未能正确评估目标轨迹曲率和边界位置，导致横向控制指令未能有效跟踪目标轨迹。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "dfb68f9e-ec56-973f-9a5e-32753e9f5898",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup5\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，linked_uca_ids有效，description含因果机制\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到目标轨迹曲率和边界位置，但未指明具体传感器或触发条件\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"包含上下文→PM错误→控制失效→多UCA的清晰链条\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定PM-AVP-LAT-2（目标轨迹与边界信念），解释其错误导致控制偏差\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/3/4均与轨迹跟踪失败、时机/持续性错误一致\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup5",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到'转向执行回读异常'但未说明具体反馈通道",
+        "B2": "链条清晰：回读异常→继续控制→位置失准→UCA-1/4",
+        "B3": "锚定FB-AVP-LAT-2（转向回读）和CA-AVP-LAT-3，逻辑一致",
+        "B4": "UCA-1/2/4均与'继续控制导致失准/擦碰/未停'一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup5",
+        "scenario_id_raw": "CS-6",
+        "description": "系统未能正确处理转向执行回读异常，继续提供横向控制指令，导致车辆位置失准。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "c241687c-9dd0-91be-b7c3-69063e449f70",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'转向执行回读异常'但未说明具体反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→继续控制→位置失准→UCA-1/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-LAT-2（转向回读）和CA-AVP-LAT-3，逻辑一致\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与'继续控制导致失准/擦碰/未停'一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup5",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "提到'侧向障碍物测距反馈延迟'但未指明传感器类型",
+        "B2": "含触发(反馈延迟)→决策失误→擦碰UCA的清晰链",
+        "B3": "提及反馈延迟但未锚定具体FB或PM/CA机制",
+        "B4": "链接UCA-1/3/4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2",
+        "total_score<9"
+      ],
+      "suggested_fix": "明确测距反馈来源（如FB-AVP-LAT-4超声波），并说明如何导致PM信念错误或CA失效。",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup5",
+        "scenario_id_raw": "CS-4",
+        "description": "侧向障碍物测距反馈延迟，系统未能及时调整横向控制策略，导致车辆擦碰障碍物。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "885ac7ad-24a1-9637-9663-389cd5082e8f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'侧向障碍物测距反馈延迟'但未指明传感器类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含触发(反馈延迟)→决策失误→擦碰UCA的清晰链\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及反馈延迟但未锚定具体FB或PM/CA机制\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"链接UCA-1/3/4与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\", \"total_score<9\"],\n  \"suggested_fix\": \"明确测距反馈来源（如FB-AVP-LAT-4超声波），并说明如何导致PM信念错误或CA失效。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup5",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，description含因果",
+        "B1": "提到‘未能及时检测’但未指明具体传感器或反馈",
+        "B2": "链条清晰：位姿误差未检→控制未调→导致UCA-1/2/3",
+        "B3": "隐含FB-AVP-LAT-3/PM-AVP-LAT-1但未明确锚定",
+        "B4": "UCA链接合理且与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确引用FB-AVP-LAT-3或PM-AVP-LAT-1，并说明具体检测失效机制（如位姿估计延迟/滤波错误）",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup5",
+        "scenario_id_raw": "CS-7",
+        "description": "系统未能及时检测到车辆横向位姿与航向误差，导致横向控制指令未能及时调整。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "f2dad930-07c2-988d-bcec-f73a5735be9b",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到‘未能及时检测’但未指明具体传感器或反馈\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：位姿误差未检→控制未调→导致UCA-1/2/3\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含FB-AVP-LAT-3/PM-AVP-LAT-1但未明确锚定\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA链接合理且与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确引用FB-AVP-LAT-3或PM-AVP-LAT-1，并说明具体检测失效机制（如位姿估计延迟/滤波错误）\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup5",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到侧向障碍物距离但未指明传感器类型或条件",
+        "B2": "仅'未能评估→指令无效'两段，缺中间环节",
+        "B3": "提及障碍物距离但未锚定FB-AVP-LAT-4或PM",
+        "B4": "UCA-1/3/4均与避障失败导致的轨迹/时机/持续问题一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "未锚定具体FB/PM",
+        "上下文不够具体"
+      ],
+      "suggested_fix": "明确环视/测距反馈失效→PM-AVP-LAT-2错误→CA-AVP-LAT-2未触发的链条",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup5",
+        "scenario_id_raw": "CS-8",
+        "description": "系统未能正确评估侧向障碍物距离，导致横向控制指令未能有效避障。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "08532707-8f30-97de-8841-ed9b2595c1aa",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到侧向障碍物距离但未指明传感器类型或条件\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'未能评估→指令无效'两段，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及障碍物距离但未锚定FB-AVP-LAT-4或PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与避障失败导致的轨迹/时机/持续问题一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定具体FB/PM\", \"上下文不够具体\"],\n  \"suggested_fix\": \"明确环视/测距反馈失效→PM-AVP-LAT-2错误→CA-AVP-LAT-2未触发的链条\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup5",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，含因果关键词",
+        "B1": "提到'转向执行器故障'但未指明具体类型或通道",
+        "B2": "仅'故障→指令未执行'，缺中间环节如反馈/决策",
+        "B3": "提及执行器故障但未锚定FB-AVP-LAT-2或PM/CA",
+        "B4": "UCA-1/2/4均与控制缺失/错误执行一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "未锚定具体FB/PM/CA",
+        "上下文不够具体"
+      ],
+      "suggested_fix": "明确转向执行器故障类型（如CAN回读丢失），关联FB-AVP-LAT-2和PM-AVP-LAT-3，并补全‘故障→反馈异常→PM错误→CA失效→UCA’链条。",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup5",
+        "scenario_id_raw": "CS-9",
+        "description": "系统未能正确处理转向执行器故障，导致横向控制指令未能正确执行。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "2d12f481-3416-91d7-99d3-1fd147649367",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup5\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，UCA有效，含因果关键词\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到'转向执行器故障'但未指明具体类型或通道\"\n    },\n    \"B2\": {\n      \"score\": 1,\n      \"rationale\": \"仅'故障→指令未执行'，缺中间环节如反馈/决策\"\n    },\n    \"B3\": {\n      \"score\": 1,\n      \"rationale\": \"提及执行器故障但未锚定FB-AVP-LAT-2或PM/CA\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/2/4均与控制缺失/错误执行一致\"\n    }\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定具体FB/PM/CA\", \"上下文不够具体\"],\n  \"suggested_fix\": \"明确转向执行器故障类型（如CAN回读丢失），关联FB-AVP-LAT-2和PM-AVP-LAT-3，并补全‘故障→反馈异常→PM错误→CA失效→UCA’链条。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup5",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到目标轨迹曲率和边界位置，但未指明具体传感器或通信路径",
+        "B2": "包含(a)上下文、(b)PM错误、(c/d)控制失效、(e)多UCA",
+        "B3": "锚定PM-AVP-LAT-2（目标轨迹与边界信念）并解释其失效导致控制偏差",
+        "B4": "UCA-1/3/4均与轨迹跟踪失效、时机/持续性错误一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup5",
+        "scenario_id_raw": "CS-10",
+        "description": "系统未能正确评估目标轨迹曲率和边界位置，导致横向控制指令未能有效跟踪目标轨迹。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "fd4856cc-fd4d-9c0e-b1be-9959005ff048",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到目标轨迹曲率和边界位置，但未指明具体传感器或通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"包含(a)上下文、(b)PM错误、(c/d)控制失效、(e)多UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-LAT-2（目标轨迹与边界信念）并解释其失效导致控制偏差\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3/4均与轨迹跟踪失效、时机/持续性错误一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    }
+  ],
+  "global_deduplication": {
+    "deduped_usable_scenarios": [
+      {
+        "scenario_id": "CS-1",
+        "summary": "环视摄像头误识别边界导致不安全转向",
+        "mechanism_signature": "camera|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=视觉误判",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-3",
+        "summary": "位姿估计误差致轨迹偏离",
+        "mechanism_signature": "algorithm|anchors=PM-AVP-FD-1|key=状态误估",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-4",
+        "summary": "侧向测距丢失或延迟致擦碰",
+        "mechanism_signature": "ultrasonic|anchors=FB-AVP-FD-1|key=测距失效",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-5",
+        "summary": "目标轨迹曲率不准致指令错误",
+        "mechanism_signature": "process_model|anchors=PM-AVP-FD-2|key=轨迹失准",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-2",
+        "summary": "转向角回读异常未检测致失准",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-FD-2|key=回读异常",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-8",
+        "summary": "横向位姿与航向误差评估错误",
+        "mechanism_signature": "algorithm|anchors=PM-AVP-FD-1|key=位姿误评",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-10",
+        "summary": "环视信息处理错误致转向时机不当",
+        "mechanism_signature": "camera|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=视觉处理错",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-7__dup2",
+        "summary": "执行效果跟踪不准致故障未发现",
+        "mechanism_signature": "actuator|anchors=FB-AVP-FD-3,PM-AVP-FD-3|key=执行跟踪失",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      }
+    ],
+    "removed_as_duplicate": [
+      {
+        "removed_scenario_id": "CS-6__dup2",
+        "kept_scenario_id": "CS-5",
+        "reason": "context_inclusion"
+      },
+      {
+        "removed_scenario_id": "CS-2__dup4",
+        "kept_scenario_id": "CS-2",
+        "reason": "semantic_equivalent"
+      },
+      {
+        "removed_scenario_id": "CS-4__dup4",
+        "kept_scenario_id": "CS-4",
+        "reason": "semantic_equivalent"
+      },
+      {
+        "removed_scenario_id": "CS-6__dup4",
+        "kept_scenario_id": "CS-8",
+        "reason": "context_inclusion"
+      },
+      {
+        "removed_scenario_id": "CS-5__dup4",
+        "kept_scenario_id": "CS-5",
+        "reason": "semantic_equivalent"
+      },
+      {
+        "removed_scenario_id": "CS-7__dup4",
+        "kept_scenario_id": "CS-7__dup2",
+        "reason": "semantic_equivalent"
+      },
+      {
+        "removed_scenario_id": "CS-1__dup5",
+        "kept_scenario_id": "CS-1",
+        "reason": "same_text_diff_uca_merge"
+      },
+      {
+        "removed_scenario_id": "CS-3__dup5",
+        "kept_scenario_id": "CS-3",
+        "reason": "semantic_equivalent"
+      }
+    ],
+    "coverage_count": 8
+  }
+}
