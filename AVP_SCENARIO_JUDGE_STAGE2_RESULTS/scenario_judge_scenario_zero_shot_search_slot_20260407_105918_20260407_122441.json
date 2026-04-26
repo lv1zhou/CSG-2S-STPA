@@ -1,0 +1,2809 @@
+{
+  "judge_meta": {
+    "timestamp": "2026-04-07T12:24:41",
+    "model": "qwen3-max",
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_tokens_item": 900,
+    "max_tokens_dedup": 3600,
+    "max_retries": 6,
+    "dedup_batch_size": 20,
+    "dedup_max_items_total": 300,
+    "dashscope_base_url": "https://dashscope.aliyuncs.com/api/v1"
+  },
+  "action_key": "search_slot",
+  "facts": {
+    "system": {
+      "system_type": "联网自动驾驶汽车(CAV) - 自动代客泊车(AVP)系统"
+    },
+    "control_action": {
+      "action_description": "AVP系统执行搜索车位/确认候选车位",
+      "controller": "控制器-AVP感知与泊车决策模块",
+      "controlled_process": "候选车位检测、确认与选择状态"
+    },
+    "uca_list": [
+      {
+        "uca_id": "UCA-1",
+        "description": "系统错误确认或选择车位，导致后续泊车进入危险区域。"
+      },
+      {
+        "uca_id": "UCA-2",
+        "description": "系统应确认可用车位时未确认，导致无法完成泊车或任务中断。"
+      },
+      {
+        "uca_id": "UCA-3",
+        "description": "车位搜索或确认时机不当，导致错过目标车位或晚确认。"
+      },
+      {
+        "uca_id": "UCA-4",
+        "description": "搜索过程持续时间不当或过早终止，导致车位选择结果失真。"
+      }
+    ],
+    "control_algorithm_description": [
+      {
+        "id": "CA-AVP-SS-1",
+        "description": "APA激活且速度低于阈值时，系统基于侧向感知和视觉线索启动候选车位搜索。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "CA-AVP-SS-2",
+        "description": "仅当几何尺寸、可通行空间与边界约束共同满足时，系统才确认候选车位可用于泊车。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "CA-AVP-SS-3",
+        "description": "若证据不一致、确认超时或车辆已越过候选区域，系统应取消确认并重新搜索。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      }
+    ],
+    "process_model_description": [
+      {
+        "id": "PM-AVP-SS-1",
+        "description": "车位几何与占用状态信念：系统相信其能正确识别车位边界、尺寸和占用情况。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "PM-AVP-SS-2",
+        "description": "自车相对车位位置与已越过距离信念：系统相信其能正确判断车辆与候选车位的相对关系。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "PM-AVP-SS-3",
+        "description": "候选车位确认置信度与搜索状态信念：系统相信当前搜索状态和确认置信度是可靠的。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3",
+          "UCA-4"
+        ]
+      }
+    ],
+    "feedback_path_description": [
+      {
+        "id": "FB-AVP-SS-1",
+        "description": "侧向超声波距离、异常回波与丢失信息。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "FB-AVP-SS-2",
+        "description": "环视摄像头提供停车线、路缘与邻车轮廓信息。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "FB-AVP-SS-3",
+        "description": "轮速里程计与自车位姿估计信息。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "FB-AVP-SS-4",
+        "description": "APA模式、档位与HMI确认反馈。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      }
+    ]
+  },
+  "facts_compact": {
+    "system_type": "联网自动驾驶汽车(CAV) - 自动代客泊车(AVP)系统",
+    "control_action": "AVP系统执行搜索车位/确认候选车位",
+    "controller": "控制器-AVP感知与泊车决策模块",
+    "uca_list": [
+      {
+        "uca_id": "UCA-1",
+        "description": "系统错误确认或选择车位，导致后续泊车进入危险区域。"
+      },
+      {
+        "uca_id": "UCA-2",
+        "description": "系统应确认可用车位时未确认，导致无法完成泊车或任务中断。"
+      },
+      {
+        "uca_id": "UCA-3",
+        "description": "车位搜索或确认时机不当，导致错过目标车位或晚确认。"
+      },
+      {
+        "uca_id": "UCA-4",
+        "description": "搜索过程持续时间不当或过早终止，导致车位选择结果失真。"
+      }
+    ],
+    "CA": [
+      {
+        "id": "CA-AVP-SS-1",
+        "description": "APA激活且速度低于阈值时，系统基于侧向感知和视觉线索启动候选车位搜索。"
+      },
+      {
+        "id": "CA-AVP-SS-2",
+        "description": "仅当几何尺寸、可通行空间与边界约束共同满足时，系统才确认候选车位可用于泊车。"
+      },
+      {
+        "id": "CA-AVP-SS-3",
+        "description": "若证据不一致、确认超时或车辆已越过候选区域，系统应取消确认并重新搜索。"
+      }
+    ],
+    "PM": [
+      {
+        "id": "PM-AVP-SS-1",
+        "description": "车位几何与占用状态信念：系统相信其能正确识别车位边界、尺寸和占用情况。"
+      },
+      {
+        "id": "PM-AVP-SS-2",
+        "description": "自车相对车位位置与已越过距离信念：系统相信其能正确判断车辆与候选车位的相对关系。"
+      },
+      {
+        "id": "PM-AVP-SS-3",
+        "description": "候选车位确认置信度与搜索状态信念：系统相信当前搜索状态和确认置信度是可靠的。"
+      }
+    ],
+    "FB": [
+      {
+        "id": "FB-AVP-SS-1",
+        "description": "侧向超声波距离、异常回波与丢失信息。"
+      },
+      {
+        "id": "FB-AVP-SS-2",
+        "description": "环视摄像头提供停车线、路缘与邻车轮廓信息。"
+      },
+      {
+        "id": "FB-AVP-SS-3",
+        "description": "轮速里程计与自车位姿估计信息。"
+      },
+      {
+        "id": "FB-AVP-SS-4",
+        "description": "APA模式、档位与HMI确认反馈。"
+      }
+    ],
+    "note": "评分只看 candidate_scenario 的逻辑质量；facts 仅用于核对UCA/CA/PM/FB锚点是否具体且一致。"
+  },
+  "summary": {
+    "file_tag": "zero_shot_search_slot",
+    "input_path": "C:\\Users\\32401\\PycharmProjects\\PythonProject\\scenario_zero_shot_search_slot_20260407_105918.json",
+    "filename": "scenario_zero_shot_search_slot_20260407_105918.json",
+    "action_key": "search_slot",
+    "file_format": {
+      "top_type": "dict",
+      "format": "runs_dict"
+    },
+    "meta_in_file": {
+      "method": "zero_shot",
+      "generator_type": "qwen_generation",
+      "task_type": "Scenario",
+      "action_key": "search_slot",
+      "model": "qwen2.5-32b-instruct",
+      "num_shots": 0,
+      "temperature": 0.1,
+      "top_p": 0.8,
+      "max_tokens": 4000,
+      "timestamp": "2026-04-07T10:58:00",
+      "messages_count": 2,
+      "prompt_chars": 3687,
+      "target_scenarios": 10,
+      "max_gen_retries_per_iter": 6
+    },
+    "source_meta": {
+      "job_source": "manifest",
+      "manifest_index": 4,
+      "file_tag": "zero_shot_search_slot",
+      "input_path": "C:\\Users\\32401\\PycharmProjects\\PythonProject\\scenario_zero_shot_search_slot_20260407_105918.json",
+      "action_key": "search_slot",
+      "filename": "scenario_zero_shot_search_slot_20260407_105918.json",
+      "manifest_entry": {
+        "method": "zero_shot",
+        "action_key": "search_slot",
+        "output_file": ".\\scenario_zero_shot_search_slot_20260407_105918.json"
+      }
+    },
+    "counts": {
+      "total_runs_in_file": 5,
+      "total_records": 50,
+      "scenario_parse_failed": 0,
+      "scenario_parse_failed_reasons": {},
+      "judge_failed": 0,
+      "num_scored": 50,
+      "合理可用": 16,
+      "合理不可用": 33,
+      "不合理不可用": 1,
+      "label_mismatch": 8,
+      "usable_before_dedup": 16,
+      "coverage_count_after_dedup": 9
+    },
+    "dedup_ok": true,
+    "dedup_debug": {
+      "mode": "batched",
+      "rounds": [
+        {
+          "round": 1,
+          "size": 16,
+          "ok": true,
+          "debug": {
+            "status_code": 200,
+            "request_id": "c33706e4-7f97-9bb0-a0b0-e647affe20c6",
+            "message": "",
+            "attempt": 1,
+            "base_url": "https://dashscope.aliyuncs.com/api/v1",
+            "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1__dup3\",\n      \"summary\": \"超声波异常回波致车位误判\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=超声误检\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup2\",\n      \"summary\": \"轮速丢失致位置误判越界\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2|key=轮速丢包\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup3\",\n      \"summary\": \"环视延迟致错过车位确认\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-4|key=视觉延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup3\",\n      \"summary\": \"轮速丢失致相对位置误判\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2|key=轮速丢包\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup3\",\n      \"summary\": \"环视不一致致车位尺寸误判\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-4|key=视觉冲突\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6__dup3\",\n      \"summary\": \"超声丢失致占用状态误判\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=超声丢信\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-8__dup3\",\n      \"summary\": \"轮速异常致候选区误判\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2|key=轮速异常\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup5\",\n      \"summary\": \"轮速与位姿不一致致越界误判\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2|key=数据冲突\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-10__dup5\",\n      \"summary\": \"停车线不符致几何评估错误\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-4|key=标线失真\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-3\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-1\",\n      \"kept_scenario_id\": \"CS-1__dup3\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-1__dup2\",\n      \"kept_scenario_id\": \"CS-1__dup3\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-1__dup4\",\n      \"kept_scenario_id\": \"CS-1__dup3\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-1__dup5\",\n      \"kept_scenario_id\": \"CS-1__dup3\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3\",\n      \"kept_scenario_id\": \"CS-3__dup2\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3__dup4\",\n      \"kept_scenario_id\": \"CS-3__dup3\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3__dup5\",\n      \"kept_scenario_id\": \"CS-3__dup3\",\n      \"reason\": \"semantic_equivalent\"\n    }\n  ],\n  \"coverage_count\": 9\n}",
+            "parse": "strict"
+          }
+        }
+      ]
+    },
+    "perf": {
+      "max_workers": 6,
+      "max_tokens_item": 900,
+      "max_tokens_dedup": 3600
+    },
+    "thresholds": {
+      "USABLE_MIN_TOTAL": 9,
+      "USABLE_MIN_B1": 1,
+      "USABLE_MIN_B2": 2,
+      "USABLE_MIN_B3": 1,
+      "USABLE_MIN_B4": 1
+    },
+    "prompt_version": "v2026-02-15.logic_quality_only"
+  },
+  "per_item_evaluations": [
+    {
+      "scenario_id": "CS-1",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确超声波异常回波为上下文",
+        "B2": "含(a)传感器异常→(b)误确认→(d)错误输出→(e)UCA-1",
+        "B3": "锚定FB-AVP-SS-1（超声波异常回波）导致错误确认",
+        "B4": "linked_uca_ids有效且与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1",
+        "scenario_id_raw": "CS-1",
+        "description": "侧向超声波传感器出现异常回波，导致系统错误地确认了不可用的车位。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "579805e7-1534-9695-bd85-6c4a42f11082",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波异常回波为上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含(a)传感器异常→(b)误确认→(d)错误输出→(e)UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1（超声波异常回波）导致错误确认\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked_uca_ids有效且与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "明确轮速里程计数据丢失",
+        "B2": "数据丢失→误判位置→错过车位，链条清晰",
+        "B3": "锚定FB-AVP-SS-3（轮速里程计）导致PM-AVP-SS-2错误",
+        "B4": "UCA-3/4与‘错过车位’‘搜索终止失真’一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3",
+        "scenario_id_raw": "CS-3",
+        "description": "轮速里程计数据丢失，导致系统误判车辆位置，错过了目标车位。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "da72af2a-f99c-98fc-901e-d0ad6149d533",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确轮速里程计数据丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"数据丢失→误判位置→错过车位，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-3（轮速里程计）导致PM-AVP-SS-2错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4与‘错过车位’‘搜索终止失真’一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果",
+        "B1": "提到通信时延但未指明具体通道",
+        "B2": "仅'时延→错误选择'，缺中间环节",
+        "B3": "未锚定任何CA/PM/FB或具体反馈源",
+        "B4": "UCA-1/UCA-3与描述一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "明确通信路径（如CAN/ACK）及如何导致PM错误或CA误判",
+      "candidate_scenario": {
+        "scenario_id": "CS-5",
+        "scenario_id_raw": "CS-5",
+        "description": "系统在确认车位过程中，由于通信时延导致反馈信息滞后，最终选择了错误的车位。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "25cacb21-180c-9b40-89be-8bcd997e7eda",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和基本因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到通信时延但未指明具体通道\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'时延→错误选择'，缺中间环节\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB或具体反馈源\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/UCA-3与描述一致\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"明确通信路径（如CAN/ACK）及如何导致PM错误或CA误判\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到APA模式切换延迟，但未指明具体通道或阈值",
+        "B2": "链条清晰：模式延迟→未及时搜索→错过时机→UCA-3/4",
+        "B3": "提及APA模式（FB-AVP-SS-4），但未深入锚定CA/PM/FB机制",
+        "B4": "UCA-3/4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "上下文不够具体",
+        "控制回路锚定弱"
+      ],
+      "suggested_fix": "明确APA模式切换依赖的FB（如HMI反馈或CAN信号）及超时阈值，并关联CA-AVP-SS-1触发条件。",
+      "candidate_scenario": {
+        "scenario_id": "CS-4",
+        "scenario_id_raw": "CS-4",
+        "description": "APA模式切换延迟，导致系统未能及时启动车位搜索，错过了最佳搜索时机。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "bc553254-0d2c-9a3a-bfbe-f36be672b388",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到APA模式切换延迟，但未指明具体通道或阈值\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：模式延迟→未及时搜索→错过时机→UCA-3/4\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及APA模式（FB-AVP-SS-4），但未深入锚定CA/PM/FB机制\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"上下文不够具体\", \"控制回路锚定弱\"],\n  \"suggested_fix\": \"明确APA模式切换依赖的FB（如HMI反馈或CAN信号）及超时阈值，并关联CA-AVP-SS-1触发条件。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA链接和基本因果描述",
+        "B1": "提到传感器数据融合但未指明具体类型",
+        "B2": "仅有一段跳跃：融合错误→尺寸误判→UCA，缺中间环节",
+        "B3": "提及传感器融合但未锚定具体FB/PM/CA",
+        "B4": "UCA-1/2与尺寸误判逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "未锚定具体反馈或过程模型"
+      ],
+      "suggested_fix": "明确超声波/环视融合错误如何导致PM-AVP-SS-1信念偏差，并触发CA-AVP-SS-2误判",
+      "candidate_scenario": {
+        "scenario_id": "CS-6",
+        "scenario_id_raw": "CS-6",
+        "description": "系统在车位搜索过程中，由于传感器数据融合错误，导致车位尺寸判断失误。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "f7e9b7c9-0d8e-917c-afe0-4e845311d144",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA链接和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到传感器数据融合但未指明具体类型\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅有一段跳跃：融合错误→尺寸误判→UCA，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及传感器融合但未锚定具体FB/PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2与尺寸误判逻辑一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定具体反馈或过程模型\"],\n  \"suggested_fix\": \"明确超声波/环视融合错误如何导致PM-AVP-SS-1信念偏差，并触发CA-AVP-SS-2误判\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA，描述有基本因果",
+        "B1": "明确环视摄像头停车线信息不准确",
+        "B2": "仅'信息不准→未确认车位'，缺中间环节",
+        "B3": "锚定FB-AVP-SS-2（环视摄像头）并说明作用",
+        "B4": "UCA-2/3与'未及时确认'逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间环节（如PM信念错误或CA判断逻辑）"
+      ],
+      "suggested_fix": "补充：因停车线不准→系统误判无有效车位边界（PM-AVP-SS-1错误）→未触发CA-AVP-SS-2确认逻辑",
+      "candidate_scenario": {
+        "scenario_id": "CS-2",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头提供的停车线信息不准确，导致系统未能及时确认可用车位。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "af7f61b7-2a78-92e2-8c14-99ca624aaf6e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA，描述有基本因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头停车线信息不准确\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'信息不准→未确认车位'，缺中间环节\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2（环视摄像头）并说明作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3与'未及时确认'逻辑一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间环节（如PM信念错误或CA判断逻辑）\"],\n  \"suggested_fix\": \"补充：因停车线不准→系统误判无有效车位边界（PM-AVP-SS-1错误）→未触发CA-AVP-SS-2确认逻辑\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "明确环视摄像头视野被遮挡",
+        "B2": "缺中间环节（如PM信念错误或CA误判）",
+        "B3": "锚定FB-AVP-SS-2（环视摄像头）并说明作用",
+        "B4": "UCA-1/4与搜索失真一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间决策环节"
+      ],
+      "suggested_fix": "补充因视野遮挡导致PM错误或CA误确认的中间步骤",
+      "candidate_scenario": {
+        "scenario_id": "CS-8",
+        "scenario_id_raw": "CS-8",
+        "description": "系统在车位搜索过程中，由于环视摄像头视野被遮挡，导致车位搜索结果失真。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3255d67a-0850-9925-9088-dd65ee5a3bc4",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头视野被遮挡\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"缺中间环节（如PM信念错误或CA误判）\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2（环视摄像头）并说明作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/4与搜索失真一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间决策环节\"],\n  \"suggested_fix\": \"补充因视野遮挡导致PM错误或CA误确认的中间步骤\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA，描述有基本因果",
+        "B1": "明确侧向超声波传感器丢失信息",
+        "B2": "仅提及传感器丢失→确认失败，缺中间决策环节",
+        "B3": "锚定FB-AVP-SS-1（超声波丢失），作用清晰",
+        "B4": "UCA-2/3与确认失败逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间环节（如PM信念错误或CA未触发）"
+      ],
+      "suggested_fix": "补充因超声波丢失导致PM-AVP-SS-1信念错误，进而使CA-AVP-SS-2未满足，最终引发UCA-2/UCA-3",
+      "candidate_scenario": {
+        "scenario_id": "CS-9",
+        "scenario_id_raw": "CS-9",
+        "description": "系统在车位确认阶段，由于侧向超声波传感器丢失信息，导致车位确认失败。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "2d48ec1c-5961-9b14-b02c-c9851ae813dc",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA，描述有基本因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确侧向超声波传感器丢失信息\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅提及传感器丢失→确认失败，缺中间决策环节\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1（超声波丢失），作用清晰\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3与确认失败逻辑一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间环节（如PM信念错误或CA未触发）\"],\n  \"suggested_fix\": \"补充因超声波丢失导致PM-AVP-SS-1信念错误，进而使CA-AVP-SS-2未满足，最终引发UCA-2/UCA-3\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA，描述有上下文+机制+UCA",
+        "B1": "提到‘自车位姿估计误差’但未指明来源（如FB-AVP-SS-3）",
+        "B2": "链条清晰：位姿误差→确认超时→UCA-2/3",
+        "B3": "提及位姿估计但未锚定FB/PM具体ID或通道",
+        "B4": "UCA-2（未确认）、UCA-3（时机不当）均合理"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足2",
+        "B3未明确锚定FB/PM"
+      ],
+      "suggested_fix": "明确位姿估计来自FB-AVP-SS-3，并关联PM-AVP-SS-2信念错误",
+      "candidate_scenario": {
+        "scenario_id": "CS-7",
+        "scenario_id_raw": "CS-7",
+        "description": "系统在车位确认阶段，由于自车位姿估计误差，导致确认超时。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "8f09b10e-621f-99b5-be59-caa669c184fb",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA，描述有上下文+机制+UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到‘自车位姿估计误差’但未指明来源（如FB-AVP-SS-3）\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：位姿误差→确认超时→UCA-2/3\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及位姿估计但未锚定FB/PM具体ID或通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2（未确认）、UCA-3（时机不当）均合理\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足2\", \"B3未明确锚定FB/PM\"],\n  \"suggested_fix\": \"明确位姿估计来自FB-AVP-SS-3，并关联PM-AVP-SS-2信念错误\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup2",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA和完整描述",
+        "B1": "明确指出侧向超声波异常回波",
+        "B2": "异常回波→错误确认车位→导致UCA-1",
+        "B3": "锚定FB-AVP-SS-1（超声波异常回波）并解释其作用",
+        "B4": "linked_uca_ids正确且与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup2",
+        "scenario_id_raw": "CS-1",
+        "description": "侧向超声波传感器出现异常回波，导致系统错误地确认了不可用的车位。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3633b33c-9129-9a18-be48-58046b7dd792",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA和完整描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确指出侧向超声波异常回波\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"异常回波→错误确认车位→导致UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1（超声波异常回波）并解释其作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked_uca_ids正确且与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup2",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "明确环视摄像头停车线信息不准确",
+        "B2": "仅描述输入错误→结果，缺中间决策环节",
+        "B3": "锚定FB-AVP-SS-2（环视摄像头）并说明影响",
+        "B4": "UCA-2/UCA-3与未确认/晚确认一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间环节（如PM信念或CA判断逻辑）"
+      ],
+      "suggested_fix": "补充因停车线不准导致PM-AVP-SS-1/2错误，进而漏触发CA-AVP-SS-2的链条",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup2",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头提供的停车线信息不准确，导致系统未能及时确认可用车位。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "6f0f3845-69c4-9ccd-ac53-3fb4a4573054",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头停车线信息不准确\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅描述输入错误→结果，缺中间决策环节\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2（环视摄像头）并说明影响\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-3与未确认/晚确认一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间环节（如PM信念或CA判断逻辑）\"],\n  \"suggested_fix\": \"补充因停车线不准导致PM-AVP-SS-1/2错误，进而漏触发CA-AVP-SS-2的链条\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "提到APA模式切换失败，但未说明具体通信或状态条件",
+        "B2": "仅'APA切换失败→搜索未启动'，缺中间环节如PM/CA如何受影响",
+        "B3": "未锚定任何CA/PM/FB，也未提具体感知或决策模块",
+        "B4": "UCA-3/4与'时机不当/过早终止'逻辑一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "补充APA模式切换失败如何影响CA-AVP-SS-1触发，并关联FB-AVP-SS-4或PM-AVP-SS-3",
+      "candidate_scenario": {
+        "scenario_id": "CS-10",
+        "scenario_id_raw": "CS-10",
+        "description": "系统在车位搜索过程中，由于APA模式切换失败，导致车位搜索未能启动。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "6bcb3d59-8eb1-9b5c-9a27-3c448a4e50ca",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到APA模式切换失败，但未说明具体通信或状态条件\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'APA切换失败→搜索未启动'，缺中间环节如PM/CA如何受影响\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB，也未提具体感知或决策模块\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4与'时机不当/过早终止'逻辑一致\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"补充APA模式切换失败如何影响CA-AVP-SS-1触发，并关联FB-AVP-SS-4或PM-AVP-SS-3\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup2",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "明确轮速里程计数据丢失",
+        "B2": "数据丢失→误判越过车位→导致UCA-2/3/4",
+        "B3": "锚定FB-AVP-SS-3（轮速里程计）和PM-AVP-SS-2",
+        "B4": "linked UCA与误判越过车位逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup2",
+        "scenario_id_raw": "CS-3",
+        "description": "轮速里程计数据丢失，导致系统误判车辆已越过候选车位。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "4226fb8c-f5f7-9032-a9d9-83b5585c02b7",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确轮速里程计数据丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"数据丢失→误判越过车位→导致UCA-2/3/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-3（轮速里程计）和PM-AVP-SS-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked UCA与误判越过车位逻辑一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup2",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "明确提及侧向超声波和环视摄像头",
+        "B2": "仅说明‘不一致→确认失败’，缺中间环节",
+        "B3": "锚定FB-AVP-SS-1和FB-AVP-SS-2，解释其不一致影响",
+        "B4": "UCA-1/2/3均与确认失败或错误相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间环节（如PM信念错误或CA判断逻辑）"
+      ],
+      "suggested_fix": "补充‘因传感器冲突导致PM-AVP-SS-1信念错误，进而违反CA-AVP-SS-2’等中间步骤",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup2",
+        "scenario_id_raw": "CS-5",
+        "description": "系统未能正确处理侧向超声波和环视摄像头的不一致信息，导致车位确认失败。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "899a5138-2322-9198-a519-65613c611d5d",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提及侧向超声波和环视摄像头\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅说明‘不一致→确认失败’，缺中间环节\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1和FB-AVP-SS-2，解释其不一致影响\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与确认失败或错误相关\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间环节（如PM信念错误或CA判断逻辑）\"],\n  \"suggested_fix\": \"补充‘因传感器冲突导致PM-AVP-SS-1信念错误，进而违反CA-AVP-SS-2’等中间步骤\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup2",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 1
+      },
+      "total_score": 5,
+      "label": "不合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到通信时延但未指明具体通道或协议",
+        "B2": "仅'通信时延→确认超时'，缺中间环节如PM/CA影响",
+        "B3": "未锚定任何CA/PM/FB，未说明回路中哪部分出错",
+        "B4": "链接全部UCA虽宽泛但逻辑上可能相关"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素",
+        "上下文不够具体"
+      ],
+      "suggested_fix": "明确通信路径（如CAN/ACK）、说明时延如何导致PM信念错误或CA误判，并关联具体FB/CA。",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup2",
+        "scenario_id_raw": "CS-6",
+        "description": "系统在确认车位过程中发生通信时延，导致车位确认超时。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "7831b1ae-b922-9f40-a48b-7087972fca09",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到通信时延但未指明具体通道或协议\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'通信时延→确认超时'，缺中间环节如PM/CA影响\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB，未说明回路中哪部分出错\"},\n    \"B4\": {\"score\": 1, \"rationale\": \"链接全部UCA虽宽泛但逻辑上可能相关\"}\n  },\n  \"total_score\": 5,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\", \"上下文不够具体\"],\n  \"suggested_fix\": \"明确通信路径（如CAN/ACK）、说明时延如何导致PM信念错误或CA误判，并关联具体FB/CA。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup2",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到相对位置但未指明传感器或状态",
+        "B2": "仅‘判断错误→确认失败’，缺中间环节",
+        "B3": "隐含PM-AVP-SS-2但未明确锚定FB/CA",
+        "B4": "UCA-2/3/4均与确认失败及时机相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "上下文不够具体",
+        "未明确锚定FB/CA/PM"
+      ],
+      "suggested_fix": "补充如‘环视摄像头误检路缘导致PM-AVP-SS-2错误，使系统漏确认车位（UCA-2）’等具体链条。",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup2",
+        "scenario_id_raw": "CS-7",
+        "description": "系统未能正确判断车辆与候选车位的相对位置，导致车位确认失败。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "115f4b5e-cac7-9845-a9ab-9d8a6c80f821",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到相对位置但未指明传感器或状态\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅‘判断错误→确认失败’，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含PM-AVP-SS-2但未明确锚定FB/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3/4均与确认失败及时机相关\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"上下文不够具体\", \"未明确锚定FB/CA/PM\"],\n  \"suggested_fix\": \"补充如‘环视摄像头误检路缘导致PM-AVP-SS-2错误，使系统漏确认车位（UCA-2）’等具体链条。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup2",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含触发+因果+UCA",
+        "B1": "提到APA模式切换延迟，但未指明具体通道或阈值",
+        "B2": "仅'延迟→未启动搜索'，缺中间环节如PM/CA如何受影响",
+        "B3": "未锚定任何CA/PM/FB，未提具体感知或决策模块",
+        "B4": "UCA-3/UCA-4与'时机不当/过早终止'逻辑一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "补充APA模式切换延迟如何影响CA-AVP-SS-1触发，及涉及的FB/PM（如HMI反馈延迟导致搜索未启动）",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup2",
+        "scenario_id_raw": "CS-4",
+        "description": "APA模式切换延迟，导致系统未能及时启动车位搜索。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "fba24e0f-34a1-98d1-ac40-679d84be5838",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup2\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，linked_uca_ids有效，description含触发+因果+UCA\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到APA模式切换延迟，但未指明具体通道或阈值\"\n    },\n    \"B2\": {\n      \"score\": 1,\n      \"rationale\": \"仅'延迟→未启动搜索'，缺中间环节如PM/CA如何受影响\"\n    },\n    \"B3\": {\n      \"score\": 0,\n      \"rationale\": \"未锚定任何CA/PM/FB，未提具体感知或决策模块\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-3/UCA-4与'时机不当/过早终止'逻辑一致\"\n    }\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"补充APA模式切换延迟如何影响CA-AVP-SS-1触发，及涉及的FB/PM（如HMI反馈延迟导致搜索未启动）\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup2",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到执行器回读错误，但未明确具体通道或条件",
+        "B2": "仅‘执行器回读错误→结果失真’，缺中间环节",
+        "B3": "未锚定任何CA/PM/FB，也未提具体反馈类型",
+        "B4": "链接全部UCA且与‘结果失真’逻辑一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "明确执行器回读错误如何影响FB（如CAN回读）及PM信念，并补全决策环节",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup2",
+        "scenario_id_raw": "CS-8",
+        "description": "系统在车位搜索过程中发生执行器状态回读错误，导致车位搜索结果失真。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "5785df43-1511-9cb7-971c-03448bf87941",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到执行器回读错误，但未明确具体通道或条件\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅‘执行器回读错误→结果失真’，缺中间环节\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB，也未提具体反馈类型\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"链接全部UCA且与‘结果失真’逻辑一致\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"明确执行器回读错误如何影响FB（如CAN回读）及PM信念，并补全决策环节\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup2",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，description含因果",
+        "B1": "提到APA模式与HMI反馈，但未说明具体不一致形式",
+        "B2": "仅说‘不一致导致确认失败’，缺中间环节",
+        "B3": "提及HMI反馈（FB-AVP-SS-4），但未说明如何影响PM/CA",
+        "B4": "UCA-3/4与‘确认失败/时机不当’逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "上下文不够具体",
+        "FB锚定未解释作用机制"
+      ],
+      "suggested_fix": "明确HMI反馈类型（如ACK缺失）、说明如何导致PM错误或CA漏触发，并补全中间决策环节。",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup2",
+        "scenario_id_raw": "CS-9",
+        "description": "系统未能正确处理APA模式与HMI反馈的不一致信息，导致车位确认失败。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "6c22d949-6e90-9ac0-af85-d22722589e25",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到APA模式与HMI反馈，但未说明具体不一致形式\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅说‘不一致导致确认失败’，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及HMI反馈（FB-AVP-SS-4），但未说明如何影响PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4与‘确认失败/时机不当’逻辑一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"上下文不够具体\", \"FB锚定未解释作用机制\"],\n  \"suggested_fix\": \"明确HMI反馈类型（如ACK缺失）、说明如何导致PM错误或CA漏触发，并补全中间决策环节。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup3",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果",
+        "B1": "明确环视摄像头信息延迟",
+        "B2": "延迟→错过确认时机→错过车位，链条清晰",
+        "B3": "锚定FB-AVP-SS-2（环视摄像头）并说明其作用",
+        "B4": "UCA-3与‘错过确认时机’一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup3",
+        "scenario_id_raw": "CS-3",
+        "description": "由于环视摄像头信息延迟，系统错过了最佳车位确认时机，导致错过目标车位。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "70132238-d469-9709-8859-dcd0b87f089e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和基本因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头信息延迟\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"延迟→错过确认时机→错过车位，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2（环视摄像头）并说明其作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3与‘错过确认时机’一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup2",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到通信丢包但未指明具体通道或上下文",
+        "B2": "仅‘丢包→结果失真’，缺中间环节与决策逻辑",
+        "B3": "未锚定任何CA/PM/FB，未说明如何影响控制回路",
+        "B4": "链接全部UCA且与描述方向一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "明确通信路径（如CAN/ACK）、说明丢包如何导致PM错误或CA误判",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup2",
+        "scenario_id_raw": "CS-10",
+        "description": "系统在车位搜索过程中发生通信丢包，导致车位搜索结果失真。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "4b68bf29-11b6-997b-bb19-f7a40c45e35b",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到通信丢包但未指明具体通道或上下文\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅‘丢包→结果失真’，缺中间环节与决策逻辑\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB，未说明如何影响控制回路\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"链接全部UCA且与描述方向一致\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"明确通信路径（如CAN/ACK）、说明丢包如何导致PM错误或CA误判\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup3",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA和完整描述",
+        "B1": "明确指出侧向超声波异常回波",
+        "B2": "异常回波→误识边界→错误确认车位，链条清晰",
+        "B3": "锚定FB-AVP-SS-1（超声波异常回波）并解释其导致PM/CA错误",
+        "B4": "UCA-1与错误确认车位直接一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup3",
+        "scenario_id_raw": "CS-1",
+        "description": "侧向超声波传感器出现异常回波，导致系统错误地识别车位边界，进而错误确认车位。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "a0b1ebad-ae34-9404-818b-520ac153dbf4",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA和完整描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确指出侧向超声波异常回波\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"异常回波→误识边界→错误确认车位，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1（超声波异常回波）并解释其导致PM/CA错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与错误确认车位直接一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup3",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确轮速里程计数据丢失",
+        "B2": "触发→PM错误→错误确认→UCA",
+        "B3": "锚定FB-AVP-SS-3与PM-AVP-SS-2",
+        "B4": "UCA-1/2均与错误/漏确认相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup3",
+        "scenario_id_raw": "CS-4",
+        "description": "轮速里程计数据丢失，导致系统无法准确判断车辆与车位的相对位置，从而错误确认车位。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "b97e8110-f087-9b3b-bbc5-e6f85789ad7b",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确轮速里程计数据丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"触发→PM错误→错误确认→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-3与PM-AVP-SS-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2均与错误/漏确认相关\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup3",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，描述含因果",
+        "B1": "明确环视摄像头停车线信息不准确",
+        "B2": "仅‘信息不准→未确认车位’，缺中间环节",
+        "B3": "锚定FB-AVP-SS-2（环视摄像头停车线）",
+        "B4": "UCA-2匹配‘应确认未确认’"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整，缺少PM/CA决策环节"
+      ],
+      "suggested_fix": "补充‘因停车线不准→PM-AVP-SS-1错误判断车位占用→违反CA-AVP-SS-2→未确认车位’",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup3",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头提供的停车线信息不准确，导致系统未能正确确认车位，从而无法完成泊车任务。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "dc396b34-e826-95ae-8fdf-d690814ac49f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup3\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，linked_uca_ids有效，描述含因果\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确环视摄像头停车线信息不准确\"\n    },\n    \"B2\": {\n      \"score\": 1,\n      \"rationale\": \"仅‘信息不准→未确认车位’，缺中间环节\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-SS-2（环视摄像头停车线）\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-2匹配‘应确认未确认’\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整，缺少PM/CA决策环节\"],\n  \"suggested_fix\": \"补充‘因停车线不准→PM-AVP-SS-1错误判断车位占用→违反CA-AVP-SS-2→未确认车位’\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup3",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA，描述有基本因果",
+        "B1": "明确提到环视摄像头信息不一致",
+        "B2": "环视异常→尺寸误识→确认错误→UCA-1/2",
+        "B3": "锚定FB-AVP-SS-2（环视）导致PM-AVP-SS-1错误",
+        "B4": "UCA-1/2均与错误/遗漏确认车位一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup3",
+        "scenario_id_raw": "CS-7",
+        "description": "系统在确认车位时，由于环视摄像头信息不一致，未能正确识别车位尺寸，导致确认错误。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "8d6c831b-4a63-9bca-ac0c-123234cbb79d",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA，描述有基本因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提到环视摄像头信息不一致\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环视异常→尺寸误识→确认错误→UCA-1/2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2（环视）导致PM-AVP-SS-1错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2均与错误/遗漏确认车位一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup3",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确侧向超声波传感器丢失信息",
+        "B2": "链条：传感器丢信→误判占用→错误确认→UCA-1",
+        "B3": "锚定FB-AVP-SS-1（超声波）并解释其导致PM错误",
+        "B4": "UCA-1与描述完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup3",
+        "scenario_id_raw": "CS-6",
+        "description": "系统在确认车位时，由于侧向超声波传感器丢失信息，未能正确识别车位占用情况，导致确认错误。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e680de49-6cd8-9b72-a115-73c7ba95f8ad",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确侧向超声波传感器丢失信息\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：传感器丢信→误判占用→错误确认→UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1（超声波）并解释其导致PM错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与描述完全一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup3",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效且description含基本因果",
+        "B1": "提到HMI确认反馈但未说明具体通信路径或时序",
+        "B2": "仅描述‘未接收反馈→中断搜索’，缺中间环节如PM/CA如何响应",
+        "B3": "提及HMI反馈但未锚定FB-AVP-SS-4或解释其在回路中作用",
+        "B4": "UCA-4与‘搜索过早终止’一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "FB锚定弱"
+      ],
+      "suggested_fix": "补充HMI反馈丢失如何影响PM-AVP-SS-3及触发CA-AVP-SS-3取消逻辑",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup3",
+        "scenario_id_raw": "CS-5",
+        "description": "APA模式切换过程中，系统未能及时接收到HMI确认反馈，导致车位搜索过程被中断。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "1dd5fd64-37f0-9c55-8022-2543cb7dcfff",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效且description含基本因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到HMI确认反馈但未说明具体通信路径或时序\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅描述‘未接收反馈→中断搜索’，缺中间环节如PM/CA如何响应\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及HMI反馈但未锚定FB-AVP-SS-4或解释其在回路中作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4与‘搜索过早终止’一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"FB锚定弱\"],\n  \"suggested_fix\": \"补充HMI反馈丢失如何影响PM-AVP-SS-3及触发CA-AVP-SS-3取消逻辑\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup3",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确轮速里程计异常为上下文",
+        "B2": "链条：里程计异常→误判位置→确认错误→UCA",
+        "B3": "锚定FB-AVP-SS-3（轮速里程计）并影响PM-AVP-SS-2",
+        "B4": "UCA-1/2/3均与确认错误相关"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup3",
+        "scenario_id_raw": "CS-8",
+        "description": "系统在确认车位时，由于轮速里程计数据异常，未能正确判断车辆是否已越过候选区域，导致确认错误。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "9f6f1259-b14a-9326-80bc-6905016f9e7c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确轮速里程计异常为上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：里程计异常→误判位置→确认错误→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-3（轮速里程计）并影响PM-AVP-SS-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/3均与确认错误相关\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup3",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到APA模式切换和HMI反馈，但未指明通信路径",
+        "B2": "链条清晰：通信时延→未收HMI反馈→确认超时→UCA-3/4",
+        "B3": "提及HMI反馈（FB-AVP-SS-4），但未说明如何影响PM或CA",
+        "B4": "UCA-3/4与确认超时逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足2",
+        "B3未明确锚定CA/PM/FB作用机制"
+      ],
+      "suggested_fix": "明确HMI反馈所属FB编号，并说明其缺失如何导致PM信念错误或CA未触发",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup3",
+        "scenario_id_raw": "CS-9",
+        "description": "系统在确认车位时，由于APA模式切换过程中通信时延，未能及时接收到HMI确认反馈，导致确认超时。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "8db7c06f-1ff1-9295-8474-b39f71cc55bf",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到APA模式切换和HMI反馈，但未指明通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：通信时延→未收HMI反馈→确认超时→UCA-3/4\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及HMI反馈（FB-AVP-SS-4），但未说明如何影响PM或CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4与确认超时逻辑一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足2\", \"B3未明确锚定CA/PM/FB作用机制\"],\n  \"suggested_fix\": \"明确HMI反馈所属FB编号，并说明其缺失如何导致PM信念错误或CA未触发\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup3",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果",
+        "B1": "明确侧向超声波异常回波",
+        "B2": "缺中间环节（如PM错误或CA误判）",
+        "B3": "锚定FB-AVP-SS-1，解释其导致边界误识",
+        "B4": "UCA-1/2均与错误/漏确认车位一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少PM或CA环节"
+      ],
+      "suggested_fix": "补充‘系统因异常回波形成错误车位边界信念（PM-AVP-SS-1），导致违反CA-AVP-SS-2而错误确认’",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup3",
+        "scenario_id_raw": "CS-10",
+        "description": "系统在确认车位时，由于侧向超声波传感器异常回波，未能正确识别车位边界，导致确认错误。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "7d29507d-df65-9948-9110-22b375a5687e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup3\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含有效UCA和基本因果\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确侧向超声波异常回波\"\n    },\n    \"B2\": {\n      \"score\": 1,\n      \"rationale\": \"缺中间环节（如PM错误或CA误判）\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-SS-1，解释其导致边界误识\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/2均与错误/漏确认车位一致\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少PM或CA环节\"],\n  \"suggested_fix\": \"补充‘系统因异常回波形成错误车位边界信念（PM-AVP-SS-1），导致违反CA-AVP-SS-2而错误确认’\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup4",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA和完整描述",
+        "B1": "明确指出侧向超声波异常回波",
+        "B2": "异常回波→错误确认车位→导致UCA-1，链条清晰",
+        "B3": "锚定FB-AVP-SS-1（超声波异常回波）并解释其导致错误确认",
+        "B4": "linked_uca_ids正确且与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup4",
+        "scenario_id_raw": "CS-1",
+        "description": "侧向超声波传感器出现异常回波，导致系统错误地确认了不可用的车位。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e69909d3-2ea2-9e6e-b616-fa9e1b0f1297",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA和完整描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确指出侧向超声波异常回波\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"异常回波→错误确认车位→导致UCA-1，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1（超声波异常回波）并解释其导致错误确认\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked_uca_ids正确且与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup4",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确环视摄像头停车线信息不准确",
+        "B2": "缺中间环节（如PM信念或CA逻辑）",
+        "B3": "锚定FB-AVP-SS-2，解释其导致漏确认",
+        "B4": "UCA-2与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间决策环节"
+      ],
+      "suggested_fix": "补充因停车线错误如何影响PM/CA判断的中间步骤",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup4",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头提供的停车线信息不准确，导致系统未能及时确认可用车位。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "fa4b478b-1219-96f1-b01b-8618c8973185",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头停车线信息不准确\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"缺中间环节（如PM信念或CA逻辑）\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2，解释其导致漏确认\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与描述一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间决策环节\"],\n  \"suggested_fix\": \"补充因停车线错误如何影响PM/CA判断的中间步骤\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup4",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，UCA-3有效，描述含触发与结果",
+        "B1": "提到APA模式切换延迟，但未说明具体来源",
+        "B2": "仅'延迟→未及时启动'，缺中间环节",
+        "B3": "未锚定任何CA/PM/FB或具体感知通道",
+        "B4": "UCA-3明确对应时机不当"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "补充APA模式切换延迟的具体来源（如HMI反馈FB-AVP-SS-4）及如何影响搜索启动逻辑（CA-AVP-SS-1）",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup4",
+        "scenario_id_raw": "CS-4",
+        "description": "APA模式切换延迟，导致系统未能及时启动车位搜索。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e1dfaae3-905e-9c1c-8081-27802a58f6da",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，UCA-3有效，描述含触发与结果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到APA模式切换延迟，但未说明具体来源\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'延迟→未及时启动'，缺中间环节\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB或具体感知通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3明确对应时机不当\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"补充APA模式切换延迟的具体来源（如HMI反馈FB-AVP-SS-4）及如何影响搜索启动逻辑（CA-AVP-SS-1）\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup4",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA-3，描述有上下文+因果+UCA",
+        "B1": "明确‘轮速里程计数据丢失’为具体FB-AVP-SS-3",
+        "B2": "链条：FB丢失→错过确认时机→UCA-3，覆盖(a)(b)(e)",
+        "B3": "锚定FB-AVP-SS-3，解释其导致PM/CA失效",
+        "B4": "UCA-3与‘错过确认时机’完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup4",
+        "scenario_id_raw": "CS-3",
+        "description": "轮速里程计数据丢失，导致系统错过了最佳车位确认时机。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "cecdb088-531f-9776-a354-ce705b90c93a",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup4\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，含有效UCA-3，描述有上下文+因果+UCA\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确‘轮速里程计数据丢失’为具体FB-AVP-SS-3\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条：FB丢失→错过确认时机→UCA-3，覆盖(a)(b)(e)\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-SS-3，解释其导致PM/CA失效\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-3与‘错过确认时机’完全一致\"\n    }\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup4",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA，描述有基本因果",
+        "B1": "提到'通信时延'但未指明具体通道或协议",
+        "B2": "链条清晰：时延→确认超时→未取消确认→导致UCA-1/3",
+        "B3": "提及'确认超时'关联CA-AVP-SS-3，但未锚定FB/PM具体项",
+        "B4": "UCA-1和UCA-3均与错误/延迟确认车位一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1未达2",
+        "B3未达2",
+        "总分<9"
+      ],
+      "suggested_fix": "明确通信路径（如CAN/ACK）并关联FB-AVP-SS-4或PM-AVP-SS-3",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup4",
+        "scenario_id_raw": "CS-5",
+        "description": "系统在确认车位过程中，由于通信时延导致确认超时，未能及时取消确认。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "a1787f1f-e1e8-9543-8c78-630028b042b0",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup4\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含有效UCA，描述有基本因果\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到'通信时延'但未指明具体通道或协议\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：时延→确认超时→未取消确认→导致UCA-1/3\"\n    },\n    \"B3\": {\n      \"score\": 1,\n      \"rationale\": \"提及'确认超时'关联CA-AVP-SS-3，但未锚定FB/PM具体项\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1和UCA-3均与错误/延迟确认车位一致\"\n    }\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1未达2\", \"B3未达2\", \"总分<9\"],\n  \"suggested_fix\": \"明确通信路径（如CAN/ACK）并关联FB-AVP-SS-4或PM-AVP-SS-3\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup4",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，含基本因果",
+        "B1": "提到传感器数据不一致，但未指明类型",
+        "B2": "仅‘数据不一致→结果失真’，缺中间环节",
+        "B3": "泛称传感器，未锚定具体FB/PM/CA",
+        "B4": "UCA-1/4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "未锚定具体反馈或过程模型"
+      ],
+      "suggested_fix": "明确如‘环视摄像头误检停车线+超声波异常回波→PM-AVP-SS-1错误→错误确认车位’",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup4",
+        "scenario_id_raw": "CS-6",
+        "description": "系统在车位搜索过程中，由于传感器数据不一致，导致车位选择结果失真。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "45a6bbc3-13ac-9800-a92e-ce09a7826bdf",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，含基本因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到传感器数据不一致，但未指明类型\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅‘数据不一致→结果失真’，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"泛称传感器，未锚定具体FB/PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/4与描述一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定具体反馈或过程模型\"],\n  \"suggested_fix\": \"明确如‘环视摄像头误检停车线+超声波异常回波→PM-AVP-SS-1错误→错误确认车位’\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup4",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，UCA有效，含基本因果",
+        "B1": "提到自车位置估计，但未指明来源",
+        "B2": "仅‘位置误差→确认失败’，缺中间环节",
+        "B3": "隐含PM-AVP-SS-2，但未明确锚定FB/CA",
+        "B4": "UCA-2/3与确认失败/时机不当一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "未锚定具体FB/CA/PM",
+        "上下文不够具体"
+      ],
+      "suggested_fix": "明确位置估计依赖的FB（如FB-AVP-SS-3），并说明如何导致PM错误及CA未触发。",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup4",
+        "scenario_id_raw": "CS-7",
+        "description": "系统在车位确认过程中，由于自车位置估计误差，导致确认失败。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ac65d1c1-c5ba-9fae-aaf5-9f547dbb466d",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，UCA有效，含基本因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到自车位置估计，但未指明来源\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅‘位置误差→确认失败’，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含PM-AVP-SS-2，但未明确锚定FB/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3与确认失败/时机不当一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定具体FB/CA/PM\", \"上下文不够具体\"],\n  \"suggested_fix\": \"明确位置估计依赖的FB（如FB-AVP-SS-3），并说明如何导致PM错误及CA未触发。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup4",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA-3，描述有上下文+因果+UCA",
+        "B1": "明确指出环视摄像头视野受限，具体可检验",
+        "B2": "仅'视野受限→错过车位'，缺中间环节如PM/CA如何失效",
+        "B3": "提到环视摄像头(FB-AVP-SS-2)，但未说明如何影响PM或CA",
+        "B4": "UCA-3与'错过目标车位'一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "FB锚定未解释对决策的影响"
+      ],
+      "suggested_fix": "补充环视受限如何导致PM错误或CA漏触发，形成完整链条",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup4",
+        "scenario_id_raw": "CS-8",
+        "description": "系统在车位搜索过程中，由于环视摄像头视野受限，导致错过目标车位。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3ae7f2aa-5761-9200-a297-0238141e9deb",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA-3，描述有上下文+因果+UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确指出环视摄像头视野受限，具体可检验\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'视野受限→错过车位'，缺中间环节如PM/CA如何失效\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提到环视摄像头(FB-AVP-SS-2)，但未说明如何影响PM或CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3与'错过目标车位'一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"FB锚定未解释对决策的影响\"],\n  \"suggested_fix\": \"补充环视受限如何导致PM错误或CA漏触发，形成完整链条\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup4",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确侧向超声波丢失信息",
+        "B2": "仅提及传感器丢失→结果失真，缺中间决策环节",
+        "B3": "锚定FB-AVP-SS-1（超声波丢失）并影响车位选择",
+        "B4": "UCA-1/4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间环节（如PM信念错误或CA误判）"
+      ],
+      "suggested_fix": "补充‘因超声波丢失导致PM-AVP-SS-1错误，进而使CA-AVP-SS-2误确认’等中间逻辑",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup4",
+        "scenario_id_raw": "CS-10",
+        "description": "系统在车位搜索过程中，由于侧向超声波传感器丢失信息，导致车位选择结果失真。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "b8d77255-5f01-9d55-b549-0f12fd249977",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确侧向超声波丢失信息\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅提及传感器丢失→结果失真，缺中间决策环节\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1（超声波丢失）并影响车位选择\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/4与描述一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间环节（如PM信念错误或CA误判）\"],\n  \"suggested_fix\": \"补充‘因超声波丢失导致PM-AVP-SS-1错误，进而使CA-AVP-SS-2误确认’等中间逻辑\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup5",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确环视摄像头与停车线信息",
+        "B2": "缺中间环节（如PM信念或CA逻辑）",
+        "B3": "锚定FB-AVP-SS-2，作用清晰",
+        "B4": "UCA-2与漏确认一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间决策环节"
+      ],
+      "suggested_fix": "补充因停车线不准如何影响PM/CA判断",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup5",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头提供的停车线信息不准确，导致系统未能及时确认可用车位。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "4f87fb73-ba6b-9d9f-8ee6-8f52a5d0a028",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头与停车线信息\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"缺中间环节（如PM信念或CA逻辑）\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2，作用清晰\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏确认一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间决策环节\"],\n  \"suggested_fix\": \"补充因停车线不准如何影响PM/CA判断\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup4",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含基本因果",
+        "B1": "提到APA模式切换，但未说明具体触发条件或状态",
+        "B2": "仅'APA切换失败→确认失败'，缺中间环节如反馈/PM/CA",
+        "B3": "未锚定任何CA/PM/FB，也未提具体感知或决策环节",
+        "B4": "UCA-2/UCA-4与'确认失败/搜索终止'逻辑一致"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "明确APA切换失败如何影响FB输入、PM信念或CA执行，例如：'因HMI未回传APA激活ACK（FB-AVP-SS-4），系统误判模式未激活（PM-AVP-SS-3），导致未触发车位确认（违反CA-AVP-SS-2），引发UCA-2。'",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup4",
+        "scenario_id_raw": "CS-9",
+        "description": "系统在车位确认过程中，由于APA模式切换失败，导致确认失败。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "b0473475-a6ba-90ce-a9e4-d263056ff90a",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含基本因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到APA模式切换，但未说明具体触发条件或状态\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'APA切换失败→确认失败'，缺中间环节如反馈/PM/CA\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB，也未提具体感知或决策环节\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-4与'确认失败/搜索终止'逻辑一致\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"明确APA切换失败如何影响FB输入、PM信念或CA执行，例如：'因HMI未回传APA激活ACK（FB-AVP-SS-4），系统误判模式未激活（PM-AVP-SS-3），导致未触发车位确认（违反CA-AVP-SS-2），引发UCA-2。'\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup5",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确超声波异常回波为上下文",
+        "B2": "异常回波→错误确认车位→导致UCA-1",
+        "B3": "锚定FB-AVP-SS-1，解释其致错作用",
+        "B4": "UCA-1与描述完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup5",
+        "scenario_id_raw": "CS-1",
+        "description": "侧向超声波传感器出现异常回波，导致系统错误地确认了不可用的车位。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "afa8c835-b6b5-9800-83da-3efa42f9b7b1",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波异常回波为上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"异常回波→错误确认车位→导致UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1，解释其致错作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与描述完全一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup5",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，描述含触发+因果+UCA",
+        "B1": "明确‘轮速里程计数据延迟’为具体上下文",
+        "B2": "链条：(a)轮速延迟 → (b)错过确认时机 → (e)UCA-3",
+        "B3": "锚定FB-AVP-SS-3（轮速里程计），影响车位相对位置判断（PM-AVP-SS-2）",
+        "B4": "UCA-3与‘错过确认时机’完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup5",
+        "scenario_id_raw": "CS-3",
+        "description": "轮速里程计数据延迟，导致系统错过了最佳车位确认时机。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "067e23aa-31c8-974a-b11e-364baf6bcee4",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup5\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，linked_uca_ids有效，描述含触发+因果+UCA\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确‘轮速里程计数据延迟’为具体上下文\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条：(a)轮速延迟 → (b)错过确认时机 → (e)UCA-3\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-SS-3（轮速里程计），影响车位相对位置判断（PM-AVP-SS-2）\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-3与‘错过确认时机’完全一致\"\n    }\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup5",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 2
+      },
+      "total_score": 6,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA-4，描述有基本因果",
+        "B1": "提到APA模式切换和通信时延，但未指明具体通信路径或反馈类型",
+        "B2": "仅'通信时延→搜索终止'，缺中间环节如PM/CA如何受影响",
+        "B3": "未锚定任何CA/PM/FB，未说明哪类反馈或决策逻辑出错",
+        "B4": "UCA-4明确对应搜索过早终止"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": true,
+      "issues": [
+        "因果链不完整",
+        "未锚定控制回路要素"
+      ],
+      "suggested_fix": "明确通信路径（如CAN/HMI）及如何导致PM信念错误或CA违反",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup5",
+        "scenario_id_raw": "CS-4",
+        "description": "APA模式切换过程中出现通信时延，导致车位搜索过程被不恰当地终止。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "f13e745b-8d7d-9254-8ee7-2e2259208348",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA-4，描述有基本因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到APA模式切换和通信时延，但未指明具体通信路径或反馈类型\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'通信时延→搜索终止'，缺中间环节如PM/CA如何受影响\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB，未说明哪类反馈或决策逻辑出错\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4明确对应搜索过早终止\"}\n  },\n  \"total_score\": 6,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链不完整\", \"未锚定控制回路要素\"],\n  \"suggested_fix\": \"明确通信路径（如CAN/HMI）及如何导致PM信念错误或CA违反\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup5",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA，描述有因果",
+        "B1": "明确轮速里程计与位姿估计不一致",
+        "B2": "触发→误判已越过车位→导致UCA-2/4",
+        "B3": "锚定FB-AVP-SS-3，影响PM-AVP-SS-2",
+        "B4": "UCA-2/4与漏确认/过早终止一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup5",
+        "scenario_id_raw": "CS-7",
+        "description": "轮速里程计与自车位姿估计信息不一致，导致系统误判车辆已越过候选车位。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "6dd0aef9-270a-9519-8a03-3e593a099f60",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA，描述有因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确轮速里程计与位姿估计不一致\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"触发→误判已越过车位→导致UCA-2/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-3，影响PM-AVP-SS-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/4与漏确认/过早终止一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup5",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "明确提到侧向超声波传感器丢失信息",
+        "B2": "仅'丢失信息→确认失败'，缺中间环节如PM/CA影响",
+        "B3": "锚定FB-AVP-SS-1（超声波丢失），与PM/CA逻辑一致",
+        "B4": "UCA-1/2均与车位确认错误/失败直接相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间环节（如PM信念错误或CA未触发）"
+      ],
+      "suggested_fix": "补充‘因超声波丢失导致PM-AVP-SS-1信念错误，进而CA-AVP-SS-2未满足’等中间逻辑",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup5",
+        "scenario_id_raw": "CS-5",
+        "description": "系统未能正确处理侧向超声波传感器丢失的信息，导致车位确认失败。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ef4d8a2f-9490-9725-9a66-c061f3c8a3a6",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提到侧向超声波传感器丢失信息\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅'丢失信息→确认失败'，缺中间环节如PM/CA影响\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-1（超声波丢失），与PM/CA逻辑一致\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2均与车位确认错误/失败直接相关\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间环节（如PM信念错误或CA未触发）\"],\n  \"suggested_fix\": \"补充‘因超声波丢失导致PM-AVP-SS-1信念错误，进而CA-AVP-SS-2未满足’等中间逻辑\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup5",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "明确环视摄像头邻车轮廓信息不完整",
+        "B2": "缺少中间环节（如PM错误或CA误判）",
+        "B3": "锚定FB-AVP-SS-2，解释其影响占用评估",
+        "B4": "UCA-1/3与车位误评/时机错配一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺中间环节（B2=1）"
+      ],
+      "suggested_fix": "补充因轮廓缺失导致PM-AVP-SS-1错误，进而误触发CA-AVP-SS-2",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup5",
+        "scenario_id_raw": "CS-6",
+        "description": "环视摄像头提供的邻车轮廓信息不完整，导致系统未能正确评估车位占用情况。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "36dabace-3042-9729-a484-1747b3cbea30",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头邻车轮廓信息不完整\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"缺少中间环节（如PM错误或CA误判）\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2，解释其影响占用评估\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3与车位误评/时机错配一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺中间环节（B2=1）\"],\n  \"suggested_fix\": \"补充因轮廓缺失导致PM-AVP-SS-1错误，进而误触发CA-AVP-SS-2\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup5",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含因果",
+        "B1": "提到APA模式与HMI反馈，但未说明具体不一致形式",
+        "B2": "仅说'不一致导致未确认'，缺中间环节如PM错误或CA逻辑",
+        "B3": "提及HMI反馈（FB-AVP-SS-4），但未解释如何影响PM/CA",
+        "B4": "UCA-3/4均涉及时机/终止问题，与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "上下文不够具体",
+        "控制回路锚定弱"
+      ],
+      "suggested_fix": "明确HMI反馈类型（如ACK缺失）、说明如何导致PM-AVP-SS-3失效，并链接CA-AVP-SS-3取消逻辑。",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup5",
+        "scenario_id_raw": "CS-8",
+        "description": "APA模式与HMI反馈不一致，导致系统未能及时确认车位。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "74a599a6-dc62-9d80-bed2-cb7ceea4139b",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到APA模式与HMI反馈，但未说明具体不一致形式\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅说'不一致导致未确认'，缺中间环节如PM错误或CA逻辑\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及HMI反馈（FB-AVP-SS-4），但未解释如何影响PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4均涉及时机/终止问题，与描述一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"上下文不够具体\", \"控制回路锚定弱\"],\n  \"suggested_fix\": \"明确HMI反馈类型（如ACK缺失）、说明如何导致PM-AVP-SS-3失效，并链接CA-AVP-SS-3取消逻辑。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup5",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "明确环视摄像头停车线信息不符",
+        "B2": "环视失真→几何误判→错误确认/时机错误→UCA-1/3",
+        "B3": "锚定FB-AVP-SS-2（环视）影响PM-AVP-SS-1（几何信念）",
+        "B4": "UCA-1/3与车位误判/时机错误一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup5",
+        "scenario_id_raw": "CS-10",
+        "description": "环视摄像头提供的停车线信息与实际不符，导致系统未能正确评估车位几何尺寸。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e9e8a431-c076-9098-bf6d-2d47146fe922",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头停车线信息不符\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环视失真→几何误判→错误确认/时机错误→UCA-1/3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-SS-2（环视）影响PM-AVP-SS-1（几何信念）\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/3与车位误判/时机错误一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup5",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 1,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果描述",
+        "B1": "明确提及侧向超声波异常回波",
+        "B2": "仅说明异常回波→终止搜索，缺中间决策环节",
+        "B3": "锚定FB-AVP-SS-1（超声波异常回波）并关联搜索终止",
+        "B4": "UCA-1/UCA-4与过早终止/错误确认一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链缺少中间环节（如PM信念错误或CA逻辑误判）"
+      ],
+      "suggested_fix": "补充异常回波如何导致PM错误或CA误判的具体机制",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup5",
+        "scenario_id_raw": "CS-9",
+        "description": "系统未能正确处理侧向超声波传感器的异常回波，导致车位搜索过程被不恰当地终止。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3db61ff8-f8f7-9f46-affc-e70a66eafb85",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup5\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含有效UCA和基本因果描述\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确提及侧向超声波异常回波\"\n    },\n    \"B2\": {\n      \"score\": 1,\n      \"rationale\": \"仅说明异常回波→终止搜索，缺中间决策环节\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-SS-1（超声波异常回波）并关联搜索终止\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/UCA-4与过早终止/错误确认一致\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链缺少中间环节（如PM信念错误或CA逻辑误判）\"],\n  \"suggested_fix\": \"补充异常回波如何导致PM错误或CA误判的具体机制\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    }
+  ],
+  "global_deduplication": {
+    "deduped_usable_scenarios": [
+      {
+        "scenario_id": "CS-1__dup3",
+        "summary": "超声波异常回波致车位误判",
+        "mechanism_signature": "ultrasonic|anchors=FB-AVP-FD-1|key=超声误检",
+        "merged_linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      {
+        "scenario_id": "CS-3__dup2",
+        "summary": "轮速丢失致位置误判越界",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-FD-2|key=轮速丢包",
+        "merged_linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-3__dup3",
+        "summary": "环视延迟致错过车位确认",
+        "mechanism_signature": "camera|anchors=FB-AVP-FD-4|key=视觉延迟",
+        "merged_linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-4__dup3",
+        "summary": "轮速丢失致相对位置误判",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-FD-2|key=轮速丢包",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-7__dup3",
+        "summary": "环视不一致致车位尺寸误判",
+        "mechanism_signature": "camera|anchors=FB-AVP-FD-4|key=视觉冲突",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-6__dup3",
+        "summary": "超声丢失致占用状态误判",
+        "mechanism_signature": "ultrasonic|anchors=FB-AVP-FD-1|key=超声丢信",
+        "merged_linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      {
+        "scenario_id": "CS-8__dup3",
+        "summary": "轮速异常致候选区误判",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-FD-2|key=轮速异常",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-7__dup5",
+        "summary": "轮速与位姿不一致致越界误判",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-FD-2|key=数据冲突",
+        "merged_linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-10__dup5",
+        "summary": "停车线不符致几何评估错误",
+        "mechanism_signature": "camera|anchors=FB-AVP-FD-4|key=标线失真",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-3"
+        ]
+      }
+    ],
+    "removed_as_duplicate": [
+      {
+        "removed_scenario_id": "CS-1",
+        "kept_scenario_id": "CS-1__dup3",
+        "reason": "context_inclusion"
+      },
+      {
+        "removed_scenario_id": "CS-1__dup2",
+        "kept_scenario_id": "CS-1__dup3",
+        "reason": "context_inclusion"
+      },
+      {
+        "removed_scenario_id": "CS-1__dup4",
+        "kept_scenario_id": "CS-1__dup3",
+        "reason": "semantic_equivalent"
+      },
+      {
+        "removed_scenario_id": "CS-1__dup5",
+        "kept_scenario_id": "CS-1__dup3",
+        "reason": "semantic_equivalent"
+      },
+      {
+        "removed_scenario_id": "CS-3",
+        "kept_scenario_id": "CS-3__dup2",
+        "reason": "context_inclusion"
+      },
+      {
+        "removed_scenario_id": "CS-3__dup4",
+        "kept_scenario_id": "CS-3__dup3",
+        "reason": "semantic_equivalent"
+      },
+      {
+        "removed_scenario_id": "CS-3__dup5",
+        "kept_scenario_id": "CS-3__dup3",
+        "reason": "semantic_equivalent"
+      }
+    ],
+    "coverage_count": 9
+  }
+}
