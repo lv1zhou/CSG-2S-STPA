@@ -1,0 +1,2809 @@
+{
+  "judge_meta": {
+    "timestamp": "2026-04-07T12:57:10",
+    "model": "qwen3-max",
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_tokens_item": 900,
+    "max_tokens_dedup": 3600,
+    "max_retries": 6,
+    "dedup_batch_size": 20,
+    "dedup_max_items_total": 300,
+    "dashscope_base_url": "https://dashscope.aliyuncs.com/api/v1"
+  },
+  "action_key": "emergency_brake",
+  "facts": {
+    "system": {
+      "system_type": "联网自动驾驶汽车(CAV) - 自动代客泊车(AVP)系统"
+    },
+    "control_action": {
+      "action_description": "AVP系统提供紧急制动指令",
+      "controller": "控制器-AVP安全监控与制动决策模块",
+      "controlled_process": "车辆减速度、制动建立与停车状态"
+    },
+    "uca_list": [
+      {
+        "uca_id": "UCA-1",
+        "description": "系统不必要地提供紧急制动，导致非预期急停或周边风险上升。"
+      },
+      {
+        "uca_id": "UCA-2",
+        "description": "系统应提供紧急制动时未提供，导致碰撞或风险未解除。"
+      },
+      {
+        "uca_id": "UCA-3",
+        "description": "紧急制动触发时机不当，导致过早或过晚制动。"
+      },
+      {
+        "uca_id": "UCA-4",
+        "description": "紧急制动解除或持续时间不当，导致次生风险或任务异常。"
+      }
+    ],
+    "control_algorithm_description": [
+      {
+        "id": "CA-AVP-EB-1",
+        "description": "检测到即将碰撞或碰撞时间低于阈值时，系统应立即触发紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "CA-AVP-EB-2",
+        "description": "在风险解除或车辆完全停止前，系统应保持制动状态。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "CA-AVP-EB-3",
+        "description": "若制动执行未确认或制动力异常，系统应进入安全停靠/告警模式。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      }
+    ],
+    "process_model_description": [
+      {
+        "id": "PM-AVP-EB-1",
+        "description": "障碍物距离与相对速度风险信念：系统相信其能正确判断碰撞风险水平。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "PM-AVP-EB-2",
+        "description": "自车速度、制动能力与剩余停车距离信念：系统相信其能正确估计可停止能力。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "PM-AVP-EB-3",
+        "description": "制动指令已执行且制动力建立成功的信念：系统相信执行链已按预期响应。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      }
+    ],
+    "feedback_path_description": [
+      {
+        "id": "FB-AVP-EB-1",
+        "description": "近距障碍物感知反馈（超声波/视觉）。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "FB-AVP-EB-2",
+        "description": "轮速、减速度和IMU反馈。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "FB-AVP-EB-3",
+        "description": "制动压力、执行ACK与故障码反馈。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "FB-AVP-EB-4",
+        "description": "CAN总线延迟、丢包与通信状态。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      }
+    ]
+  },
+  "facts_compact": {
+    "system_type": "联网自动驾驶汽车(CAV) - 自动代客泊车(AVP)系统",
+    "control_action": "AVP系统提供紧急制动指令",
+    "controller": "控制器-AVP安全监控与制动决策模块",
+    "uca_list": [
+      {
+        "uca_id": "UCA-1",
+        "description": "系统不必要地提供紧急制动，导致非预期急停或周边风险上升。"
+      },
+      {
+        "uca_id": "UCA-2",
+        "description": "系统应提供紧急制动时未提供，导致碰撞或风险未解除。"
+      },
+      {
+        "uca_id": "UCA-3",
+        "description": "紧急制动触发时机不当，导致过早或过晚制动。"
+      },
+      {
+        "uca_id": "UCA-4",
+        "description": "紧急制动解除或持续时间不当，导致次生风险或任务异常。"
+      }
+    ],
+    "CA": [
+      {
+        "id": "CA-AVP-EB-1",
+        "description": "检测到即将碰撞或碰撞时间低于阈值时，系统应立即触发紧急制动。"
+      },
+      {
+        "id": "CA-AVP-EB-2",
+        "description": "在风险解除或车辆完全停止前，系统应保持制动状态。"
+      },
+      {
+        "id": "CA-AVP-EB-3",
+        "description": "若制动执行未确认或制动力异常，系统应进入安全停靠/告警模式。"
+      }
+    ],
+    "PM": [
+      {
+        "id": "PM-AVP-EB-1",
+        "description": "障碍物距离与相对速度风险信念：系统相信其能正确判断碰撞风险水平。"
+      },
+      {
+        "id": "PM-AVP-EB-2",
+        "description": "自车速度、制动能力与剩余停车距离信念：系统相信其能正确估计可停止能力。"
+      },
+      {
+        "id": "PM-AVP-EB-3",
+        "description": "制动指令已执行且制动力建立成功的信念：系统相信执行链已按预期响应。"
+      }
+    ],
+    "FB": [
+      {
+        "id": "FB-AVP-EB-1",
+        "description": "近距障碍物感知反馈（超声波/视觉）。"
+      },
+      {
+        "id": "FB-AVP-EB-2",
+        "description": "轮速、减速度和IMU反馈。"
+      },
+      {
+        "id": "FB-AVP-EB-3",
+        "description": "制动压力、执行ACK与故障码反馈。"
+      },
+      {
+        "id": "FB-AVP-EB-4",
+        "description": "CAN总线延迟、丢包与通信状态。"
+      }
+    ],
+    "note": "评分只看 candidate_scenario 的逻辑质量；facts 仅用于核对UCA/CA/PM/FB锚点是否具体且一致。"
+  },
+  "summary": {
+    "file_tag": "lora_emergency_brake",
+    "input_path": "C:\\Users\\32401\\PycharmProjects\\PythonProject\\scenario_lora_emergency_brake_20260407_112138.json",
+    "filename": "scenario_lora_emergency_brake_20260407_112138.json",
+    "action_key": "emergency_brake",
+    "file_format": {
+      "top_type": "dict",
+      "format": "runs_dict"
+    },
+    "meta_in_file": {
+      "method": "lora",
+      "generator_type": "dashscope_app",
+      "task_type": "Scenario",
+      "action_key": "emergency_brake",
+      "app_id": "f557a6ca9faa4a67a92e1d4e036502f9",
+      "timestamp": "2026-04-07T11:16:54",
+      "messages_count": 2,
+      "prompt_chars": 3583,
+      "min_scenarios": 8,
+      "max_scenarios": 10,
+      "template_anchor_n": 10,
+      "max_gen_retries_per_iter": 6
+    },
+    "source_meta": {
+      "job_source": "manifest",
+      "manifest_index": 11,
+      "file_tag": "lora_emergency_brake",
+      "input_path": "C:\\Users\\32401\\PycharmProjects\\PythonProject\\scenario_lora_emergency_brake_20260407_112138.json",
+      "action_key": "emergency_brake",
+      "filename": "scenario_lora_emergency_brake_20260407_112138.json",
+      "manifest_entry": {
+        "method": "lora",
+        "action_key": "emergency_brake",
+        "output_file": ".\\scenario_lora_emergency_brake_20260407_112138.json"
+      }
+    },
+    "counts": {
+      "total_runs_in_file": 5,
+      "total_records": 48,
+      "scenario_parse_failed": 0,
+      "scenario_parse_failed_reasons": {},
+      "judge_failed": 0,
+      "num_scored": 48,
+      "合理可用": 39,
+      "合理不可用": 8,
+      "不合理不可用": 1,
+      "label_mismatch": 0,
+      "usable_before_dedup": 39,
+      "coverage_count_after_dedup": 22
+    },
+    "dedup_ok": true,
+    "dedup_debug": {
+      "mode": "batched",
+      "rounds": [
+        {
+          "round": 1,
+          "input_size": 39,
+          "batches": [
+            {
+              "batch_index": 0,
+              "size": 20,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "69fbd827-814f-96c6-9e4b-5456b7191b59",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-AVP-EB-1\",\n      \"summary\": \"超声波污损致虚警触发误制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=虚警误刹\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-2__dup2\",\n      \"summary\": \"超声波漏检真实障碍物致未制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=漏检失刹\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-3\",\n      \"summary\": \"雷达多径干扰致虚警误制动\",\n      \"mechanism_signature\": \"other|anchors=FB-AVP-EB-1|key=雷达虚警\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-3\",\n      \"summary\": \"轮速故障致坡道后溜未制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=状态误判\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-5\",\n      \"summary\": \"轮速打滑致提前终止制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=打滑误停\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-4\",\n      \"summary\": \"制动助力器卡死致指令未执行\",\n      \"mechanism_signature\": \"actuator|anchors=PM-AVP-EB-3|key=执行失效\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6\",\n      \"summary\": \"CAN断连致制动指令未送达\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-4|key=指令丢失\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-5\",\n      \"summary\": \"CAN拥塞致障碍信息延迟解刹\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=反馈延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-7\",\n      \"summary\": \"踏板信号误解析致错误制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2|key=信号错解\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-9\",\n      \"summary\": \"IMU损坏致运动状态认知错误\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=IMU失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-4\",\n      \"summary\": \"踏板卡滞致自动制动未触发\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-2|key=踏板卡滞\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-8\",\n      \"summary\": \"液压泵堵转致制动力不足\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-3,CA-AVP-EB-3|key=压力不足\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-6\",\n      \"summary\": \"湿滑路面未修正附着系数致制动力不足\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-2,PM-AVP-EB-2|key=附着误估\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-3__dup2\",\n      \"summary\": \"传感器延迟致制动触发时机不当\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-1,CA-AVP-EB-1|key=TTC滞后\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-4__dup2\",\n      \"summary\": \"压力传感器断电致过早解刹\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-3,PM-AVP-EB-3,CA-AVP-EB-2|key=状态清除\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-5__dup2\",\n      \"summary\": \"静态地图错误致持续误判障碍\",\n      \"mechanism_signature\": \"upstream_comm|anchors=PM-AVP-EB-1|key=地图过时\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-6__dup2\",\n      \"summary\": \"湿滑路面未修正致停车距离误判\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-1,PM-AVP-EB-2|key=距离误算\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-7__dup2\",\n      \"summary\": \"CAN拥塞致制动指令丢失且状态未更新\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-4,CA-AVP-EB-1,PM-AVP-EB-3|key=指令丢+失联\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-1\",\n      \"kept_scenario_id\": \"CS-AVP-EB-1\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-AVP-EB-1__dup2\",\n      \"kept_scenario_id\": \"CS-AVP-EB-1\",\n      \"reason\": \"context_inclusion\"\n    }\n  ],\n  \"coverage_count\": 18\n}",
+                "parse": "strict"
+              }
+            },
+            {
+              "batch_index": 1,
+              "size": 19,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "ce6291db-29a3-9642-b84a-46ba052a1676",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-AVP-EB-9__dup2\",\n      \"summary\": \"制动液压泵硬件故障致制动力失效\",\n      \"mechanism_signature\": \"actuator|anchors=none|key=制动执行器失效\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-10__dup2\",\n      \"summary\": \"控制器卡死致无法处理反馈触发紧急制动\",\n      \"mechanism_signature\": \"compute_hw|anchors=PM-AVP-FD-1,PM-AVP-FD-2,PM-AVP-FD-3|key=控制器卡死\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-EB-1\",\n      \"summary\": \"雨雪遮挡超声波致误判障碍物\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=传感器遮挡\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-EB-2\",\n      \"summary\": \"过程模型高估制动能力致停止距离不足\",\n      \"mechanism_signature\": \"process_model|anchors=PM-AVP-FD-3|key=制动能力误判\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-EB-3\",\n      \"summary\": \"制动执行失败但未正确处理故障码\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-3,CA-AVP-FD-3|key=执行失败未响应\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-EB-4\",\n      \"summary\": \"CAN通信延迟致制动指令送达过晚\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-4|key=指令延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-EB-7\",\n      \"summary\": \"制动管路泄漏致制动力不足且持续制动\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-2|key=制动力不足\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-EB-6\",\n      \"summary\": \"强光眩目致视觉误判天空为障碍物\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-FD-1|key=视觉误识别\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-EB-9\",\n      \"summary\": \"制动压力传感器故障致误判制动成功\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-3,PM-AVP-FD-3|key=反馈欺骗\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-2__dup2\",\n      \"summary\": \"地图/IMU/轮速错误致边界或速度误判\",\n      \"mechanism_signature\": \"process_model|anchors=PM-AVP-FD-1,PM-AVP-FD-2,FB-AVP-FD-2|key=定位与速度误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-1__dup2\",\n      \"summary\": \"障碍物误分类或虚警致不必要制动\",\n      \"mechanism_signature\": \"process_model|anchors=PM-AVP-FD-1,FB-AVP-FD-1|key=障碍物误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup2\",\n      \"summary\": \"制动算法缺陷或崩溃致指令未发出\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-FD-1|key=算法失效\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup2\",\n      \"summary\": \"制动反馈错误致提前解除制动\",\n      \"mechanism_signature\": \"process_model|anchors=PM-AVP-FD-3,FB-AVP-FD-3|key=反馈欺骗\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-5__dup2\",\n      \"summary\": \"感知传感器断连或通信丢包致漏检障碍物\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1,FB-AVP-FD-4|key=反馈中断\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6__dup2\",\n      \"summary\": \"风险解除算法缺陷致制动解除过晚\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-FD-2|key=解除逻辑缺陷\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-9\",\n      \"summary\": \"传感器刷新率不足致障碍物状态更新延迟\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=状态更新延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-8__dup2\",\n      \"summary\": \"使用过时数据致误触发制动\",\n      \"mechanism_signature\": \"process_model|anchors=PM-AVP-FD-1|key=旧数据误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup2\",\n      \"summary\": \"CAN总线EMI致制动指令延迟或丢失\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-4,FB-AVP-FD-3|key=总线干扰\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-10\",\n      \"summary\": \"轮速传感器故障致速度误判影响制动时机\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2,PM-AVP-FD-2|key=速度误判\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-2\"]\n    }\n  ],\n  \"removed_as_duplicate\": [],\n  \"coverage_count\": 19\n}",
+                "parse": "strict"
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "input_size": 37,
+          "batches": [
+            {
+              "batch_index": 0,
+              "size": 20,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "3875a527-c515-9a05-8449-e831603f100b",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-AVP-EB-1\",\n      \"summary\": \"超声波污损致虚警触发误制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=虚警误刹\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-2__dup2\",\n      \"summary\": \"反光障碍物漏检致未制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=漏检失刹\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-3\",\n      \"summary\": \"隧道多径干扰雷达致误制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=多径误刹\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-3\",\n      \"summary\": \"轮速故障致坡道后溜未制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2,PM-AVP-FD-2|key=状态误判\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-5\",\n      \"summary\": \"打滑致车速误判提前终止制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2,PM-AVP-FD-2|key=打滑误停\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-4\",\n      \"summary\": \"制动助力器卡死致执行失败\",\n      \"mechanism_signature\": \"actuator|anchors=PM-AVP-FD-3|key=执行器卡死\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6\",\n      \"summary\": \"CAN断连致制动指令未送达\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-4|key=总线断连\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-5\",\n      \"summary\": \"CAN拥塞致障碍信息延迟解刹\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-1,FB-AVP-FD-4|key=反馈延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-7\",\n      \"summary\": \"踏板信号误解析致非预期制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2|key=信号错解\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-9\",\n      \"summary\": \"IMU损坏致运动状态认知错误\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2,PM-AVP-FD-2|key=IMU失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-4\",\n      \"summary\": \"踏板卡滞致传感器反馈滞后\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-2|key=机械卡滞\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-8\",\n      \"summary\": \"液压泵堵转致制动力不足\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-FD-3,CA-AVP-FD-3|key=压力不足\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-6\",\n      \"summary\": \"算法未修正湿滑路面抓地力\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-FD-2,PM-AVP-FD-2|key=附着误估\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-10__dup2\",\n      \"summary\": \"监控模块卡死致反馈冻结\",\n      \"mechanism_signature\": \"compute_hw|anchors=FB-AVP-FD-1,FB-AVP-FD-2,FB-AVP-FD-3,FB-AVP-FD-4,PM-AVP-FD-1,PM-AVP-FD-2,PM-AVP-FD-3|key=计算卡死\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-AVP-EB-3__dup2\",\n      \"kept_scenario_id\": \"CS-5\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-AVP-EB-4__dup2\",\n      \"kept_scenario_id\": \"CS-AVP-EB-5\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-AVP-EB-5__dup2\",\n      \"kept_scenario_id\": \"CS-AVP-EB-1\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-AVP-EB-6__dup2\",\n      \"kept_scenario_id\": \"CS-AVP-EB-6\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-AVP-EB-7__dup2\",\n      \"kept_scenario_id\": \"CS-6\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-AVP-EB-9__dup2\",\n      \"kept_scenario_id\": \"CS-AVP-EB-4\",\n      \"reason\": \"semantic_equivalent\"\n    }\n  ],\n  \"coverage_count\": 14\n}",
+                "parse": "strict"
+              }
+            },
+            {
+              "batch_index": 1,
+              "size": 17,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "fbf42cb2-cb11-91c2-8838-c655cc4b4a27",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1__dup2\",\n      \"summary\": \"感知误判障碍物致误制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=感知虚警\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-2__dup2\",\n      \"summary\": \"地图/定位偏差致边界误判\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=位置误估\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup2\",\n      \"summary\": \"制动算法缺陷致指令未发\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-1|key=算法死锁\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup2\",\n      \"summary\": \"制动反馈错误致提前释放\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-3,PM-AVP-EB-3|key=反馈欺骗\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-5__dup2\",\n      \"summary\": \"感知中断致风险未识别\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=信号丢失\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6__dup2\",\n      \"summary\": \"风险解除判断缺陷致制动过久\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-2|key=解除延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup2\",\n      \"summary\": \"CAN通信抖动致制动指令延迟\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-4,FB-AVP-EB-3|key=总线延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-8__dup2\",\n      \"summary\": \"旧数据触发不必要制动\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=数据过时\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-9\",\n      \"summary\": \"动态障碍物状态更新延迟致制动过晚\",\n      \"mechanism_signature\": \"camera|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=状态滞后\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-10\",\n      \"summary\": \"轮速故障致速度误判与制动过晚\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=速度误估\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-EB-1\",\n      \"kept_scenario_id\": \"CS-1__dup2\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-EB-6\",\n      \"kept_scenario_id\": \"CS-1__dup2\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-EB-2\",\n      \"kept_scenario_id\": \"CS-2__dup2\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-EB-3\",\n      \"kept_scenario_id\": \"CS-4__dup2\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-EB-4\",\n      \"kept_scenario_id\": \"CS-6__dup2\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-EB-7\",\n      \"kept_scenario_id\": \"CS-4__dup2\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-EB-9\",\n      \"kept_scenario_id\": \"CS-4__dup2\",\n      \"reason\": \"semantic_equivalent\"\n    }\n  ],\n  \"coverage_count\": 10\n}",
+                "parse": "strict"
+              }
+            }
+          ]
+        },
+        {
+          "round": 3,
+          "input_size": 24,
+          "batches": [
+            {
+              "batch_index": 0,
+              "size": 20,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "f13ac772-19fe-986d-949b-b92e5ff152d3",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1__dup2\",\n      \"summary\": \"感知虚警导致误制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=虚警误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-2__dup2\",\n      \"summary\": \"障碍物漏检致未制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=漏检失制\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup2\",\n      \"summary\": \"算法缺陷致制动指令未生成\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-1|key=指令缺失\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-3\",\n      \"summary\": \"轮速故障致坡道后溜未制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=状态误判\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-5\",\n      \"summary\": \"打滑致车速误判提前终止制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=打滑误停\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup2\",\n      \"summary\": \"执行反馈错误致制动误解除\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-3,PM-AVP-EB-3|key=反馈失真\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-4\",\n      \"summary\": \"制动器卡死致指令未执行\",\n      \"mechanism_signature\": \"actuator|anchors=PM-AVP-EB-3|key=执行失效\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6\",\n      \"summary\": \"CAN断连致制动指令丢失\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-4|key=总线断连\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-5\",\n      \"summary\": \"CAN拥塞致障碍信息延迟\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=反馈延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-7\",\n      \"summary\": \"传感器信号误解析致误制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2|key=信号错解\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-9\",\n      \"summary\": \"IMU损坏致运动状态误判\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=IMU失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-4\",\n      \"summary\": \"踏板卡滞致自动制动抑制\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-2|key=踏板卡滞\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-8\",\n      \"summary\": \"液压泵堵转致制动力不足\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-3,CA-AVP-EB-3|key=压力不足\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-6\",\n      \"summary\": \"湿滑路面抓地力模型缺失\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-2|key=模型缺陷\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-10__dup2\",\n      \"summary\": \"控制器卡死致反馈处理冻结\",\n      \"mechanism_signature\": \"compute_hw|anchors=FB-AVP-EB-1,FB-AVP-EB-2,FB-AVP-EB-3,FB-AVP-EB-4,PM-AVP-EB-1,PM-AVP-EB-2,PM-AVP-EB-3|key=硬件卡死\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-2__dup2\",\n      \"summary\": \"定位/地图错误致误制动\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=位置误估\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-5__dup2\",\n      \"summary\": \"感知供电脱落致障碍未检出\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=供电中断\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6__dup2\",\n      \"summary\": \"风险解除算法缺陷致制动过久\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-2|key=解除延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-AVP-EB-1\",\n      \"kept_scenario_id\": \"CS-1__dup2\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3\",\n      \"kept_scenario_id\": \"CS-1__dup2\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-2__dup2\",\n      \"kept_scenario_id\": \"CS-2__dup2\",\n      \"reason\": \"semantic_equivalent\"\n    }\n  ],\n  \"coverage_count\": 18\n}",
+                "parse": "strict"
+              }
+            },
+            {
+              "batch_index": 1,
+              "size": 4,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "8c518037-c2ca-93f1-89b6-a1b29e0b3a06",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-7__dup2\",\n      \"summary\": \"CAN通信抖动致制动指令延迟\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-4,FB-AVP-EB-3|key=总线延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-8__dup2\",\n      \"summary\": \"基于过时感知数据误触发制动\",\n      \"mechanism_signature\": \"process_model|anchors=PM-AVP-EB-1|key=旧数据误判\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-9\",\n      \"summary\": \"动态障碍物状态更新延迟致制动过晚\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=感知延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-10\",\n      \"summary\": \"轮速传感器故障致速度误判\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=轮速失真\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    }\n  ],\n  \"removed_as_duplicate\": [],\n  \"coverage_count\": 4\n}",
+                "parse": "strict"
+              }
+            }
+          ]
+        },
+        {
+          "round": 4,
+          "input_size": 22,
+          "batches": [
+            {
+              "batch_index": 0,
+              "size": 20,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "a1a2a05f-94fb-968f-b10d-aec7f273dff1",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1__dup2\",\n      \"summary\": \"感知误判导致误制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=误检虚警\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-2__dup2\",\n      \"summary\": \"障碍物漏检致未制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=漏检失效\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup2\",\n      \"summary\": \"制动算法缺陷或崩溃\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-1|key=算法死锁\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-3\",\n      \"summary\": \"轮速故障致误判静止\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=状态误认\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-5\",\n      \"summary\": \"打滑致提前终止制动\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=打滑误停\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup2\",\n      \"summary\": \"制动反馈错误致误解除\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-3,PM-AVP-EB-3|key=执行误认\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-4\",\n      \"summary\": \"制动执行器卡死未制动\",\n      \"mechanism_signature\": \"actuator|anchors=PM-AVP-EB-3|key=执行卡滞\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6\",\n      \"summary\": \"CAN断连致指令未达\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-4|key=总线断连\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-5\",\n      \"summary\": \"反馈延迟致过早解刹\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=信息延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-7\",\n      \"summary\": \"传感器信号错解致误制动\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-2|key=信号混淆\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-9\",\n      \"summary\": \"IMU损坏致运动误判\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=IMU失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-4\",\n      \"summary\": \"踏板卡滞致未触发AEB\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-2|key=踏板卡滞\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-8\",\n      \"summary\": \"液压泵堵转致制动力不足\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-3,CA-AVP-EB-3|key=泵体堵转\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-6\",\n      \"summary\": \"湿滑路面制动力不足\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-2|key=抓地低估\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-10__dup2\",\n      \"summary\": \"控制器卡死致无响应\",\n      \"mechanism_signature\": \"compute_hw|anchors=FB-AVP-EB-1,FB-AVP-EB-2,FB-AVP-EB-3,FB-AVP-EB-4,PM-AVP-EB-1,PM-AVP-EB-2,PM-AVP-EB-3|key=硬件卡死\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-2__dup2\",\n      \"summary\": \"定位/地图错误致误制动\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=位置误估\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-5__dup2\",\n      \"summary\": \"感知中断致未制动\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=感知中断\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6__dup2\",\n      \"summary\": \"风险解除算法缺陷\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-2|key=解除延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup2\",\n      \"summary\": \"CAN抖动致指令延迟\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-3,FB-AVP-EB-4|key=总线抖动\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-8__dup2\",\n      \"summary\": \"旧数据致误触发制动\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=数据过时\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    }\n  ],\n  \"removed_as_duplicate\": [],\n  \"coverage_count\": 20\n}",
+                "parse": "strict"
+              }
+            },
+            {
+              "batch_index": 1,
+              "size": 2,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "37d6ede5-43a2-9dad-9d02-e415fbc312cf",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-9\",\n      \"summary\": \"动态障碍物状态更新延迟致制动过晚\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1,PM-AVP-FD-1|key=感知延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-10\",\n      \"summary\": \"轮速传感器故障致速度误判\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2,PM-AVP-FD-3|key=传感失真\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    }\n  ],\n  \"removed_as_duplicate\": [],\n  \"coverage_count\": 2\n}",
+                "parse": "strict"
+              }
+            }
+          ]
+        },
+        {
+          "round": 5,
+          "final_size": 22,
+          "ok": true,
+          "debug": {
+            "status_code": 200,
+            "request_id": "f5f01ef3-4fe2-9e78-bd7c-a4f6c56f5da5",
+            "message": "",
+            "attempt": 1,
+            "base_url": "https://dashscope.aliyuncs.com/api/v1",
+            "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1__dup2\",\n      \"summary\": \"感知误判导致不必要制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=误检虚警\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-2__dup2\",\n      \"summary\": \"障碍物漏检致未制动\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=漏检失效\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup2\",\n      \"summary\": \"制动算法缺陷或崩溃\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-1|key=逻辑死锁\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-3\",\n      \"summary\": \"轮速故障致坡道未制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=状态误判\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-5\",\n      \"summary\": \"打滑致提前终止制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=车速误判\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup2\",\n      \"summary\": \"制动反馈错误致误解除\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-3,PM-AVP-EB-3|key=执行误认\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-4\",\n      \"summary\": \"制动器卡死致指令未执行\",\n      \"mechanism_signature\": \"actuator|anchors=PM-AVP-EB-3|key=执行失效\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6\",\n      \"summary\": \"CAN断连致指令未达\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-4|key=总线断连\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-5\",\n      \"summary\": \"CAN拥塞致过早解制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=反馈延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-7\",\n      \"summary\": \"传感器信号错解致误制动\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2|key=信号混淆\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-9\",\n      \"summary\": \"IMU损坏致运动状态误判\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=惯导失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-4\",\n      \"summary\": \"踏板卡滞致未触发AEB\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-2|key=机械卡滞\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-8\",\n      \"summary\": \"液压泵堵转致制动力不足\",\n      \"mechanism_signature\": \"actuator|anchors=FB-AVP-EB-3,CA-AVP-EB-3|key=压力不足\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-6\",\n      \"summary\": \"湿滑路面制动力评估不足\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-2|key=抓地误估\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-AVP-EB-10__dup2\",\n      \"summary\": \"控制器卡死致无法响应危险\",\n      \"mechanism_signature\": \"compute_hw|anchors=FB-AVP-EB-1,FB-AVP-EB-2,FB-AVP-EB-3,FB-AVP-EB-4,PM-AVP-EB-1,PM-AVP-EB-2,PM-AVP-EB-3|key=硬件冻结\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-2__dup2\",\n      \"summary\": \"地图/IMU/轮速致位置误判\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=定位偏差\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-5__dup2\",\n      \"summary\": \"感知供电/通信中断致漏检\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=感知中断\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6__dup2\",\n      \"summary\": \"风险解除算法缺陷致制动过久\",\n      \"mechanism_signature\": \"algorithm|anchors=CA-AVP-EB-2|key=解除延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-7__dup2\",\n      \"summary\": \"CAN抖动致指令延迟或丢失\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-3,FB-AVP-EB-4|key=指令丢包\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-8__dup2\",\n      \"summary\": \"旧数据致过时障碍物制动\",\n      \"mechanism_signature\": \"process_model|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=数据陈旧\",\n      \"merged_linked_uca_ids\": [\"UCA-1\"]\n    },\n    {\n      \"scenario_id\": \"CS-9\",\n      \"summary\": \"动态障碍物状态更新延迟\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=状态滞后\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-10\",\n      \"summary\": \"轮速污损致速度低估\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=速度误读\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    }\n  ],\n  \"removed_as_duplicate\": [],\n  \"coverage_count\": 22\n}",
+            "parse": "strict"
+          }
+        }
+      ]
+    },
+    "perf": {
+      "max_workers": 6,
+      "max_tokens_item": 900,
+      "max_tokens_dedup": 3600
+    },
+    "thresholds": {
+      "USABLE_MIN_TOTAL": 9,
+      "USABLE_MIN_B1": 1,
+      "USABLE_MIN_B2": 2,
+      "USABLE_MIN_B3": 1,
+      "USABLE_MIN_B4": 1
+    },
+    "prompt_version": "v2026-02-15.logic_quality_only"
+  },
+  "per_item_evaluations": [
+    {
+      "scenario_id": "CS-AVP-EB-3",
+      "scenario_id_raw": "CS-AVP-EB-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA",
+        "B1": "明确轮速传感器故障与坡道场景",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果",
+        "B3": "锚定FB-AVP-EB-2与PM-AVP-EB-2",
+        "B4": "UCA-2与漏制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-3",
+        "scenario_id_raw": "CS-AVP-EB-3",
+        "description": "【反馈导致过程模型错误】轮速传感器（FB-AVP-EB-2）故障，系统错误地显示车辆处于停止状态，当实际车辆在坡道上被推后时，系统未检测到危险（PM-AVP-EB-2错误），未能提供紧急制动。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3d0ca7b3-7717-9eb4-82e5-6a158b64a05c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确轮速传感器故障与坡道场景\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-2与PM-AVP-EB-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-6",
+      "scenario_id_raw": "CS-AVP-EB-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA",
+        "B1": "提到湿滑路面但未指明具体感知/反馈通道",
+        "B2": "链条清晰：环境→PM错误→制动不足→UCA-3/4",
+        "B3": "锚定PM-AVP-EB-2的‘可停止能力’信念错误",
+        "B4": "UCA-3/4与制动时机/持续时间问题一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-6",
+        "scenario_id_raw": "CS-AVP-EB-6",
+        "description": "【控制算法缺陷】系统在计算制动减速时，没有考虑到轮胎在湿滑路面上的抓地力下降（使 CA-AVP-EB-2 的“可停止能力”评估过高），导致紧急制动的制动力不足或持续时间过短，触发 UCA-3 或 UCA-4。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e6bb7f54-fbf7-9431-8766-49d974e127f8",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-6\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到湿滑路面但未指明具体感知/反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：环境→PM错误→制动不足→UCA-3/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-EB-2的‘可停止能力’信念错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4与制动时机/持续时间问题一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-1",
+      "scenario_id_raw": "CS-AVP-EB-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果、UCA",
+        "B1": "明确超声波污损导致虚警",
+        "B2": "FB→PM错误→误触发制动→UCA-1",
+        "B3": "锚定FB-AVP-EB-1和PM-AVP-EB-1",
+        "B4": "UCA-1与误制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-1",
+        "scenario_id_raw": "CS-AVP-EB-1",
+        "description": "【反馈导致过程模型错误】超声波传感器（FB-AVP-EB-1）因污损导致虚警，系统错误地建立了一个不存在的障碍物（PM-AVP-EB-1错误），触发了不必要的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "a575ea32-ce38-92e7-a4d7-9924305d7a05",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-1\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果、UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波污损导致虚警\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"FB→PM错误→误触发制动→UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1和PM-AVP-EB-1\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与误制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-4",
+      "scenario_id_raw": "CS-AVP-EB-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果链和UCA",
+        "B1": "提到制动助力器电机故障，但未说明具体反馈通道或通信路径",
+        "B2": "链条清晰：指令发出→执行失败→PM错误→UCA-2",
+        "B3": "明确违反PM-AVP-EB-3，锚定具体PM且逻辑一致",
+        "B4": "linked_uca_ids有效且与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-4",
+        "scenario_id_raw": "CS-AVP-EB-4",
+        "description": "【控制路径故障】系统正确发出了紧急制动指令，但制动助力器（受控过程的一部分）的电机因故障卡死，未能执行指令，导致系统对受控过程状态产生错误认知（违反 PM-AVP-EB-3），从而触发 UCA-2。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "15c7ebac-860f-9a1b-a1c6-be01b99a436c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到制动助力器电机故障，但未说明具体反馈通道或通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：指令发出→执行失败→PM错误→UCA-2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确违反PM-AVP-EB-3，锚定具体PM且逻辑一致\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked_uca_ids有效且与描述一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-5",
+      "scenario_id_raw": "CS-AVP-EB-5",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA",
+        "B1": "明确CAN拥塞+障碍物距离延迟",
+        "B2": "含(a)通信延迟→(b)过时信息→(c)误判风险解除→(d)过早解除制动→(e)UCA-4",
+        "B3": "锚定FB-AVP-EB-4与FB-AVP-EB-1，解释其导致PM错误",
+        "B4": "UCA-4与过早解除制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-5",
+        "scenario_id_raw": "CS-AVP-EB-5",
+        "description": "【反馈延迟】由于 CAN 总线（FB-AVP-EB-4）发生严重拥塞，障碍物距离信息（来自 FB-AVP-EB-1）的更新被显著延迟，系统基于过时的信息判断风险已解除，导致过早地解除了紧急制动，触发 UCA-4。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "eff8d98f-34d8-9e80-94e5-50d3c9d5ea28",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确CAN拥塞+障碍物距离延迟\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含(a)通信延迟→(b)过时信息→(c)误判风险解除→(d)过早解除制动→(e)UCA-4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-4与FB-AVP-EB-1，解释其导致PM错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4与过早解除制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-2",
+      "scenario_id_raw": "CS-AVP-EB-2",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果机制及UCA链接",
+        "B1": "提到相对速度和阈值，但未指明传感器或反馈类型",
+        "B2": "链条清晰：错误相对速度→误判碰撞时间→过早制动→UCA-1",
+        "B3": "涉及CA-AVP-EB-1但未锚定具体FB/PM或解释其失准原因",
+        "B4": "明确链接UCA-1且逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "补充障碍物速度来源（如超声波/FB-AVP-EB-1）及PM-AVP-EB-1信念错误说明",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-2",
+        "scenario_id_raw": "CS-AVP-EB-2",
+        "description": "【控制算法缺陷】系统在计算碰撞时间时，使用了一个不准确的障碍物相对速度（使CA-AVP-EB-1的“即将碰撞”触发阈值过低），导致过早触发不必要的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "d109784e-f4e3-9a07-8af7-3936deb9273f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果机制及UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到相对速度和阈值，但未指明传感器或反馈类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：错误相对速度→误判碰撞时间→过早制动→UCA-1\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"涉及CA-AVP-EB-1但未锚定具体FB/PM或解释其失准原因\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"明确链接UCA-1且逻辑一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"补充障碍物速度来源（如超声波/FB-AVP-EB-1）及PM-AVP-EB-1信念错误说明\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-7",
+      "scenario_id_raw": "CS-AVP-EB-7",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果、UCA",
+        "B1": "明确制动踏板传感器与IMU混淆",
+        "B2": "含(a)(b)(c)(d)(e)完整链条",
+        "B3": "锚定FB-AVP-EB-2并说明误解释影响",
+        "B4": "UCA-1与非必要制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-7",
+        "scenario_id_raw": "CS-AVP-EB-7",
+        "description": "【反馈处理错误】从制动踏板传感器（FB-AVP-EB-2 的一部分）获取的信号被错误地解释为来自其他传感器（如 IMU）。系统基于此错误信息，提供了与实际车辆状态不符的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "f6a4d10c-04a9-9508-a3f3-d846b35cc2eb",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-7\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果、UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确制动踏板传感器与IMU混淆\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含(a)(b)(c)(d)(e)完整链条\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-2并说明误解释影响\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与非必要制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-8",
+      "scenario_id_raw": "CS-AVP-EB-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果机制和UCA",
+        "B1": "提到传感器视野但未指明类型",
+        "B2": "障碍物移出→漏检→未制动→UCA-2",
+        "B3": "提及传感器但未锚定具体FB/PM",
+        "B4": "明确导致UCA-2"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2"
+      ],
+      "suggested_fix": "明确传感器类型（如超声波）并关联FB-AVP-EB-1及PM-AVP-EB-1",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-8",
+        "scenario_id_raw": "CS-AVP-EB-8",
+        "description": "【控制算法缺陷】系统在紧急制动后，其持续监控该障碍物位置的逻辑存在漏洞。当障碍物短暂移出传感器视野后再次出现时，系统未能重新检测并提供新的制动指令，导致 UCA-2。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "7c10a37f-e637-978b-8830-4a986fbfa739",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-8\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果机制和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到传感器视野但未指明类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"障碍物移出→漏检→未制动→UCA-2\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及传感器但未锚定具体FB/PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"明确导致UCA-2\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\"],\n  \"suggested_fix\": \"明确传感器类型（如超声波）并关联FB-AVP-EB-1及PM-AVP-EB-1\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-9",
+      "scenario_id_raw": "CS-AVP-EB-9",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果链和UCA",
+        "B1": "明确IMU损坏及恒定加速度输出",
+        "B2": "IMU故障→PM错误→UCA1/2，链条完整",
+        "B3": "锚定FB-AVP-EB-2与PM-AVP-EB-2，作用清晰",
+        "B4": "linked_uca_ids有效且与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-9",
+        "scenario_id_raw": "CS-AVP-EB-9",
+        "description": "【反馈导致过程模型错误】惯性测量单元（IMU）（FB-AVP-EB-2 的一部分）因冲击损坏，持续输出一个恒定的加速度值。系统基于此错误反馈，形成了一个错误的自车运动状态认知（PM-AVP-EB-2 错误），导致 UCA-1 或 UCA-2。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "c6787778-865d-9114-ac05-821df74ac32f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-9\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确IMU损坏及恒定加速度输出\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"IMU故障→PM错误→UCA1/2，链条完整\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-2与PM-AVP-EB-2，作用清晰\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked_uca_ids有效且与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确超声波污损为具体上下文",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果",
+        "B3": "锚定FB-AVP-EB-1与PM-AVP-EB-1",
+        "B4": "UCA-1与不必要制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1",
+        "scenario_id_raw": "CS-1",
+        "description": "超声波传感器(FB-AVP-EB-1)被泥水污损，导致其持续报告前方有障碍物。控制器的过程模型(PM-AVP-EB-1)基于此错误信息，触发了不必要的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "analysis_result",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3cd58936-55a9-966b-90a0-854a39aad1f8",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波污损为具体上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1与PM-AVP-EB-1\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与不必要制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-10",
+      "scenario_id_raw": "CS-AVP-EB-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "提到电源波动/静电放电，但未指明具体硬件或信号路径",
+        "B2": "死机→未处理风险→未制动，链条清晰",
+        "B3": "提及决策模块故障，但未锚定具体PM/FB/CA",
+        "B4": "UCA-2与漏制动一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1未达2",
+        "B3未达2",
+        "总分<9"
+      ],
+      "suggested_fix": "明确故障影响的具体FB（如CAN ACK丢失）或PM（如风险信念失效），并关联CA-AVP-EB-1。",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-10",
+        "scenario_id_raw": "CS-AVP-EB-10",
+        "description": "【硬件故障】紧急制动决策模块本身因电源波动或静电放电而死机。它未能正确处理持续的碰撞风险，导致未能提供必要的紧急制动指令。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "analysis_result",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "91cca7b6-0c21-96eb-8698-b682130cf01c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-10\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到电源波动/静电放电，但未指明具体硬件或信号路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"死机→未处理风险→未制动，链条清晰\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及决策模块故障，但未锚定具体PM/FB/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏制动一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1未达2\", \"B3未达2\", \"总分<9\"],\n  \"suggested_fix\": \"明确故障影响的具体FB（如CAN ACK丢失）或PM（如风险信念失效），并关联CA-AVP-EB-1。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果机制和UCA链接",
+        "B1": "提到前方车辆急刹，但未说明感知/反馈类型",
+        "B2": "含触发(前车急刹)→算法错误→漏制动→UCA-2",
+        "B3": "引用CA-AVP-EB-1但未锚定具体FB/PM或解释",
+        "B4": "明确链接UCA-2且逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1=1<2",
+        "B3=1<2",
+        "总分<9"
+      ],
+      "suggested_fix": "补充障碍物感知来源（如超声波/FB-AVP-EB-1）及PM信念错误环节",
+      "candidate_scenario": {
+        "scenario_id": "CS-2",
+        "scenario_id_raw": "CS-2",
+        "description": "控制器的软件算法(CA-AVP-EB-1)在计算碰撞时间(CT)时，由于一个分支条件错误，未能触发紧急制动。此时前方车辆急刹，导致系统未提供制动。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "analysis_result",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "98c7612f-3a30-9c4a-a5a5-d7b1cb40b786",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果机制和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到前方车辆急刹，但未说明感知/反馈类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含触发(前车急刹)→算法错误→漏制动→UCA-2\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"引用CA-AVP-EB-1但未锚定具体FB/PM或解释\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"明确链接UCA-2且逻辑一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1=1<2\", \"B3=1<2\", \"总分<9\"],\n  \"suggested_fix\": \"补充障碍物感知来源（如超声波/FB-AVP-EB-1）及PM信念错误环节\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确前向雷达+隧道多径效应",
+        "B2": "环境干扰→误检→错误制动→UCA-1",
+        "B3": "锚定FB-AVP-EB-1并说明其失真作用",
+        "B4": "准确链接UCA-1"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3",
+        "scenario_id_raw": "CS-3",
+        "description": "车辆以高速在隧道中行驶，前向雷达(FB-AVP-EB-1)被隧道壁的多径效应干扰，导致其错误地报告前方有障碍物。控制器基于此错误反馈提供了不必要的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "analysis_result",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "a5df4b7c-a926-9b3b-953c-903c285dc128",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确前向雷达+隧道多径效应\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环境干扰→误检→错误制动→UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1并说明其失真作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"准确链接UCA-1\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA链接",
+        "B1": "提到踏板卡滞和传感器类型，但未说明触发条件",
+        "B2": "链条清晰：机械卡滞→反馈失真→误判驾驶员制动→漏触发AEB→UCA-2",
+        "B3": "明确锚定FB-AVP-EB-2并解释其在决策中的作用",
+        "B4": "UCA-2与漏触发紧急制动完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-4",
+        "scenario_id_raw": "CS-4",
+        "description": "制动踏板的机械结构发生卡滞。当驾驶员手动踩下制动踏板时，踏板位置传感器(FB-AVP-EB-2)的反馈未及时更新，导致控制器错误地认为驾驶员正在制动，从而未触发自动紧急制动。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "analysis_result",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "c0c23b01-dac3-95c7-8063-1b28c7b2ef79",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到踏板卡滞和传感器类型，但未说明触发条件\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：机械卡滞→反馈失真→误判驾驶员制动→漏触发AEB→UCA-2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确锚定FB-AVP-EB-2并解释其在决策中的作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏触发紧急制动完全一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA",
+        "B1": "明确湿滑路面+轮速传感器打滑",
+        "B2": "环境→FB失真→PM误判→提前终止制动→UCA-3",
+        "B3": "锚定FB-AVP-EB-2与PM-AVP-EB-2并解释作用",
+        "B4": "UCA-3对应制动时机不当，逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-5",
+        "scenario_id_raw": "CS-5",
+        "description": "在湿滑的路面上，轮速传感器(FB-AVP-EB-2)因打滑而上报了极低的车速。控制器的过程模型(PM-AVP-EB-2)基于此错误信息，错误地认为车辆已停止，从而提前终止了紧急制动指令。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "analysis_result",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "329ab145-33d2-9bf3-9373-fe9d3cc32b82",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确湿滑路面+轮速传感器打滑\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环境→FB失真→PM误判→提前终止制动→UCA-3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-2与PM-AVP-EB-2并解释作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3对应制动时机不当，逻辑一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA，描述有上下文+因果+UCA",
+        "B1": "明确CAN总线物理损坏，具体通信路径",
+        "B2": "链条：CAN断开→指令未达→未制动→UCA-2",
+        "B3": "锚定FB-AVP-EB-4（CAN状态），解释其导致执行失败",
+        "B4": "UCA-2与‘应制动未制动’完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6",
+        "scenario_id_raw": "CS-6",
+        "description": "控制器与制动执行器之间的CAN总线(FB-AVP-EB-4)因物理损坏而断开连接。当系统发出紧急制动指令时，该指令从未到达执行器，导致车辆未制动。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "analysis_result",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "8032d1b2-385b-9806-b0ba-2922b1ca6b07",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，含有效UCA，描述有上下文+因果+UCA\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确CAN总线物理损坏，具体通信路径\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条：CAN断开→指令未达→未制动→UCA-2\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-EB-4（CAN状态），解释其导致执行失败\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-2与‘应制动未制动’完全一致\"\n    }\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 0,
+        "B4": 1
+      },
+      "total_score": 5,
+      "label": "不合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "提到路径规划缺陷但未指明具体模块或数据",
+        "B2": "仅描述结果，缺中间决策/反馈环节",
+        "B3": "未锚定任何CA/PM/FB具体要素",
+        "B4": "UCA-1/3链接合理但机制模糊"
+      },
+      "judge_label_raw": "不合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链断裂",
+        "未锚定控制回路要素",
+        "上下文不够具体"
+      ],
+      "suggested_fix": "明确路径规划缺陷如何影响PM（如PM-AVP-EB-1）及对应FB（如FB-AVP-EB-1），并拆分单一场景为独立UCA致因。",
+      "candidate_scenario": {
+        "scenario_id": "CS-7",
+        "scenario_id_raw": "CS-7",
+        "description": "系统在自动代客泊车过程中，由于路径规划算法缺陷，提供了一个过于接近路障的停车轨迹。当车辆接近该位置时，系统基于正确感知提供了紧急制动，但此时已违反安全界限，导致UCA-1与UCA-3同时发生。使场景过于复杂或违背现实可能性。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "analysis_result",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "29c3b83e-8bfc-9d63-88ab-c3f07bc91a1a",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到路径规划缺陷但未指明具体模块或数据\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅描述结果，缺中间决策/反馈环节\"},\n    \"B3\": {\"score\": 0, \"rationale\": \"未锚定任何CA/PM/FB具体要素\"},\n    \"B4\": {\"score\": 1, \"rationale\": \"UCA-1/3链接合理但机制模糊\"}\n  },\n  \"total_score\": 5,\n  \"label\": \"不合理不可用\",\n  \"issues\": [\"因果链断裂\", \"未锚定控制回路要素\", \"上下文不够具体\"],\n  \"suggested_fix\": \"明确路径规划缺陷如何影响PM（如PM-AVP-EB-1）及对应FB（如FB-AVP-EB-1），并拆分单一场景为独立UCA致因。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "明确制动液压泵堵转、压力传感器反馈",
+        "B2": "堵转→压力不足→进入安全模式→未有效制动",
+        "B3": "锚定FB-AVP-EB-3与CA-AVP-EB-3，作用清晰",
+        "B4": "UCA-2（未制动）和UCA-4（次生风险）合理"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-8",
+        "scenario_id_raw": "CS-8",
+        "description": "制动液压泵电机发生堵转，无法提供足够的制动力。当系统发出紧急制动指令时，制动压力传感器(FB-AVP-EB-3)上报压力不足，控制器(CA-AVP-EB-3)因此进入安全停靠模式，导致未提供有效制动。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "analysis_result",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "453c1607-16b8-9ff6-af39-93a6b8d0ffe9",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确制动液压泵堵转、压力传感器反馈\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"堵转→压力不足→进入安全模式→未有效制动\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-3与CA-AVP-EB-3，作用清晰\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2（未制动）和UCA-4（次生风险）合理\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-2__dup2",
+      "scenario_id_raw": "CS-AVP-EB-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA",
+        "B1": "明确超声波传感器与反光材质",
+        "B2": "环境→FB漏检→PM误判→未制动→UCA-2",
+        "B3": "锚定FB-AVP-EB-1和PM-AVP-EB-1",
+        "B4": "准确链接UCA-2"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-2__dup2",
+        "scenario_id_raw": "CS-AVP-EB-2",
+        "description": "真实障碍物存在且碰撞时间逼近阈值；但超声波传感器(FB-AVP-EB-1)因表面反光材质而漏检；控制器过程模型(PM-AVP-EB-1)错误地认为路径安全，导致未提供应触发的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "305a8270-82d2-909b-b664-25df13c76525",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-2__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波传感器与反光材质\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环境→FB漏检→PM误判→未制动→UCA-2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1和PM-AVP-EB-1\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"准确链接UCA-2\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-1__dup2",
+      "scenario_id_raw": "CS-AVP-EB-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "明确超声波传感器与金属立柱干扰",
+        "B2": "环境干扰→FB虚警→PM误判→CA误触发→UCA-1",
+        "B3": "锚定FB-AVP-EB-1、PM-AVP-EB-1、CA-AVP-EB-1且逻辑一致",
+        "B4": "准确链接UCA-1，与不必要制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-1__dup2",
+        "scenario_id_raw": "CS-AVP-EB-1",
+        "description": "超声波传感器(FB-AVP-EB-1)受到停车场金属立柱干扰产生虚警；过程模型(PM-AVP-EB-1)错误地确认了碰撞风险；控制器算法(CA-AVP-EB-1)因此触发不必要的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "880e736e-db03-9b45-b753-4ccdf0877a48",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-1__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波传感器与金属立柱干扰\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环境干扰→FB虚警→PM误判→CA误触发→UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1、PM-AVP-EB-1、CA-AVP-EB-1且逻辑一致\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"准确链接UCA-1，与不必要制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-3__dup2",
+      "scenario_id_raw": "CS-AVP-EB-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "明确提到通信延迟影响TTC计算",
+        "B2": "链条清晰：通信延迟→TTC滞后→触发点延迟→UCA-3",
+        "B3": "锚定FB-AVP-EB-1与CA-AVP-EB-1，解释其作用",
+        "B4": "准确链接UCA-3，逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-3__dup2",
+        "scenario_id_raw": "CS-AVP-EB-3",
+        "description": "障碍物距离传感器(FB-AVP-EB-1)数据更新因通信延迟，导致碰撞时间计算(TTC)滞后；控制器算法(CA-AVP-EB-1)的决策触发点因而被延迟，构成触发时机不当。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "0d94aa2b-bdf3-96dc-97c2-94a0c232df5c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-3__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提到通信延迟影响TTC计算\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：通信延迟→TTC滞后→触发点延迟→UCA-3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1与CA-AVP-EB-1，解释其作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"准确链接UCA-3，逻辑一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-4__dup2",
+      "scenario_id_raw": "CS-AVP-EB-4",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA和完整描述",
+        "B1": "明确制动压力传感器断电的具体上下文",
+        "B2": "链条清晰：传感器断电→PM错误→违反CA→过早解除",
+        "B3": "锚定FB-AVP-EB-3与PM-AVP-EB-3并说明作用",
+        "B4": "UCA-4与过早解除制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-4__dup2",
+        "scenario_id_raw": "CS-AVP-EB-4",
+        "description": "制动执行完成后，制动压力传感器(FB-AVP-EB-3)因线路短路而断电；控制器的过程模型(PM-AVP-EB-3)对“制动力建立成功”的认知被错误清除；从而违反CA-AVP-EB-2，导致制动被过早解除。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "1dad49fe-ce4f-9ea3-b940-11d0e313877e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-4__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA和完整描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确制动压力传感器断电的具体上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：传感器断电→PM错误→违反CA→过早解除\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-3与PM-AVP-EB-3并说明作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4与过早解除制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-5__dup2",
+      "scenario_id_raw": "CS-AVP-EB-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "提到静态地图和锥桶，但未指明具体感知模态",
+        "B2": "链条清晰：过时地图→错误PM→误触发制动→UCA-1",
+        "B3": "明确锚定PM-AVP-EB-1并解释其作用",
+        "B4": "UCA-1与非预期制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-5__dup2",
+        "scenario_id_raw": "CS-AVP-EB-5",
+        "description": "系统基于过时的静态地图信息，对停车场内临时放置的锥桶产生错误认知；其过程模型(PM-AVP-EB-1)持续更新为“障碍物存在”状态，导致非预期的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "1168fb74-81e6-9103-8ede-bd2d27c549e6",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-5__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到静态地图和锥桶，但未指明具体感知模态\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：过时地图→错误PM→误触发制动→UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确锚定PM-AVP-EB-1并解释其作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与非预期制动一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-6__dup2",
+      "scenario_id_raw": "CS-AVP-EB-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA和完整描述",
+        "B1": "提到湿滑路面但未指明具体感知/反馈通道",
+        "B2": "上下文→PM错误→CA失效→UCA-2，链条清晰",
+        "B3": "明确锚定CA-AVP-EB-1与PM-AVP-EB-2并解释作用",
+        "B4": "UCA-2与漏制动逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-6__dup2",
+        "scenario_id_raw": "CS-AVP-EB-6",
+        "description": "车辆在湿滑路面上行驶时，制动决策算法(CA-AVP-EB-1)未对路面附着系数进行修正；基于错误的“剩余停车距离信念”(PM-AVP-EB-2)，提供了不足以使车辆停止的制动力。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "549e4f6d-e614-9ff4-a8f1-f8a35ce6c4bc",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-6__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA和完整描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到湿滑路面但未指明具体感知/反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"上下文→PM错误→CA失效→UCA-2，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确锚定CA-AVP-EB-1与PM-AVP-EB-2并解释作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏制动逻辑一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-7__dup2",
+      "scenario_id_raw": "CS-AVP-EB-7",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和清晰因果描述",
+        "B1": "明确CAN总线拥塞导致指令丢失",
+        "B2": "覆盖(a)(b)(d)(e)：CAN丢包→PM未更新→未执行制动→UCA-2",
+        "B3": "锚定FB-AVP-EB-4、CA-AVP-EB-1、PM-AVP-EB-3且逻辑一致",
+        "B4": "UCA-2与漏制动完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-7__dup2",
+        "scenario_id_raw": "CS-AVP-EB-7",
+        "description": "制动指令通过CAN总线(FB-AVP-EB-4)发送时，因网络拥塞而丢失；控制器已发出指令(CA-AVP-EB-1)，但受控过程未收到；控制器的过程模型(PM-AVP-EB-3)未能及时更新为“指令发送但未执行”。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "bd43f569-e07e-945d-a364-2039c9223765",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-7__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和清晰因果描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确CAN总线拥塞导致指令丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(d)(e)：CAN丢包→PM未更新→未执行制动→UCA-2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-4、CA-AVP-EB-1、PM-AVP-EB-3且逻辑一致\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏制动完全一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-9__dup2",
+      "scenario_id_raw": "CS-AVP-EB-9",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和清晰描述",
+        "B1": "明确指出制动液压泵硬件故障",
+        "B2": "链条：风险信号→指令触发→执行器失效→未减速→UCA-2",
+        "B3": "锚定FB-AVP-EB-3（制动ACK/故障码）与PM-AVP-EB-3信念",
+        "B4": "准确链接UCA-2（应制动未制动）"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-9__dup2",
+        "scenario_id_raw": "CS-AVP-EB-9",
+        "description": "制动液压泵硬件故障，无法提供有效制动力；尽管控制器收到了正确的风险信号并触发了指令；但由于执行器失效，未能使车辆减速或停车。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "23187b89-a43b-95da-851c-7c2861f9df1d",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-9__dup2\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含有效UCA和清晰描述\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确指出制动液压泵硬件故障\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条：风险信号→指令触发→执行器失效→未减速→UCA-2\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定FB-AVP-EB-3（制动ACK/故障码）与PM-AVP-EB-3信念\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"准确链接UCA-2（应制动未制动）\"\n    }\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-8__dup2",
+      "scenario_id_raw": "CS-AVP-EB-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和清晰描述",
+        "B1": "提到‘处理延迟’但未指明具体任务/通信路径",
+        "B2": "链条清晰：软件缺陷→优先级抢占→延迟→违反CA→过晚制动→UCA-3",
+        "B3": "提及违反CA-AVP-EB-1，但未锚定具体FB/PM或解释机制",
+        "B4": "明确链接UCA-3且逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足：上下文不够具体",
+        "B3不足：缺乏对FB/PM的具体锚定"
+      ],
+      "suggested_fix": "补充具体任务类型（如CAN通信任务）及所涉FB/PM（如FB-AVP-EB-4或PM-AVP-EB-1）",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-8__dup2",
+        "scenario_id_raw": "CS-AVP-EB-8",
+        "description": "软件缺陷导致紧急制动任务的优先级被其他非关键任务抢占；当障碍物被检测到时，系统因处理延迟而违反CA-AVP-EB-1的实时性要求，触发过晚制动。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ee337cf6-5b7b-90c5-9a89-c8fa3b911b15",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-8__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和清晰描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到‘处理延迟’但未指明具体任务/通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：软件缺陷→优先级抢占→延迟→违反CA→过晚制动→UCA-3\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及违反CA-AVP-EB-1，但未锚定具体FB/PM或解释机制\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"明确链接UCA-3且逻辑一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足：上下文不够具体\", \"B3不足：缺乏对FB/PM的具体锚定\"],\n  \"suggested_fix\": \"补充具体任务类型（如CAN通信任务）及所涉FB/PM（如FB-AVP-EB-4或PM-AVP-EB-1）\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-AVP-EB-10__dup2",
+      "scenario_id_raw": "CS-AVP-EB-10",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果机制和UCA链接",
+        "B1": "明确硬件卡死及所有FB失效，上下文具体",
+        "B2": "链条清晰：硬件卡死→FB失效→PM冻结→漏触发制动→UCA-2",
+        "B3": "锚定全部FB与PM，说明其冻结导致决策失败",
+        "B4": "UCA-2与漏触发紧急制动完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-AVP-EB-10__dup2",
+        "scenario_id_raw": "CS-AVP-EB-10",
+        "description": "控制器-AVP安全监控模块硬件卡死，无法处理任何反馈路径(FB-AVP-EB-1/2/3/4)的信息；其过程模型(PM-AVP-EB-1/2/3)被冻结在上一次的安全状态；当真实危险出现时，无法触发紧急制动。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "analysis_result",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "cef78e6e-e3c3-9c39-b2d6-0a87d1bc47fb",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-AVP-EB-10__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果机制和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确硬件卡死及所有FB失效，上下文具体\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：硬件卡死→FB失效→PM冻结→漏触发制动→UCA-2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定全部FB与PM，说明其冻结导致决策失败\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏触发紧急制动完全一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-1",
+      "scenario_id_raw": "CS-EB-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果机制及UCA链接",
+        "B1": "明确超声波传感器受雨雪遮挡",
+        "B2": "链条：环境干扰→感知错误→风险误判→UCA-1",
+        "B3": "锚定FB-AVP-EB-1并说明其失真导致PM错误",
+        "B4": "UCA-1与非必要制动逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-1",
+        "scenario_id_raw": "CS-EB-1",
+        "description": "反馈路径(FB-AVP-EB-1)的超声波传感器因雨雪遮挡，错误地感知到前方有障碍物，使控制器对碰撞风险产生错误认知。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "146ae8c5-5c97-9552-85db-8243a527e2fb",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-1\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果机制及UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波传感器受雨雪遮挡\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：环境干扰→感知错误→风险误判→UCA-1\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1并说明其失真导致PM错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与非必要制动逻辑一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-2",
+      "scenario_id_raw": "CS-EB-2",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果机制及UCA链接",
+        "B1": "提到制动能力与停止距离，但未指明具体传感器或通信路径",
+        "B2": "链条清晰：PM高估制动能力→计算停止距离偏小→未触发制动→UCA-2",
+        "B3": "明确锚定PM-AVP-EB-2，并解释其错误导致决策失效",
+        "B4": "linked_uca_ids为有效UCA-2，且逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-2",
+        "scenario_id_raw": "CS-EB-2",
+        "description": "控制器(AVP安全监控模块)的过程模型(PM-AVP-EB-2)错误地高估了制动能力，导致其计算的所需停止距离远小于实际值。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "07dea823-904f-9ae9-b5b1-658a3049adb9",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果机制及UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到制动能力与停止距离，但未指明具体传感器或通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：PM高估制动能力→计算停止距离偏小→未触发制动→UCA-2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确锚定PM-AVP-EB-2，并解释其错误导致决策失效\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked_uca_ids为有效UCA-2，且逻辑一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-3",
+      "scenario_id_raw": "CS-EB-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果链和UCA",
+        "B1": "明确液压故障与故障码反馈",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果",
+        "B3": "锚定FB-AVP-EB-3和CA-AVP-EB-3",
+        "B4": "UCA-2与漏制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-3",
+        "scenario_id_raw": "CS-EB-3",
+        "description": "制动执行器(EB-Brake)因液压系统故障无法响应指令，控制器的反馈模型(FB-AVP-EB-3)在收到执行失败的故障码后，其控制算法(CA-AVP-EB-3)未能正确处理；该场景违反了反馈导致控制器对受控过程状态产生错误认知或决策偏差。从而触发 UCA-2。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ca3bbf4b-04ef-92b6-9ccf-02a252eba985",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确液压故障与故障码反馈\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-3和CA-AVP-EB-3\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-4",
+      "scenario_id_raw": "CS-EB-4",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA",
+        "B1": "明确CAN通信延迟，具体可检验",
+        "B2": "含(a)CAN延迟→(b)指令晚达→(d)制动过晚→(e)UCA-3",
+        "B3": "锚定FB-AVP-EB-4并说明其导致PM/CA失效",
+        "B4": "UCA-3与描述完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-4",
+        "scenario_id_raw": "CS-EB-4",
+        "description": "反馈路径(FB-AVP-EB-4)的CAN通信发生延迟，导致紧急制动指令在障碍物距离过近时才送达，使制动触发时机过晚。从而触发 UCA-3。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e245b033-8a56-9437-b473-562d6eb1f0e6",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确CAN通信延迟，具体可检验\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含(a)CAN延迟→(b)指令晚达→(d)制动过晚→(e)UCA-3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-4并说明其导致PM/CA失效\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3与描述完全一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-7",
+      "scenario_id_raw": "CS-EB-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "提到制动管路泄漏，但未说明具体反馈通道细节",
+        "B2": "链条清晰：制动泄漏→制动力不足→轮速反馈车辆移动→持续制动→UCA-4",
+        "B3": "明确引用FB-AVP-EB-2（轮速）并解释其导致持续制动",
+        "B4": "UCA-4与制动持续过久一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-7",
+        "scenario_id_raw": "CS-EB-7",
+        "description": "制动指令已发送，但制动管路因泄漏导致制动力严重不足。控制器的反馈模型(FB-AVP-EB-2)基于轮速判断车辆仍在移动，因此保持制动状态，导致制动持续时间过长。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "4b516f11-3ae6-9412-b2b5-98909ff6e3d6",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-7\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到制动管路泄漏，但未说明具体反馈通道细节\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：制动泄漏→制动力不足→轮速反馈车辆移动→持续制动→UCA-4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"明确引用FB-AVP-EB-2（轮速）并解释其导致持续制动\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4与制动持续过久一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-6",
+      "scenario_id_raw": "CS-EB-6",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果机制及UCA链接",
+        "B1": "明确视觉系统+强光眩目+天空误检",
+        "B2": "环境→FB失真→PM错误→UCA-1，链条清晰",
+        "B3": "锚定FB-AVP-EB-1和PM-AVP-EB-1，作用明确",
+        "B4": "UCA-1与误制动逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-6",
+        "scenario_id_raw": "CS-EB-6",
+        "description": "反馈路径(FB-AVP-EB-1)的视觉系统因强光眩目，错误地将天空识别为障碍物，使控制器的过程模型(PM-AVP-EB-1)对障碍物存在产生错误认知。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "15005eee-3922-9ed7-8706-c14433a54792",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-6\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果机制及UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确视觉系统+强光眩目+天空误检\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环境→FB失真→PM错误→UCA-1，链条清晰\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1和PM-AVP-EB-1，作用明确\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与误制动逻辑一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-5",
+      "scenario_id_raw": "CS-EB-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、机制与UCA",
+        "B1": "提到软件死锁但未指明具体模块或资源类型",
+        "B2": "链条清晰：死锁→无法处理信号→漏发制动→UCA-2",
+        "B3": "未锚定具体FB/PM/CA，仅泛称‘碰撞风险信号’",
+        "B4": "明确链接UCA-2且逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确死锁发生的具体模块（如安全监控线程）及所依赖的反馈通道（如FB-AVP-EB-1或FB-AVP-EB-4），并关联PM/CA。",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-5",
+        "scenario_id_raw": "CS-EB-5",
+        "description": "控制器软件出现死锁或资源耗尽，导致即使收到有效的碰撞风险信号，也无法处理或发送制动指令。从而触发 UCA-2。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "08905ef6-9189-98ec-824c-8b453a238fc3",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、机制与UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到软件死锁但未指明具体模块或资源类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：死锁→无法处理信号→漏发制动→UCA-2\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"未锚定具体FB/PM/CA，仅泛称‘碰撞风险信号’\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"明确链接UCA-2且逻辑一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确死锁发生的具体模块（如安全监控线程）及所依赖的反馈通道（如FB-AVP-EB-1或FB-AVP-EB-4），并关联PM/CA。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-8",
+      "scenario_id_raw": "CS-EB-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果机制及UCA链接",
+        "B1": "提到‘优先级设置不当’但未指明具体任务或通信路径",
+        "B2": "链条清晰：请求→任务阻塞→制动过晚→UCA-3",
+        "B3": "提及软件逻辑缺陷但未锚定具体CA/PM/FB编号或通道",
+        "B4": "明确链接UCA-3且与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "补充具体任务类型（如CAN处理线程）或引用PM-AVP-EB-1等锚点",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-8",
+        "scenario_id_raw": "CS-EB-8",
+        "description": "安全监控模块的软件逻辑存在缺陷，当系统收到紧急制动请求时，由于优先级设置不当，该请求被低优先级的任务阻塞，导致制动指令触发过晚。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "9d6fbc69-9b53-974f-8c9f-2f958236c8c2",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-8\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果机制及UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到‘优先级设置不当’但未指明具体任务或通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：请求→任务阻塞→制动过晚→UCA-3\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及软件逻辑缺陷但未锚定具体CA/PM/FB编号或通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"明确链接UCA-3且与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"补充具体任务类型（如CAN处理线程）或引用PM-AVP-EB-1等锚点\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-9",
+      "scenario_id_raw": "CS-EB-9",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果链和UCA",
+        "B1": "明确制动压力传感器故障",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果",
+        "B3": "锚定FB-AVP-EB-3与PM-AVP-EB-3",
+        "B4": "UCA-4与提前释放制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-9",
+        "scenario_id_raw": "CS-EB-9",
+        "description": "反馈路径(FB-AVP-EB-3)的制动压力传感器发生故障，持续输出一个正常的压力值。当实际制动力建立失败时，控制器的过程模型(PM-AVP-EB-3)基于错误反馈，错误地认为制动已成功，并提前释放了制动。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "bccebd69-fc57-99c5-b7cb-97fd49607656",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-9\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确制动压力传感器故障\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-3与PM-AVP-EB-3\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4与提前释放制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-EB-10",
+      "scenario_id_raw": "CS-EB-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果机制及UCA链接",
+        "B1": "提及宇宙辐射和寄存器翻转，但未涉具体感知/通信通道",
+        "B2": "链条清晰：硬件故障→错误指令→非预期急停→UCA-1",
+        "B3": "涉及控制器内部故障，但未锚定具体FB/PM/CA",
+        "B4": "明确导致UCA-1，逻辑一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "补充具体反馈通道（如CAN制动ACK）或关联PM-*/FB-*",
+      "candidate_scenario": {
+        "scenario_id": "CS-EB-10",
+        "scenario_id_raw": "CS-EB-10",
+        "description": "控制器硬件发生随机硬件故障，其内部处理器寄存器被宇宙辐射翻转，导致一个随机的紧急制动指令被发送给制动系统，造成非预期急停。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "analysis_result",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "46f59a76-1940-9de1-956a-faa9ba3d395c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-EB-10\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果机制及UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提及宇宙辐射和寄存器翻转，但未涉具体感知/通信通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：硬件故障→错误指令→非预期急停→UCA-1\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"涉及控制器内部故障，但未锚定具体FB/PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"明确导致UCA-1，逻辑一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"补充具体反馈通道（如CAN制动ACK）或关联PM-*/FB-*\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup2",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果链和UCA链接",
+        "B1": "明确提及低精度地图、IMU校准偏差、轮速计故障",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果链",
+        "B3": "锚定PM-AVP-EB-2与FB-AVP-EB-2并解释作用",
+        "B4": "UCA-1与误触发紧急制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup2",
+        "scenario_id_raw": "CS-2",
+        "description": "控制器-AVP安全监控与制动决策模块的过程模型(PM-AVP-EB-2)不准确：系统基于低精度地图或陈旧的高精地图，对自身所在停车场的车道边界或立柱位置产生错误认知；或因IMU(FB-AVP-EB-2)校准偏差，导致对自车相对于边界的横向位置估计错误；或因轮速计(FB-AVP-EB-2)故障读数偏低，使系统高估了自车速度，从而在正常行驶时错误触发紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "c62ee505-41a5-9352-aab4-90ffc1cae7bc",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果链和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提及低精度地图、IMU校准偏差、轮速计故障\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果链\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-EB-2与FB-AVP-EB-2并解释作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与误触发紧急制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup2",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "明确超声波/视觉、夜间/积水反光等具体上下文",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果链",
+        "B3": "锚定PM-AVP-EB-1与FB-AVP-EB-1并解释作用",
+        "B4": "UCA-1与不必要制动完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup2",
+        "scenario_id_raw": "CS-1",
+        "description": "控制器-AVP安全监控与制动决策模块的过程模型(PM-AVP-EB-1)错误：一个静态障碍物被错误分类为移动物体；或夜间/恶劣天气下视觉感知(FB-AVP-EB-1)故障，导致系统将路边积水反光误判为移动车辆；或超声波传感器(FB-AVP-EB-1)因停车桩表面材质特性产生虚警，使系统对障碍物位置或状态产生错误认知，从而不必要地提供紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "fdb073cb-cf19-95c1-ac5b-a18d762eff97",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波/视觉、夜间/积水反光等具体上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果链\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-EB-1与FB-AVP-EB-1并解释作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与不必要制动完全一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup2",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果机制和UCA链接",
+        "B1": "提到算法缺陷/卡死，但未明确具体模块或通信路径",
+        "B2": "链条清晰：风险检测→算法缺陷→指令未发出→UCA-2",
+        "B3": "锚定CA-AVP-EB-1，说明其失效导致漏触发",
+        "B4": "linked_uca_ids为有效UCA-2且逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup2",
+        "scenario_id_raw": "CS-3",
+        "description": "控制器-AVP-EB-1算法缺陷或软件卡死：当系统正确检测到碰撞风险时，因紧急制动触发算法(CA-AVP-EB-1)存在代码缺陷，导致其陷入死循环或无法生成正确的制动指令；或处理器因内存溢出而崩溃，从而使制动指令未能提供。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "109f6bfc-84c7-978c-9020-5f53ba6d3583",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果机制和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到算法缺陷/卡死，但未明确具体模块或通信路径\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：风险检测→算法缺陷→指令未发出→UCA-2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定CA-AVP-EB-1，说明其失效导致漏触发\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"linked_uca_ids为有效UCA-2且逻辑一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup2",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA-4",
+        "B1": "明确制动压力传感器与卡钳异物",
+        "B2": "覆盖(a)(b)(c)(d)(e)五层因果",
+        "B3": "锚定PM-AVP-EB-3与FB-AVP-EB-3具体作用",
+        "B4": "UCA-4与制动解除不当完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup2",
+        "scenario_id_raw": "CS-4",
+        "description": "控制器-AVP安全监控与制动决策模块的过程模型(PM-AVP-EB-3)错误：系统发送了紧急制动指令，但因制动压力传感器(FB-AVP-EB-3)故障，始终反馈为0压力，使系统错误地相信制动已成功执行并解除；或制动卡钳因异物卡住而失效，但系统未收到相关故障码，导致其在风险持续存在的情况下错误地提供了“制动已解除”的指令。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "7a7de7b3-3a8e-9930-8b57-d1aa66d9bbd6",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup2\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含触发、因果链和UCA-4\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确制动压力传感器与卡钳异物\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"覆盖(a)(b)(c)(d)(e)五层因果\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定PM-AVP-EB-3与FB-AVP-EB-3具体作用\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-4与制动解除不当完全一致\"\n    }\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup2",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果链和UCA",
+        "B1": "明确超声波/通信丢包等具体上下文",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果",
+        "B3": "锚定FB-AVP-EB-1/FB-AVP-EB-4并解释作用",
+        "B4": "UCA-2与漏触发逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup2",
+        "scenario_id_raw": "CS-5",
+        "description": "反馈路径(FB-AVP-EB-1)中断：近距障碍物感知传感器的供电线束因振动脱落，导致控制器-AVP安全监控与制动决策模块从未收到该障碍物存在的反馈；或通信总线(FB-AVP-EB-4)因电磁干扰导致该反馈数据包丢失，从而使系统未能在应触发制动时提供指令。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ef8d1724-8321-9989-8329-d9b2be2108f9",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波/通信丢包等具体上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1/FB-AVP-EB-4并解释作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与漏触发逻辑一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup2",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "提到算法缺陷和处理器负载，但未明确具体反馈通道",
+        "B2": "链条清晰：算法缺陷/负载→风险解除误判→制动过晚→UCA-3",
+        "B3": "锚定CA-AVP-EB-2，并说明其监控逻辑缺陷导致错误保持制动",
+        "B4": "UCA-3（时机不当）与制动解除过晚一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup2",
+        "scenario_id_raw": "CS-6",
+        "description": "控制器-AVP-EB-2算法缺陷：系统在触发紧急制动后，因用于持续监控风险解除的算法(CA-AVP-EB-2)存在缺陷（例如仅检查障碍物距离而未考虑其运动状态），当障碍物移动离开时，系统未能及时检测到并错误地保持制动状态；或因处理器负载过高，导致风险解除判断算法处理延迟，使制动解除时机过晚。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "b54bd635-4697-9da2-a2ed-88186bfe4c85",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到算法缺陷和处理器负载，但未明确具体反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：算法缺陷/负载→风险解除误判→制动过晚→UCA-3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定CA-AVP-EB-2，并说明其监控逻辑缺陷导致错误保持制动\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3（时机不当）与制动解除过晚一致\"}\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA链接",
+        "B1": "明确超声波/视觉传感器及状态变化",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果",
+        "B3": "锚定FB-AVP-EB-1与PM-AVP-EB-1并解释作用",
+        "B4": "UCA-3与制动过晚完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-9",
+        "scenario_id_raw": "CS-9",
+        "description": "反馈路径(FB-AVP-EB-1)问题：一个动态障碍物（如行人）在车辆即将到达其位置时突然停下或改变方向。然而，传感器(FB-AVP-EB-1)的刷新率不足或数据处理延迟，导致其对障碍物运动状态的更新（从移动到停止）存在延迟。因此，当障碍物实际上已停止时，系统基于其“仍在移动”的过时认知(PM-AVP-EB-1)，导致制动触发过晚。或者，当障碍物停下时，系统因传感器(FB-AVP-EB-1)的点云数据处理算法缺陷，未能及时识别到其静止状态，因此未能触发制动。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "833cc6fc-1818-9ef4-b4ae-b68b75fc293c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波/视觉传感器及状态变化\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-1与PM-AVP-EB-1并解释作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3与制动过晚完全一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup2",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA",
+        "B1": "明确提及前一帧图像数据、处理延迟",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果",
+        "B3": "锚定PM-AVP-EB-1并解释其错误信念",
+        "B4": "UCA-1与非必要制动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup2",
+        "scenario_id_raw": "CS-8",
+        "description": "控制器-AVP安全监控与制动决策模块的过程模型(PM-AVP-EB-1)错误：系统基于过时或低精度的传感器数据（例如前一帧的图像数据）进行决策，而该帧数据中显示前方有障碍物。由于处理延迟或算法更新不及时，当车辆已经通过该障碍物位置时，系统仍基于旧数据的“障碍物存在”信念(PM-AVP-EB-1)触发了不必要的紧急制动。",
+        "linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3b10c489-34b6-9f58-9c48-8fec94faf955",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提及前一帧图像数据、处理延迟\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定PM-AVP-EB-1并解释其错误信念\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1与非必要制动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup2",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA和完整描述",
+        "B1": "明确CAN总线、EMI、ACK等具体上下文",
+        "B2": "链条覆盖触发→通信异常→指令失效→UCA",
+        "B3": "锚定FB-AVP-EB-4与FB-AVP-EB-3并解释作用",
+        "B4": "UCA-2/UCA-3与场景逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup2",
+        "scenario_id_raw": "CS-7",
+        "description": "反馈路径(FB-AVP-EB-4)问题：控制器-AVP安全监控与制动决策模块与制动执行器之间的CAN总线(FB-AVP-EB-4)因EMI导致通信抖动或延迟。当系统发出紧急制动指令时，该指令在总线上传输过程中发生延迟或丢包，导致制动力建立过晚或完全未收到指令，从而使系统因未收到执行ACK(FB-AVP-EB-3)而进入告警模式；或因总线带宽不足，导致紧急制动指令与其他非关键数据包发生冲突，造成指令被延迟或覆盖。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "1698a24e-b9cc-92bc-8377-32b786a84307",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA和完整描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确CAN总线、EMI、ACK等具体上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条覆盖触发→通信异常→指令失效→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-4与FB-AVP-EB-3并解释作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-3与场景逻辑一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果链和UCA",
+        "B1": "明确轮速传感器及污垢/损坏上下文",
+        "B2": "覆盖(a)(b)(c)(d)(e)多层因果",
+        "B3": "锚定FB-AVP-EB-2与PM-AVP-EB-2并解释作用",
+        "B4": "UCA-2/UCA-3与描述完全一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-10",
+        "scenario_id_raw": "CS-10",
+        "description": "反馈路径(FB-AVP-EB-2)问题：轮速传感器(FB-AVP-EB-2)因污垢或损坏而提供了一个极低的轮速读数，即使车辆正在高速行驶。这导致控制器-AVP安全监控与制动决策模块的过程模型(PM-AVP-EB-2)错误地认为车辆速度非常低。当系统检测到一个实际存在的碰撞风险时，基于这个错误的速度信念，其计算出的碰撞时间可能远高于真实情况，导致制动触发时机过晚或根本未触发。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "analysis_result",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "312ab3e1-2e9c-9731-abf2-f2ca8043449b",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果链和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确轮速传感器及污垢/损坏上下文\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"覆盖(a)(b)(c)(d)(e)多层因果\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-EB-2与PM-AVP-EB-2并解释作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-3与描述完全一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    }
+  ],
+  "global_deduplication": {
+    "deduped_usable_scenarios": [
+      {
+        "scenario_id": "CS-1__dup2",
+        "summary": "感知误判导致不必要制动",
+        "mechanism_signature": "ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=误检虚警",
+        "merged_linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      {
+        "scenario_id": "CS-AVP-EB-2__dup2",
+        "summary": "障碍物漏检致未制动",
+        "mechanism_signature": "ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=漏检失效",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-3__dup2",
+        "summary": "制动算法缺陷或崩溃",
+        "mechanism_signature": "algorithm|anchors=CA-AVP-EB-1|key=逻辑死锁",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-AVP-EB-3",
+        "summary": "轮速故障致坡道未制动",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=状态误判",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-5",
+        "summary": "打滑致提前终止制动",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=车速误判",
+        "merged_linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-4__dup2",
+        "summary": "制动反馈错误致误解除",
+        "mechanism_signature": "actuator|anchors=FB-AVP-EB-3,PM-AVP-EB-3|key=执行误认",
+        "merged_linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-AVP-EB-4",
+        "summary": "制动器卡死致指令未执行",
+        "mechanism_signature": "actuator|anchors=PM-AVP-EB-3|key=执行失效",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-6",
+        "summary": "CAN断连致指令未达",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-EB-4|key=总线断连",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-AVP-EB-5",
+        "summary": "CAN拥塞致过早解制动",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=反馈延迟",
+        "merged_linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-AVP-EB-7",
+        "summary": "传感器信号错解致误制动",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-EB-2|key=信号混淆",
+        "merged_linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      {
+        "scenario_id": "CS-AVP-EB-9",
+        "summary": "IMU损坏致运动状态误判",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=惯导失效",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-4",
+        "summary": "踏板卡滞致未触发AEB",
+        "mechanism_signature": "actuator|anchors=FB-AVP-EB-2|key=机械卡滞",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-8",
+        "summary": "液压泵堵转致制动力不足",
+        "mechanism_signature": "actuator|anchors=FB-AVP-EB-3,CA-AVP-EB-3|key=压力不足",
+        "merged_linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-AVP-EB-6",
+        "summary": "湿滑路面制动力评估不足",
+        "mechanism_signature": "algorithm|anchors=CA-AVP-EB-2|key=抓地误估",
+        "merged_linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-AVP-EB-10__dup2",
+        "summary": "控制器卡死致无法响应危险",
+        "mechanism_signature": "compute_hw|anchors=FB-AVP-EB-1,FB-AVP-EB-2,FB-AVP-EB-3,FB-AVP-EB-4,PM-AVP-EB-1,PM-AVP-EB-2,PM-AVP-EB-3|key=硬件冻结",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-2__dup2",
+        "summary": "地图/IMU/轮速致位置误判",
+        "mechanism_signature": "process_model|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=定位偏差",
+        "merged_linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      {
+        "scenario_id": "CS-5__dup2",
+        "summary": "感知供电/通信中断致漏检",
+        "mechanism_signature": "upstream_comm|anchors=FB-AVP-EB-1,FB-AVP-EB-4|key=感知中断",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-6__dup2",
+        "summary": "风险解除算法缺陷致制动过久",
+        "mechanism_signature": "algorithm|anchors=CA-AVP-EB-2|key=解除延迟",
+        "merged_linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-7__dup2",
+        "summary": "CAN抖动致指令延迟或丢失",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-EB-3,FB-AVP-EB-4|key=指令丢包",
+        "merged_linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-8__dup2",
+        "summary": "旧数据致过时障碍物制动",
+        "mechanism_signature": "process_model|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=数据陈旧",
+        "merged_linked_uca_ids": [
+          "UCA-1"
+        ]
+      },
+      {
+        "scenario_id": "CS-9",
+        "summary": "动态障碍物状态更新延迟",
+        "mechanism_signature": "ultrasonic|anchors=FB-AVP-EB-1,PM-AVP-EB-1|key=状态滞后",
+        "merged_linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-10",
+        "summary": "轮速污损致速度低估",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-EB-2,PM-AVP-EB-2|key=速度误读",
+        "merged_linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      }
+    ],
+    "removed_as_duplicate": [],
+    "coverage_count": 22
+  }
+}
