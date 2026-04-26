@@ -1,0 +1,2802 @@
+{
+  "judge_meta": {
+    "timestamp": "2026-04-07T12:02:16",
+    "model": "qwen3-max",
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "max_tokens_item": 900,
+    "max_tokens_dedup": 3600,
+    "max_retries": 6,
+    "dedup_batch_size": 20,
+    "dedup_max_items_total": 300,
+    "dashscope_base_url": "https://dashscope.aliyuncs.com/api/v1"
+  },
+  "action_key": "forward_drive",
+  "facts": {
+    "system": {
+      "system_type": "联网自动驾驶汽车(CAV) - 自动代客泊车(AVP)系统"
+    },
+    "control_action": {
+      "action_description": "AVP系统提供前进驱动指令",
+      "controller": "控制器-AVP泊车决策与控制模块",
+      "controlled_process": "车辆纵向/横向泊车轨迹控制"
+    },
+    "uca_list": [
+      {
+        "uca_id": "UCA-1",
+        "description": "前进驱动被不安全地提供，导致碰撞或驶入危险区域。"
+      },
+      {
+        "uca_id": "UCA-2",
+        "description": "前进驱动的边界控制或持续过程不当，导致越界或财产损失。"
+      },
+      {
+        "uca_id": "UCA-3",
+        "description": "应提供前进驱动时未提供，导致无法完成泊车或停留在不可接受位置。"
+      },
+      {
+        "uca_id": "UCA-4",
+        "description": "前进驱动的时机或持续时间不当，导致非预期运动或风险上升。"
+      }
+    ],
+    "control_algorithm_description": [
+      {
+        "id": "CA-AVP-FD-1",
+        "description": "路径有效、过程模型判断前方可通行且系统处于允许前进的泊车状态时，控制算法应发出前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "CA-AVP-FD-2",
+        "description": "当车辆接近目标终点、边界阈值或出现越界趋势时，控制算法应停止继续下发前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "CA-AVP-FD-3",
+        "description": "当前进驱动执行确认超时或回读不一致时，控制算法应停止前进驱动并进入降级/等待。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      }
+    ],
+    "process_model_description": [
+      {
+        "id": "PM-AVP-FD-1",
+        "description": "环境位置信念：控制器相信其能正确获知车辆位置、障碍物距离与可通行空间。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "PM-AVP-FD-2",
+        "description": "任务与路径信念：控制器相信路径是最新且完整的，并相信模式、档位和路径阶段一致。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "id": "PM-AVP-FD-3",
+        "description": "执行效果信念：控制器相信前进指令会产生期望位移，且可通过回读验证执行是否成功。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      }
+    ],
+    "feedback_path_description": [
+      {
+        "id": "FB-AVP-FD-1",
+        "description": "超声波近距障碍物测距、置信度与异常丢失信息。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      {
+        "id": "FB-AVP-FD-2",
+        "description": "车辆CAN轮速、偏航、转角与档位回读，可能存在延迟或丢包。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "FB-AVP-FD-3",
+        "description": "执行确认、扭矩、ACK与故障码反馈。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "id": "FB-AVP-FD-4",
+        "description": "上位机路径通信的序列号、时间戳、丢包与延迟状态。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      }
+    ]
+  },
+  "facts_compact": {
+    "system_type": "联网自动驾驶汽车(CAV) - 自动代客泊车(AVP)系统",
+    "control_action": "AVP系统提供前进驱动指令",
+    "controller": "控制器-AVP泊车决策与控制模块",
+    "uca_list": [
+      {
+        "uca_id": "UCA-1",
+        "description": "前进驱动被不安全地提供，导致碰撞或驶入危险区域。"
+      },
+      {
+        "uca_id": "UCA-2",
+        "description": "前进驱动的边界控制或持续过程不当，导致越界或财产损失。"
+      },
+      {
+        "uca_id": "UCA-3",
+        "description": "应提供前进驱动时未提供，导致无法完成泊车或停留在不可接受位置。"
+      },
+      {
+        "uca_id": "UCA-4",
+        "description": "前进驱动的时机或持续时间不当，导致非预期运动或风险上升。"
+      }
+    ],
+    "CA": [
+      {
+        "id": "CA-AVP-FD-1",
+        "description": "路径有效、过程模型判断前方可通行且系统处于允许前进的泊车状态时，控制算法应发出前进驱动指令。"
+      },
+      {
+        "id": "CA-AVP-FD-2",
+        "description": "当车辆接近目标终点、边界阈值或出现越界趋势时，控制算法应停止继续下发前进驱动指令。"
+      },
+      {
+        "id": "CA-AVP-FD-3",
+        "description": "当前进驱动执行确认超时或回读不一致时，控制算法应停止前进驱动并进入降级/等待。"
+      }
+    ],
+    "PM": [
+      {
+        "id": "PM-AVP-FD-1",
+        "description": "环境位置信念：控制器相信其能正确获知车辆位置、障碍物距离与可通行空间。"
+      },
+      {
+        "id": "PM-AVP-FD-2",
+        "description": "任务与路径信念：控制器相信路径是最新且完整的，并相信模式、档位和路径阶段一致。"
+      },
+      {
+        "id": "PM-AVP-FD-3",
+        "description": "执行效果信念：控制器相信前进指令会产生期望位移，且可通过回读验证执行是否成功。"
+      }
+    ],
+    "FB": [
+      {
+        "id": "FB-AVP-FD-1",
+        "description": "超声波近距障碍物测距、置信度与异常丢失信息。"
+      },
+      {
+        "id": "FB-AVP-FD-2",
+        "description": "车辆CAN轮速、偏航、转角与档位回读，可能存在延迟或丢包。"
+      },
+      {
+        "id": "FB-AVP-FD-3",
+        "description": "执行确认、扭矩、ACK与故障码反馈。"
+      },
+      {
+        "id": "FB-AVP-FD-4",
+        "description": "上位机路径通信的序列号、时间戳、丢包与延迟状态。"
+      }
+    ],
+    "note": "评分只看 candidate_scenario 的逻辑质量；facts 仅用于核对UCA/CA/PM/FB锚点是否具体且一致。"
+  },
+  "summary": {
+    "file_tag": "zero_shot_forward_drive",
+    "input_path": "C:\\Users\\32401\\PycharmProjects\\PythonProject\\scenario_zero_shot_forward_drive_20260407_104715.json",
+    "filename": "scenario_zero_shot_forward_drive_20260407_104715.json",
+    "action_key": "forward_drive",
+    "file_format": {
+      "top_type": "dict",
+      "format": "runs_dict"
+    },
+    "meta_in_file": {
+      "method": "zero_shot",
+      "generator_type": "qwen_generation",
+      "task_type": "Scenario",
+      "action_key": "forward_drive",
+      "model": "qwen2.5-32b-instruct",
+      "num_shots": 0,
+      "temperature": 0.1,
+      "top_p": 0.8,
+      "max_tokens": 4000,
+      "timestamp": "2026-04-07T10:45:43",
+      "messages_count": 2,
+      "prompt_chars": 3700,
+      "target_scenarios": 10,
+      "max_gen_retries_per_iter": 6
+    },
+    "source_meta": {
+      "job_source": "manifest",
+      "manifest_index": 0,
+      "file_tag": "zero_shot_forward_drive",
+      "input_path": "C:\\Users\\32401\\PycharmProjects\\PythonProject\\scenario_zero_shot_forward_drive_20260407_104715.json",
+      "action_key": "forward_drive",
+      "filename": "scenario_zero_shot_forward_drive_20260407_104715.json",
+      "manifest_entry": {
+        "method": "zero_shot",
+        "action_key": "forward_drive",
+        "output_file": ".\\scenario_zero_shot_forward_drive_20260407_104715.json"
+      }
+    },
+    "counts": {
+      "total_runs_in_file": 5,
+      "total_records": 50,
+      "scenario_parse_failed": 0,
+      "scenario_parse_failed_reasons": {},
+      "judge_failed": 0,
+      "num_scored": 50,
+      "合理可用": 21,
+      "合理不可用": 29,
+      "不合理不可用": 0,
+      "label_mismatch": 0,
+      "usable_before_dedup": 21,
+      "coverage_count_after_dedup": 6
+    },
+    "dedup_ok": true,
+    "dedup_debug": {
+      "mode": "batched",
+      "rounds": [
+        {
+          "round": 1,
+          "input_size": 21,
+          "batches": [
+            {
+              "batch_index": 0,
+              "size": 20,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "3704eb12-561d-9489-940f-68eaacdb0e05",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1\",\n      \"summary\": \"超声波数据丢失致误判前方无障碍\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=超声失效\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-2\",\n      \"summary\": \"环视视频干扰致路径/位置误判\",\n      \"mechanism_signature\": \"camera|anchors=PM-AVP-FD-1,PM-AVP-FD-2|key=视觉干扰\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-6\",\n      \"summary\": \"路径通信丢包致使用过期路径\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-FD-4,PM-AVP-FD-2|key=路径丢包\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup2\",\n      \"summary\": \"执行确认超时未停指令\",\n      \"mechanism_signature\": \"actuator|anchors=CA-AVP-FD-3,FB-AVP-FD-3|key=确认超时\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-10__dup3\",\n      \"summary\": \"路径通信元数据处理错误致时机不当\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-FD-4,CA-AVP-FD-1|key=时序错乱\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-5__dup3\",\n      \"summary\": \"路径丢包致未发必要前进指令\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-FD-4,CA-AVP-FD-1|key=路径缺失\",\n      \"merged_linked_uca_ids\": [\"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-9__dup3\",\n      \"summary\": \"CAN状态回读异常致驱动持续不当\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2,PM-AVP-FD-3|key=CAN异常\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-3__dup4\",\n      \"summary\": \"底层状态反馈延迟致判断失准\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2,PM-AVP-FD-3|key=状态延迟\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\", \"UCA-4\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\"removed_scenario_id\": \"CS-1__dup2\", \"kept_scenario_id\": \"CS-1\", \"reason\": \"semantic_equivalent\"},\n    {\"removed_scenario_id\": \"CS-1__dup3\", \"kept_scenario_id\": \"CS-1\", \"reason\": \"semantic_equivalent\"},\n    {\"removed_scenario_id\": \"CS-1__dup4\", \"kept_scenario_id\": \"CS-1\", \"reason\": \"semantic_equivalent\"},\n    {\"removed_scenario_id\": \"CS-1__dup5\", \"kept_scenario_id\": \"CS-1\", \"reason\": \"same_text_diff_uca_merge\"},\n    {\"removed_scenario_id\": \"CS-2__dup2\", \"kept_scenario_id\": \"CS-2\", \"reason\": \"context_inclusion\"},\n    {\"removed_scenario_id\": \"CS-2__dup3\", \"kept_scenario_id\": \"CS-2\", \"reason\": \"semantic_equivalent\"},\n    {\"removed_scenario_id\": \"CS-2__dup4\", \"kept_scenario_id\": \"CS-2\", \"reason\": \"context_inclusion\"},\n    {\"removed_scenario_id\": \"CS-2__dup5\", \"kept_scenario_id\": \"CS-2\", \"reason\": \"same_text_diff_uca_merge\"},\n    {\"removed_scenario_id\": \"CS-5__dup2\", \"kept_scenario_id\": \"CS-6\", \"reason\": \"context_inclusion\"},\n    {\"removed_scenario_id\": \"CS-5__dup4\", \"kept_scenario_id\": \"CS-6\", \"reason\": \"context_inclusion\"},\n    {\"removed_scenario_id\": \"CS-6__dup4\", \"kept_scenario_id\": \"CS-6\", \"reason\": \"semantic_equivalent\"},\n    {\"removed_scenario_id\": \"CS-10__dup2\", \"kept_scenario_id\": \"CS-10__dup3\", \"reason\": \"context_inclusion\"}\n  ],\n  \"coverage_count\": 8\n}",
+                "parse": "strict"
+              }
+            },
+            {
+              "batch_index": 1,
+              "size": 1,
+              "ok": true,
+              "debug": {
+                "status_code": 200,
+                "request_id": "f472d270-02ed-997f-be83-ecf3e36311c5",
+                "message": "",
+                "attempt": 1,
+                "base_url": "https://dashscope.aliyuncs.com/api/v1",
+                "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-6__dup5\",\n      \"summary\": \"路径通信丢包致越界或泊车失败\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-FD-4,CA-AVP-FD-1|key=路径丢包\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    }\n  ],\n  \"removed_as_duplicate\": [],\n  \"coverage_count\": 1\n}",
+                "parse": "strict"
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "final_size": 9,
+          "ok": true,
+          "debug": {
+            "status_code": 200,
+            "request_id": "24f32d11-ecd3-97fd-ac36-2e0c3d423268",
+            "message": "",
+            "attempt": 1,
+            "base_url": "https://dashscope.aliyuncs.com/api/v1",
+            "raw": "{\n  \"deduped_usable_scenarios\": [\n    {\n      \"scenario_id\": \"CS-1\",\n      \"summary\": \"超声波数据丢失致误判前方无障碍\",\n      \"mechanism_signature\": \"ultrasonic|anchors=FB-AVP-FD-1|key=超声丢失\",\n      \"merged_linked_uca_ids\": [\"UCA-1\", \"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-2\",\n      \"summary\": \"环视摄像头干扰致路径误判\",\n      \"mechanism_signature\": \"camera|anchors=none|key=视觉干扰\",\n      \"merged_linked_uca_ids\": [\"UCA-2\"]\n    },\n    {\n      \"scenario_id\": \"CS-6\",\n      \"summary\": \"路径通信丢包致指令错误或缺失\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-FD-4|key=路径丢包\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-3\"]\n    },\n    {\n      \"scenario_id\": \"CS-4__dup2\",\n      \"summary\": \"执行确认超时未停驱致非预期运动\",\n      \"mechanism_signature\": \"actuator|anchors=CA-AVP-FD-3,FB-AVP-FD-3|key=确认超时\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-10__dup3\",\n      \"summary\": \"路径通信状态处理错误致时机不当\",\n      \"mechanism_signature\": \"upstream_comm|anchors=FB-AVP-FD-4|key=时序错乱\",\n      \"merged_linked_uca_ids\": [\"UCA-3\", \"UCA-4\"]\n    },\n    {\n      \"scenario_id\": \"CS-9__dup3\",\n      \"summary\": \"CAN回读异常致驱动持续时间不当\",\n      \"mechanism_signature\": \"can_comm|anchors=FB-AVP-FD-2|key=CAN异常\",\n      \"merged_linked_uca_ids\": [\"UCA-2\", \"UCA-4\"]\n    }\n  ],\n  \"removed_as_duplicate\": [\n    {\n      \"removed_scenario_id\": \"CS-5__dup3\",\n      \"kept_scenario_id\": \"CS-6\",\n      \"reason\": \"context_inclusion\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-3__dup4\",\n      \"kept_scenario_id\": \"CS-9__dup3\",\n      \"reason\": \"semantic_equivalent\"\n    },\n    {\n      \"removed_scenario_id\": \"CS-6__dup5\",\n      \"kept_scenario_id\": \"CS-6\",\n      \"reason\": \"same_text_diff_uca_merge\"\n    }\n  ],\n  \"coverage_count\": 6\n}",
+            "parse": "strict"
+          }
+        }
+      ]
+    },
+    "perf": {
+      "max_workers": 6,
+      "max_tokens_item": 900,
+      "max_tokens_dedup": 3600
+    },
+    "thresholds": {
+      "USABLE_MIN_TOTAL": 9,
+      "USABLE_MIN_B1": 1,
+      "USABLE_MIN_B2": 2,
+      "USABLE_MIN_B3": 1,
+      "USABLE_MIN_B4": 1
+    },
+    "prompt_version": "v2026-02-15.logic_quality_only"
+  },
+  "per_item_evaluations": [
+    {
+      "scenario_id": "CS-3",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "提到'底层状态反馈延迟'但未指明具体通道",
+        "B2": "链条清晰：反馈延迟→未及时停止→非预期运动→UCA-4",
+        "B3": "提及反馈延迟但未锚定具体FB或CA/PM",
+        "B4": "UCA-4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确底层反馈类型（如CAN回读/FB-AVP-FD-2）并关联CA/PM",
+      "candidate_scenario": {
+        "scenario_id": "CS-3",
+        "scenario_id_raw": "CS-3",
+        "description": "车辆底层状态反馈延迟，导致控制器未能及时停止前进驱动指令，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "9a7b1d7b-c389-9f49-a287-03dbfb0b80cd",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'底层状态反馈延迟'但未指明具体通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：反馈延迟→未及时停止→非预期运动→UCA-4\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及反馈延迟但未锚定具体FB或CA/PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确底层反馈类型（如CAN回读/FB-AVP-FD-2）并关联CA/PM\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到执行确认超时，但未指明具体FB通道",
+        "B2": "链条清晰：超时→未检测→继续发指令→风险",
+        "B3": "提及执行确认但未锚定具体FB或CA/PM",
+        "B4": "UCA-2/3/4均与指令持续/时机/缺失相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确执行确认对应FB-AVP-FD-3，并关联CA-AVP-FD-3",
+      "candidate_scenario": {
+        "scenario_id": "CS-4",
+        "scenario_id_raw": "CS-4",
+        "description": "执行确认超时，但控制器未能检测到此问题，继续发出前进驱动指令，导致执行失败或风险上升。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e896cce6-4192-90b7-b578-28456e20b337",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到执行确认超时，但未指明具体FB通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：超时→未检测→继续发指令→风险\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及执行确认但未锚定具体FB或CA/PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3/4均与指令持续/时机/缺失相关\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确执行确认对应FB-AVP-FD-3，并关联CA-AVP-FD-3\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确环视摄像头视频流干扰",
+        "B2": "干扰→误判路径→错误指令→越界/UCA-2",
+        "B3": "锚定环视摄像头（FB-AVP-FD-4相关），影响PM-AVP-FD-2",
+        "B4": "UCA-2与越界/财产损失一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头视频流受干扰，导致控制器误判路径状态，发出不适当的前进驱动指令，造成越界或财产损失。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "d3a87a4d-a8b2-9f05-a74a-969010714975",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头视频流干扰\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"干扰→误判路径→错误指令→越界/UCA-2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定环视摄像头（FB-AVP-FD-4相关），影响PM-AVP-FD-2\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与越界/财产损失一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确超声波雷达数据异常丢失",
+        "B2": "链条：传感器丢失→误判无障碍→发指令→碰撞",
+        "B3": "锚定FB-AVP-FD-1（超声波）并影响PM-AVP-FD-1",
+        "B4": "UCA-1/2与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1",
+        "scenario_id_raw": "CS-1",
+        "description": "超声波雷达传感器数据异常丢失，导致控制器误判前方无障碍物，发出前进驱动指令，造成碰撞或驶入危险区域。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "7b1f2459-a8ba-9ace-92bc-17c7e6c235d9",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波雷达数据异常丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：传感器丢失→误判无障碍→发指令→碰撞\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-1（超声波）并影响PM-AVP-FD-1\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA，描述有上下文+因果+UCA",
+        "B1": "明确‘路径通信丢包’，属FB-AVP-FD-4具体通道",
+        "B2": "链条：(a)路径丢包→(b)未获新路径→(c)错误发指令→(d)越界/损失→(e)UCA-2/3",
+        "B3": "锚定上位机路径通信（FB-AVP-FD-4），导致PM-AVP-FD-2信念错误",
+        "B4": "UCA-2（越界）和UCA-3（应提供未提供）均合理"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6",
+        "scenario_id_raw": "CS-6",
+        "description": "路径通信丢包，导致控制器未能接收到最新的路径信息，发出错误的前进驱动指令，造成越界或财产损失。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "548cfa87-95f0-917d-adee-3ac12f57514c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA，描述有上下文+因果+UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确‘路径通信丢包’，属FB-AVP-FD-4具体通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：(a)路径丢包→(b)未获新路径→(c)错误发指令→(d)越界/损失→(e)UCA-2/3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定上位机路径通信（FB-AVP-FD-4），导致PM-AVP-FD-2信念错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2（越界）和UCA-3（应提供未提供）均合理\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "提到‘接近目标终点’但未指明具体反馈或阈值",
+        "B2": "链条清晰：接近终点→未停指令→越界/UCA",
+        "B3": "未锚定具体FB/PM/CA，仅隐含停止逻辑",
+        "B4": "UCA-2/4与越界/时机不当一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "上下文不够具体",
+        "缺乏FB/PM/CA具体锚点"
+      ],
+      "suggested_fix": "明确使用FB-AVP-FD-2（CAN回读）或CA-AVP-FD-2（边界停止逻辑）作为依据",
+      "candidate_scenario": {
+        "scenario_id": "CS-5",
+        "scenario_id_raw": "CS-5",
+        "description": "车辆接近目标终点时，控制器未能及时停止前进驱动指令，导致车辆越界或停在不可接受位置。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "d5101a97-39be-9be4-b3e0-78501ccafb0d",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到‘接近目标终点’但未指明具体反馈或阈值\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：接近终点→未停指令→越界/UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"未锚定具体FB/PM/CA，仅隐含停止逻辑\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/4与越界/时机不当一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"上下文不够具体\", \"缺乏FB/PM/CA具体锚点\"],\n  \"suggested_fix\": \"明确使用FB-AVP-FD-2（CAN回读）或CA-AVP-FD-2（边界停止逻辑）作为依据\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup2",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "明确超声波雷达数据异常丢失",
+        "B2": "链条：传感器丢失→误判无障碍→错误提供驱动→UCA-1/2",
+        "B3": "锚定FB-AVP-FD-1（超声波）并说明其导致PM错误信念",
+        "B4": "UCA-1/2与不安全/越界前进一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup2",
+        "scenario_id_raw": "CS-1",
+        "description": "超声波雷达传感器数据异常丢失，导致控制器误判前方无障碍物，从而不安全地提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "53acadd4-c2e7-9651-8e2c-19af35997db5",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波雷达数据异常丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：传感器丢失→误判无障碍→错误提供驱动→UCA-1/2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-1（超声波）并说明其导致PM错误信念\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2与不安全/越界前进一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup2",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确环视摄像头视频流干扰",
+        "B2": "干扰→误判位置→错误提供指令→UCA",
+        "B3": "锚定环视摄像头（FB），影响PM-AVP-FD-1",
+        "B4": "UCA-1/4与过早/不当驱动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup2",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头视频流受干扰，导致控制器误判车辆位置，从而在不适当的时间提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "d3253262-0a25-9dd0-8960-774ce6a22a1f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头视频流干扰\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"干扰→误判位置→错误提供指令→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定环视摄像头（FB），影响PM-AVP-FD-1\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/4与过早/不当驱动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA-3，描述有上下文+因果+结果",
+        "B1": "提到‘档位状态’但未指明具体反馈源（如CAN回读）",
+        "B2": "仅‘误判档位→不移动→UCA-3’，缺中间环节如FB/PM错误",
+        "B3": "提及档位但未锚定FB-AVP-FD-2或PM/CA，解释不足",
+        "B4": "UCA-3与‘应提供未提供’一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B2因果链不完整",
+        "B3未锚定具体FB/PM/CA"
+      ],
+      "suggested_fix": "明确档位状态来自CAN回读(FB-AVP-FD-2)，并说明因回读延迟/错误导致PM-AVP-FD-2信念错误，进而违反CA-AVP-FD-1",
+      "candidate_scenario": {
+        "scenario_id": "CS-8",
+        "scenario_id_raw": "CS-8",
+        "description": "控制器未能正确判断车辆档位状态，导致前进驱动指令发出后车辆无法移动，造成无法完成泊车。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "17c16e43-bf41-9070-8dad-53ab6a6e7395",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA-3，描述有上下文+因果+结果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到‘档位状态’但未指明具体反馈源（如CAN回读）\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅‘误判档位→不移动→UCA-3’，缺中间环节如FB/PM错误\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及档位但未锚定FB-AVP-FD-2或PM/CA，解释不足\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3与‘应提供未提供’一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B2因果链不完整\", \"B3未锚定具体FB/PM/CA\"],\n  \"suggested_fix\": \"明确档位状态来自CAN回读(FB-AVP-FD-2)，并说明因回读延迟/错误导致PM-AVP-FD-2信念错误，进而违反CA-AVP-FD-1\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，描述含因果和UCA",
+        "B1": "提到'执行器状态回读'但未指明具体FB类型",
+        "B2": "链条清晰：回读失败→指令执行失败→泊车失败/UCA",
+        "B3": "提及回读但未锚定具体FB或CA/PM",
+        "B4": "UCA-2/3/4均与未提供/错误时机/越界相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足2",
+        "B3未锚定具体控制回路要素"
+      ],
+      "suggested_fix": "明确回读来源（如FB-AVP-FD-2/CAN回读）并关联CA/PM",
+      "candidate_scenario": {
+        "scenario_id": "CS-9",
+        "scenario_id_raw": "CS-9",
+        "description": "控制器未能正确处理执行器状态回读，导致前进驱动指令执行失败，造成无法完成泊车或停留在不可接受位置。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "99460edd-2db3-9e05-bfe6-d3aac6d3629e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，linked_uca_ids有效，描述含因果和UCA\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到'执行器状态回读'但未指明具体FB类型\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：回读失败→指令执行失败→泊车失败/UCA\"\n    },\n    \"B3\": {\n      \"score\": 1,\n      \"rationale\": \"提及回读但未锚定具体FB或CA/PM\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-2/3/4均与未提供/错误时机/越界相关\"\n    }\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足2\", \"B3未锚定具体控制回路要素\"],\n  \"suggested_fix\": \"明确回读来源（如FB-AVP-FD-2/CAN回读）并关联CA/PM\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果描述",
+        "B1": "提到‘误判位置’但未指明具体传感器或反馈源",
+        "B2": "含(a)位置误判→(c)指令时机错→(d/e)非预期运动/UCA",
+        "B3": "提及位置误判但未锚定具体PM/FB（如FB-AVP-FD-1/PM-AVP-FD-1）",
+        "B4": "UCA-1/UCA-4与‘非预期运动/风险上升’一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足：未明确位置误判来源（如超声波/CAN/定位模块）",
+        "B3弱锚定：未关联具体PM或FB条目"
+      ],
+      "suggested_fix": "明确位置误判源于哪类反馈（如FB-AVP-FD-1超声波异常）及对应PM（如PM-AVP-FD-1）",
+      "candidate_scenario": {
+        "scenario_id": "CS-7",
+        "scenario_id_raw": "CS-7",
+        "description": "控制器误判车辆位置，导致前进驱动指令发出时机不当，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "2857abe5-5fcd-9e36-80a2-68eaf8ca8a99",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到‘误判位置’但未指明具体传感器或反馈源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含(a)位置误判→(c)指令时机错→(d/e)非预期运动/UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及位置误判但未锚定具体PM/FB（如FB-AVP-FD-1/PM-AVP-FD-1）\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/UCA-4与‘非预期运动/风险上升’一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足：未明确位置误判来源（如超声波/CAN/定位模块）\", \"B3弱锚定：未关联具体PM或FB条目\"],\n  \"suggested_fix\": \"明确位置误判源于哪类反馈（如FB-AVP-FD-1超声波异常）及对应PM（如PM-AVP-FD-1）\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA-4，描述有因果结构",
+        "B1": "提到'通信时延'但未指明具体通道（如上位机路径通信）",
+        "B2": "链条清晰：通信时延→指令时机不当→非预期运动→UCA-4",
+        "B3": "提及通信时延但未锚定FB-AVP-FD-4或具体回路环节",
+        "B4": "UCA-4明确对应'时机不当导致风险上升'"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足：未明确通信类型",
+        "B3不足：未锚定具体FB/CA/PM"
+      ],
+      "suggested_fix": "明确'上位机路径通信时延（FB-AVP-FD-4）导致PM-AVP-FD-2错误，违反CA-AVP-FD-1'",
+      "candidate_scenario": {
+        "scenario_id": "CS-10",
+        "scenario_id_raw": "CS-10",
+        "description": "控制器未能正确处理通信时延，导致前进驱动指令发出时机不当，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 1,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "28d94e9c-a0ad-90d8-834d-e669130e5690",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA-4，描述有因果结构\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'通信时延'但未指明具体通道（如上位机路径通信）\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：通信时延→指令时机不当→非预期运动→UCA-4\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及通信时延但未锚定FB-AVP-FD-4或具体回路环节\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4明确对应'时机不当导致风险上升'\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足：未明确通信类型\", \"B3不足：未锚定具体FB/CA/PM\"],\n  \"suggested_fix\": \"明确'上位机路径通信时延（FB-AVP-FD-4）导致PM-AVP-FD-2错误，违反CA-AVP-FD-1'\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup2",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "明确‘路径通信丢包’为上位机路径通信问题",
+        "B2": "链条：丢包→未获新路径→错误提供驱动→UCA-2/3",
+        "B3": "锚定FB-AVP-FD-4（上位机路径通信）并影响PM/CA",
+        "B4": "UCA-2/3与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup2",
+        "scenario_id_raw": "CS-5",
+        "description": "路径通信丢包，导致控制器未能接收到最新的路径信息，从而在不适当的位置提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "13780f17-b121-9475-b3aa-6328c88e3899",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确‘路径通信丢包’为上位机路径通信问题\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：丢包→未获新路径→错误提供驱动→UCA-2/3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-4（上位机路径通信）并影响PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup2",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca有效，描述含触发+因果+UCA",
+        "B1": "明确‘执行确认超时’，属具体FB-AVP-FD-3场景",
+        "B2": "链条：(a)执行确认超时→(c)未停指令→(d)持续驱动→(e)UCA-2/4",
+        "B3": "锚定FB-AVP-FD-3（执行确认），解释其失效致CA-AVP-FD-3未触发",
+        "B4": "UCA-2/4均与非预期运动/越界风险一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup2",
+        "scenario_id_raw": "CS-4",
+        "description": "执行确认超时，但控制器未能及时停止前进驱动指令，导致非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "53b4eeb9-cdd2-905b-8a17-9c76000eaf47",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca有效，描述含触发+因果+UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确‘执行确认超时’，属具体FB-AVP-FD-3场景\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：(a)执行确认超时→(c)未停指令→(d)持续驱动→(e)UCA-2/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-3（执行确认），解释其失效致CA-AVP-FD-3未触发\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/4均与非预期运动/越界风险一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup2",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA链接和基本因果描述",
+        "B1": "提到'底层状态反馈延迟'但未指明具体通道",
+        "B2": "含触发(反馈延迟)→决策(未及时停止)→行为(越界/损失)",
+        "B3": "提及反馈延迟但未锚定具体FB或PM/CA",
+        "B4": "UCA-2/UCA-4与越界/时机不当一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确反馈类型（如CAN回读/FB-AVP-FD-2）及如何影响CA-AVP-FD-2",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup2",
+        "scenario_id_raw": "CS-3",
+        "description": "车辆底层状态反馈延迟，导致控制器未能及时停止前进驱动指令，造成越界或财产损失。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "e66b39bc-7377-96bb-aac8-f39ae5409ce9",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA链接和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'底层状态反馈延迟'但未指明具体通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含触发(反馈延迟)→决策(未及时停止)→行为(越界/损失)\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及反馈延迟但未锚定具体FB或PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-4与越界/时机不当一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确反馈类型（如CAN回读/FB-AVP-FD-2）及如何影响CA-AVP-FD-2\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup2",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA，描述有因果",
+        "B1": "提到执行器回读但未指明具体FB类型",
+        "B2": "链条清晰：回读失败→未检测→不发指令→UCA-3/4",
+        "B3": "提及执行器回读但未锚定FB-AVP-FD-2/3或PM",
+        "B4": "UCA-3/4与‘未提供驱动’和‘时机错误’一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2",
+        "总分<9"
+      ],
+      "suggested_fix": "明确执行器回读对应FB-AVP-FD-2/3，并说明如何导致PM错误或CA失效",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup2",
+        "scenario_id_raw": "CS-8",
+        "description": "控制器未能正确处理执行器状态回读，导致前进驱动指令执行失败但未被检测到，造成车辆无法完成泊车。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "dba588aa-d372-911d-add2-161d81272e92",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA，描述有因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到执行器回读但未指明具体FB类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读失败→未检测→不发指令→UCA-3/4\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及执行器回读但未锚定FB-AVP-FD-2/3或PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4与‘未提供驱动’和‘时机错误’一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\", \"总分<9\"],\n  \"suggested_fix\": \"明确执行器回读对应FB-AVP-FD-2/3，并说明如何导致PM错误或CA失效\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup2",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "提到位置误判但未指明具体传感器或反馈源",
+        "B2": "链条清晰：误判位置→错误提供指令→导致UCA-3",
+        "B3": "提及位置误判但未锚定具体PM/FB/CA编号或通道",
+        "B4": "UCA-3与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确位置误判来源（如FB-AVP-FD-1超声波或FB-AVP-FD-2轮速回读），并关联PM-AVP-FD-1。",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup2",
+        "scenario_id_raw": "CS-7",
+        "description": "控制器误判车辆位置，导致在不应提供前进驱动的情况下提供指令，造成车辆停留在不可接受位置。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "5949a1bf-92e9-9b60-8b91-4f3bb2afdeda",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到位置误判但未指明具体传感器或反馈源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：误判位置→错误提供指令→导致UCA-3\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及位置误判但未锚定具体PM/FB/CA编号或通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确位置误判来源（如FB-AVP-FD-1超声波或FB-AVP-FD-2轮速回读），并关联PM-AVP-FD-1。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup2",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，description含上下文+因果+UCA",
+        "B1": "提到“接近目标终点”但未指明具体反馈或阈值来源",
+        "B2": "链条清晰：接近终点→未停指令→越界/碰撞（覆盖a,c,d,e）",
+        "B3": "未锚定具体FB/PM/CA，仅泛称“未能及时停止”",
+        "B4": "UCA-1/2/4均与越界/碰撞/时机不当一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2",
+        "total_score<9"
+      ],
+      "suggested_fix": "明确触发条件（如CAN回读延迟/FB-AVP-FD-2）及对应CA/PM失效机制",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup2",
+        "scenario_id_raw": "CS-6",
+        "description": "车辆接近目标终点时，控制器未能及时停止前进驱动指令，导致车辆越界或碰撞。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "500faf43-a21e-9397-be46-5ead1b6c40aa",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup2\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，linked_uca_ids有效，description含上下文+因果+UCA\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到“接近目标终点”但未指明具体反馈或阈值来源\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：接近终点→未停指令→越界/碰撞（覆盖a,c,d,e）\"\n    },\n    \"B3\": {\n      \"score\": 1,\n      \"rationale\": \"未锚定具体FB/PM/CA，仅泛称“未能及时停止”\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/2/4均与越界/碰撞/时机不当一致\"\n    }\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\", \"total_score<9\"],\n  \"suggested_fix\": \"明确触发条件（如CAN回读延迟/FB-AVP-FD-2）及对应CA/PM失效机制\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup2",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到通信时延但未指明具体通道",
+        "B2": "链条清晰：时延→反馈缺失→错误指令→UCA",
+        "B3": "提及通信时延但未锚定具体FB/CA/PM",
+        "B4": "UCA-2/4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确通信类型（如上位机路径通信/FB-AVP-FD-4）及时延阈值",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup2",
+        "scenario_id_raw": "CS-9",
+        "description": "通信时延导致控制器未能及时接收车辆状态反馈，从而在不适当的时间提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "9d87d272-a665-992d-9602-84a2857fc84e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到通信时延但未指明具体通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：时延→反馈缺失→错误指令→UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及通信时延但未锚定具体FB/CA/PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/4与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确通信类型（如上位机路径通信/FB-AVP-FD-4）及时延阈值\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup2",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，描述含因果",
+        "B1": "明确提到路径通信的序列号和时间戳",
+        "B2": "链条清晰：通信异常→错误指令→非预期运动→UCA-4",
+        "B3": "锚定FB-AVP-FD-4（上位机路径通信）并说明其作用",
+        "B4": "UCA-3/4与场景逻辑一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup2",
+        "scenario_id_raw": "CS-10",
+        "description": "控制器未能正确处理路径通信的序列号和时间戳，导致前进驱动指令在不适当的时间提供，造成非预期运动。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 2,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ba0c29be-870d-9989-8e8e-3e7af6d75825",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup2\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，描述含因果\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提到路径通信的序列号和时间戳\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：通信异常→错误指令→非预期运动→UCA-4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-4（上位机路径通信）并说明其作用\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4与场景逻辑一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup3",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果、UCA",
+        "B1": "明确超声波雷达数据异常丢失",
+        "B2": "链条：传感器丢失→误判无障碍→错误发指令→UCA",
+        "B3": "锚定FB-AVP-FD-1（超声波）及PM-AVP-FD-1信念错误",
+        "B4": "UCA-1/2与不安全前进驱动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup3",
+        "scenario_id_raw": "CS-1",
+        "description": "超声波雷达传感器数据异常丢失，导致控制器误判前方无障碍物，从而不安全地提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "59c4b7b6-6ff7-936e-8a49-7f33cd23f552",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果、UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波雷达数据异常丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：传感器丢失→误判无障碍→错误发指令→UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-1（超声波）及PM-AVP-FD-1信念错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2与不安全前进驱动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup3",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "明确环视摄像头视频流受干扰",
+        "B2": "干扰→误判位置→不安全提供指令，链条清晰",
+        "B3": "锚定环视摄像头（属FB），影响PM-AVP-FD-1位置信念",
+        "B4": "UCA-1/2/4均与不安全/越界/时机错误一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup3",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头视频流受干扰，导致控制器误判车辆位置，从而不安全地提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "1be1cbd7-5ffb-9fbe-8dcf-77e46df329eb",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup3\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段齐全，含触发、因果和UCA链接\"\n    },\n    \"B1\": {\n      \"score\": 2,\n      \"rationale\": \"明确环视摄像头视频流受干扰\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"干扰→误判位置→不安全提供指令，链条清晰\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定环视摄像头（属FB），影响PM-AVP-FD-1位置信念\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-1/2/4均与不安全/越界/时机错误一致\"\n    }\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup3",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA链接和基本因果描述",
+        "B1": "提到'底层状态反馈延迟'但未指明具体通道",
+        "B2": "有清晰链条：反馈延迟→未及时停止→越界/损失",
+        "B3": "提及反馈延迟但未锚定具体FB或PM/CA",
+        "B4": "UCA-2/UCA-4与越界/时机不当一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确是CAN回读/FB-AVP-FD-2延迟，并关联CA-AVP-FD-2",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup3",
+        "scenario_id_raw": "CS-3",
+        "description": "车辆底层状态反馈延迟，导致控制器未能及时停止前进驱动指令，造成越界或财产损失。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "181621b4-2d09-9e6f-8854-e4241c6e56bf",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA链接和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'底层状态反馈延迟'但未指明具体通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"有清晰链条：反馈延迟→未及时停止→越界/损失\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及反馈延迟但未锚定具体FB或PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-4与越界/时机不当一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确是CAN回读/FB-AVP-FD-2延迟，并关联CA-AVP-FD-2\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup3",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "提到执行确认超时，但未指明具体反馈通道",
+        "B2": "链条清晰：超时→未停指令→非预期运动→UCA",
+        "B3": "提及执行确认超时，但未锚定FB/CA编号或具体通道",
+        "B4": "UCA-2/UCA-4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确执行确认来源（如FB-AVP-FD-3）并关联CA-AVP-FD-3",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup3",
+        "scenario_id_raw": "CS-4",
+        "description": "执行确认超时，但控制器未能及时停止前进驱动指令，导致非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "806dd1d9-95b3-9320-9788-2776edea82f2",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到执行确认超时，但未指明具体反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：超时→未停指令→非预期运动→UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及执行确认超时，但未锚定FB/CA编号或具体通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-4与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确执行确认来源（如FB-AVP-FD-3）并关联CA-AVP-FD-3\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup3",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确‘路径通信丢包’为上位机路径通信",
+        "B2": "链条：丢包→未收新路径→未发指令→UCA-3",
+        "B3": "锚定FB-AVP-FD-4（上位机路径通信丢包）",
+        "B4": "UCA-3与‘未提供前进驱动’一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup3",
+        "scenario_id_raw": "CS-5",
+        "description": "路径通信丢包，导致控制器未能接收到最新的路径信息，从而未能提供必要的前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-3"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "c4cfcec3-720d-9c62-b5d5-bbcfd8079e46",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确‘路径通信丢包’为上位机路径通信\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：丢包→未收新路径→未发指令→UCA-3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-4（上位机路径通信丢包）\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3与‘未提供前进驱动’一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup3",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果描述",
+        "B1": "提到“接近目标终点”，但未指明具体反馈或状态来源",
+        "B2": "有清晰链条：接近终点→未停指令→越界，覆盖(a)(c)(d)(e)",
+        "B3": "未锚定具体FB/PM/CA，仅泛称“控制器未能及时停止”",
+        "B4": "UCA-1/2/4均与越界/非预期运动一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确触发条件来源（如FB-AVP-FD-2轮速回读延迟）及对应CA/PM失效机制",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup3",
+        "scenario_id_raw": "CS-6",
+        "description": "车辆接近目标终点时，控制器未能及时停止前进驱动指令，导致车辆超出预定位置。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "32e3105e-8769-9423-873b-ccc3f400e449",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到“接近目标终点”，但未指明具体反馈或状态来源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"有清晰链条：接近终点→未停指令→越界，覆盖(a)(c)(d)(e)\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"未锚定具体FB/PM/CA，仅泛称“控制器未能及时停止”\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与越界/非预期运动一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确触发条件来源（如FB-AVP-FD-2轮速回读延迟）及对应CA/PM失效机制\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup3",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "明确提到CAN轮速、偏航、转角与档位回读",
+        "B2": "链条清晰：反馈异常→指令持续不当→非预期运动/UCA",
+        "B3": "锚定FB-AVP-FD-2（CAN回读），解释其影响决策",
+        "B4": "UCA-2/4与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup3",
+        "scenario_id_raw": "CS-9",
+        "description": "控制器未能正确处理车辆CAN轮速、偏航、转角与档位回读，导致前进驱动指令的持续时间不当，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "a05aa87d-0198-9102-9cc0-72d90441079e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提到CAN轮速、偏航、转角与档位回读\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：反馈异常→指令持续不当→非预期运动/UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-2（CAN回读），解释其影响决策\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/4与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup3",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "明确提到上位机路径通信的序列号、时间戳、丢包与延迟",
+        "B2": "链条清晰：通信异常→指令时机错误→非预期运动/UCA-4",
+        "B3": "锚定FB-AVP-FD-4，说明其影响指令时机",
+        "B4": "UCA-3/4均与未提供或时机不当的前进驱动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup3",
+        "scenario_id_raw": "CS-10",
+        "description": "控制器未能正确处理上位机路径通信的序列号、时间戳、丢包与延迟状态，导致前进驱动指令的时机不当，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "8fb3c619-67c2-9971-99bf-bff1d090163f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提到上位机路径通信的序列号、时间戳、丢包与延迟\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：通信异常→指令时机错误→非预期运动/UCA-4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-4，说明其影响指令时机\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-3/4均与未提供或时机不当的前进驱动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup3",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA链接和基本因果描述",
+        "B1": "提到‘执行器状态回读’但未指明具体FB类型",
+        "B2": "链条清晰：回读异常→指令持续不当→非预期运动→UCA-4/UCA-2",
+        "B3": "提及回读但未锚定具体FB或CA/PM",
+        "B4": "UCA-2/UCA-4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确回读来源（如FB-AVP-FD-2/CAN回读）并关联CA/PM",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup3",
+        "scenario_id_raw": "CS-8",
+        "description": "控制器未能正确处理执行器状态回读，导致前进驱动指令的持续时间不当，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "915e0089-8712-96aa-978d-6354128807c6",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA链接和基本因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到‘执行器状态回读’但未指明具体FB类型\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→指令持续不当→非预期运动→UCA-4/UCA-2\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及回读但未锚定具体FB或CA/PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-4与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确回读来源（如FB-AVP-FD-2/CAN回读）并关联CA/PM\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup3",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果",
+        "B1": "提到位置误判但未指明具体传感器或反馈源",
+        "B2": "有清晰链条：位置误判→指令时机错→非预期运动→UCA",
+        "B3": "提及位置误判但未锚定具体PM/FB（如超声波/CAN）",
+        "B4": "UCA-1/UCA-4与描述一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确位置误判来源（如FB-AVP-FD-1超声波或FB-AVP-FD-2 CAN回读），并关联PM-AVP-FD-1。",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup3",
+        "scenario_id_raw": "CS-7",
+        "description": "控制器误判车辆位置，导致前进驱动指令的时机不当，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-4"
+        ]
+      },
+      "iteration": 3,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "421e8a68-4538-9734-875c-15cf0d79c0b9",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup3\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和基本因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到位置误判但未指明具体传感器或反馈源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"有清晰链条：位置误判→指令时机错→非预期运动→UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及位置误判但未锚定具体PM/FB（如超声波/CAN）\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/UCA-4与描述一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确位置误判来源（如FB-AVP-FD-1超声波或FB-AVP-FD-2 CAN回读），并关联PM-AVP-FD-1。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup4",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "明确指出超声波雷达数据异常丢失",
+        "B2": "链条：传感器丢失→误判无障碍→错误提供驱动→UCA-1/2",
+        "B3": "锚定FB-AVP-FD-1（超声波）并说明其导致PM错误信念",
+        "B4": "UCA-1/2与不安全前进驱动一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup4",
+        "scenario_id_raw": "CS-1",
+        "description": "超声波雷达传感器数据异常丢失，导致控制器误判前方无障碍物，从而不安全地提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "595d629b-3a5b-977b-a16b-b70a0c8c908f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确指出超声波雷达数据异常丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：传感器丢失→误判无障碍→错误提供驱动→UCA-1/2\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-1（超声波）并说明其导致PM错误信念\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2与不安全前进驱动一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup4",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，UCA有效，描述含触发+因果+UCA",
+        "B1": "明确环视摄像头视频流延迟",
+        "B2": "延迟→未及时感知→错误时机发指令→UCA-1/4",
+        "B3": "锚定环视摄像头（FB-AVP-FD-4相关），影响PM环境信念",
+        "B4": "UCA-1/4与‘不适当时间提供前进’一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup4",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头视频流传输延迟，导致控制器未能及时获取周围环境变化，从而在不适当的时间提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "93d4f51f-ad5a-9637-9110-36159452be8c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，UCA有效，描述含触发+因果+UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确环视摄像头视频流延迟\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"延迟→未及时感知→错误时机发指令→UCA-1/4\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定环视摄像头（FB-AVP-FD-4相关），影响PM环境信念\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/4与‘不适当时间提供前进’一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup4",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA链接",
+        "B1": "明确上位机路径通信的序列号/时间戳/丢包/延迟",
+        "B2": "链条：通信异常→路径过时→错误指令→UCA-2/3",
+        "B3": "锚定FB-AVP-FD-4，说明其导致PM错误和CA误判",
+        "B4": "UCA-2（越界）和UCA-3（未提供驱动）均合理"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup4",
+        "scenario_id_raw": "CS-5",
+        "description": "路径通信的序列号、时间戳、丢包与延迟状态导致路径信息不完整或过时，控制器据此提供错误的前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "7ee87867-1f38-9434-9dc1-ae0592da0174",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA链接\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确上位机路径通信的序列号/时间戳/丢包/延迟\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：通信异常→路径过时→错误指令→UCA-2/3\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-4，说明其导致PM错误和CA误判\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2（越界）和UCA-3（未提供驱动）均合理\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup4",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和因果描述",
+        "B1": "提到执行确认超时/回读不一致，但未指明具体FB通道",
+        "B2": "链条清晰：反馈异常→未停指令→继续前进→危险区域",
+        "B3": "提及回读/确认问题，但未锚定具体FB或CA/PM",
+        "B4": "UCA-2/3/4均与不停止前进驱动相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确引用FB-AVP-FD-3及CA-AVP-FD-3，说明ACK/故障码如何导致决策失效",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup4",
+        "scenario_id_raw": "CS-4",
+        "description": "执行确认超时或回读不一致，但控制算法未能及时停止前进驱动，导致车辆继续前进至危险区域。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "6d68dabf-e18a-95c7-a562-4421cb37997f",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和因果描述\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到执行确认超时/回读不一致，但未指明具体FB通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：反馈异常→未停指令→继续前进→危险区域\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及回读/确认问题，但未锚定具体FB或CA/PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3/4均与不停止前进驱动相关\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确引用FB-AVP-FD-3及CA-AVP-FD-3，说明ACK/故障码如何导致决策失效\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup4",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA列表和因果描述",
+        "B1": "明确提到CAN回读延迟/丢包，具体可检验",
+        "B2": "链条清晰：反馈异常→状态误判→错误指令→多UCA",
+        "B3": "锚定FB-AVP-FD-2（CAN回读），解释其导致状态误判",
+        "B4": "UCA-2/3/4均与指令不当/缺失/时序错误一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup4",
+        "scenario_id_raw": "CS-3",
+        "description": "车辆底层状态反馈中的轮速、偏航、转角与档位回读存在延迟或丢包，导致控制器未能准确判断车辆状态，从而提供不当的前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "fc173188-2b0b-92dd-af96-3f941b9c3abf",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA列表和因果描述\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确提到CAN回读延迟/丢包，具体可检验\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：反馈异常→状态误判→错误指令→多UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-2（CAN回读），解释其导致状态误判\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3/4均与指令不当/缺失/时序错误一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup4",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 9,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA链接",
+        "B1": "提到路径变化但未说明具体来源（如上位机通信）",
+        "B2": "路径信念错误→错误指令→导致UCA-2/3，链条清晰",
+        "B3": "锚定PM-AVP-FD-2（路径信念），与描述一致",
+        "B4": "UCA-2/3均与路径错误导致的越界/未驱动相符"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup4",
+        "scenario_id_raw": "CS-6",
+        "description": "控制器错误地认为路径是最新且完整的，但实际上路径已发生变化，导致提供不适当的前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "2ea9527c-8192-922a-9bc1-1b16ace4e8ca",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup4\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含触发、因果和UCA链接\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到路径变化但未说明具体来源（如上位机通信）\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"路径信念错误→错误指令→导致UCA-2/3，链条清晰\"\n    },\n    \"B3\": {\n      \"score\": 2,\n      \"rationale\": \"锚定PM-AVP-FD-2（路径信念），与描述一致\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-2/3均与路径错误导致的越界/未驱动相符\"\n    }\n  },\n  \"total_score\": 9,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup4",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA，描述有因果结构",
+        "B1": "提到执行器故障但未指明具体FB通道",
+        "B2": "链条清晰：PM错误→执行不符→越界/停错位",
+        "B3": "提及PM错误信念但未锚定具体PM/FB编号或通道",
+        "B4": "UCA-2/3/4均与越界、停错、时序问题一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2",
+        "total_score<9"
+      ],
+      "suggested_fix": "明确执行器故障对应的具体FB（如FB-AVP-FD-3）及PM-AVP-FD-3的错误信念机制",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup4",
+        "scenario_id_raw": "CS-7",
+        "description": "控制器错误地认为前进指令会产生期望位移，但由于执行器故障，实际位移与预期不符，导致车辆越界或停在不可接受的位置。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "44410dc1-0342-9f2b-bd93-717380521d79",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup4\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含有效UCA，描述有因果结构\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到执行器故障但未指明具体FB通道\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：PM错误→执行不符→越界/停错位\"\n    },\n    \"B3\": {\n      \"score\": 1,\n      \"rationale\": \"提及PM错误信念但未锚定具体PM/FB编号或通道\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-2/3/4均与越界、停错、时序问题一致\"\n    }\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\", \"total_score<9\"],\n  \"suggested_fix\": \"明确执行器故障对应的具体FB（如FB-AVP-FD-3）及PM-AVP-FD-3的错误信念机制\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-1__dup5",
+      "scenario_id_raw": "CS-1",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确超声波雷达数据异常丢失",
+        "B2": "链条：传感器丢失→误判无障碍→发指令→碰撞",
+        "B3": "锚定FB-AVP-FD-1（超声波）导致PM错误信念",
+        "B4": "UCA-1/2与碰撞/越界一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-1__dup5",
+        "scenario_id_raw": "CS-1",
+        "description": "超声波雷达传感器数据异常丢失，导致控制器误判前方无障碍物，发出前进驱动指令，造成碰撞或驶入危险区域。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 0,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "63e8bf06-f93f-91e4-b86c-5c897314b01e",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-1__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确超声波雷达数据异常丢失\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：传感器丢失→误判无障碍→发指令→碰撞\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-1（超声波）导致PM错误信念\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2与碰撞/越界一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup4",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，描述含因果",
+        "B1": "提到位置与障碍物，但未指明传感器类型或状态",
+        "B2": "仅‘误判→不安全驱动’，缺中间环节",
+        "B3": "隐含PM-AVP-FD-1错误，但未锚定具体FB/CA",
+        "B4": "UCA-1/2/4均与不安全前进驱动一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "因果链不完整",
+        "上下文不够具体",
+        "缺乏FB/CA/PM显式锚定"
+      ],
+      "suggested_fix": "明确因超声波丢失（FB-AVP-FD-1）导致PM-AVP-FD-1错误，进而违反CA-AVP-FD-1，触发UCA-1。",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup4",
+        "scenario_id_raw": "CS-8",
+        "description": "控制器未能正确判断车辆位置与障碍物距离，导致在不安全的情况下提供前进驱动指令。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "3fec349e-7287-9e39-9bfa-3f32d350559d",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，描述含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到位置与障碍物，但未指明传感器类型或状态\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"仅‘误判→不安全驱动’，缺中间环节\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"隐含PM-AVP-FD-1错误，但未锚定具体FB/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与不安全前进驱动一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"因果链不完整\", \"上下文不够具体\", \"缺乏FB/CA/PM显式锚定\"],\n  \"suggested_fix\": \"明确因超声波丢失（FB-AVP-FD-1）导致PM-AVP-FD-1错误，进而违反CA-AVP-FD-1，触发UCA-1。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-2__dup5",
+      "scenario_id_raw": "CS-2",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段齐全，含有效UCA，描述有基本结构",
+        "B1": "明确指出环视摄像头视频流受干扰",
+        "B2": "环视干扰→误判路径→错误指令→越界/损失，链条完整",
+        "B3": "锚定环视摄像头（属FB），导致PM-AVP-FD-2路径信念错误",
+        "B4": "UCA-2与越界/财产损失一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-2__dup5",
+        "scenario_id_raw": "CS-2",
+        "description": "环视摄像头视频流受干扰，导致控制器误判路径状态，发出不适当的前进驱动指令，造成越界或财产损失。",
+        "linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 1,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "fa90b712-37ea-9ebc-8325-4032f0836d61",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-2__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含有效UCA，描述有基本结构\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确指出环视摄像头视频流受干扰\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"环视干扰→误判路径→错误指令→越界/损失，链条完整\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定环视摄像头（属FB），导致PM-AVP-FD-2路径信念错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2与越界/财产损失一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup4",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 1,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 7,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，描述含因果",
+        "B1": "提到执行确认与通信状态，但未指明具体通道",
+        "B2": "有因果但缺中间环节（如PM/CA如何出错）",
+        "B3": "提及执行确认和通信，但未锚定具体FB/CA/PM",
+        "B4": "UCA-2/3/4均与未执行/时机错误一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B2因果链不完整",
+        "B3缺乏具体锚点"
+      ],
+      "suggested_fix": "明确是哪类反馈（如FB-AVP-FD-3/FB-AVP-FD-4）失真，导致PM/CA错误决策",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup4",
+        "scenario_id_raw": "CS-10",
+        "description": "控制器未能正确处理执行确认与通信状态，导致前进驱动指令未能按预期执行，车辆停留在不可接受的位置。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "06cf211f-2d92-98a6-8b9f-699f7c8926b2",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，描述含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到执行确认与通信状态，但未指明具体通道\"},\n    \"B2\": {\"score\": 1, \"rationale\": \"有因果但缺中间环节（如PM/CA如何出错）\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及执行确认和通信，但未锚定具体FB/CA/PM\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3/4均与未执行/时机错误一致\"}\n  },\n  \"total_score\": 7,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B2因果链不完整\", \"B3缺乏具体锚点\"],\n  \"suggested_fix\": \"明确是哪类反馈（如FB-AVP-FD-3/FB-AVP-FD-4）失真，导致PM/CA错误决策\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup4",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，UCA有效，描述含因果",
+        "B1": "提到边界/终点但未指明具体反馈源",
+        "B2": "含触发(越界趋势)→决策(未停指令)→行为(越界)→UCA",
+        "B3": "未锚定具体FB/PM/CA，仅泛称控制失效",
+        "B4": "UCA-1/2/4均与越界/非预期运动一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2",
+        "total_score<9"
+      ],
+      "suggested_fix": "明确如超声波丢失或CAN回读延迟等具体FB失效，及其如何导致PM错误和CA未停指令。",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup4",
+        "scenario_id_raw": "CS-9",
+        "description": "控制器未能及时停止前进驱动指令，导致车辆越过目标终点或边界阈值，造成越界或财产损失。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 4,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ed7992d0-37e1-95ec-9e0a-06f564867c10",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup4\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，UCA有效，描述含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到边界/终点但未指明具体反馈源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含触发(越界趋势)→决策(未停指令)→行为(越界)→UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"未锚定具体FB/PM/CA，仅泛称控制失效\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2/4均与越界/非预期运动一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\", \"total_score<9\"],\n  \"suggested_fix\": \"明确如超声波丢失或CAN回读延迟等具体FB失效，及其如何导致PM错误和CA未停指令。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-4__dup5",
+      "scenario_id_raw": "CS-4",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，linked_uca_ids有效，描述含因果",
+        "B1": "提到'执行确认超时'但未指明具体FB通道",
+        "B2": "链条清晰：超时→未检测→继续发指令→风险",
+        "B3": "提及执行确认但未锚定FB-AVP-FD-3或具体ACK机制",
+        "B4": "UCA-2/3/4均与指令持续/时机/缺失相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确执行确认对应FB-AVP-FD-3，并说明ACK丢失如何导致PM错误信念",
+      "candidate_scenario": {
+        "scenario_id": "CS-4__dup5",
+        "scenario_id_raw": "CS-4",
+        "description": "执行确认超时，但控制器未能检测到此问题，继续发出前进驱动指令，导致执行失败或风险上升。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 3,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "73a57c4c-b97f-97cb-8896-2da1c81b939c",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-4__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，linked_uca_ids有效，描述含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'执行确认超时'但未指明具体FB通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：超时→未检测→继续发指令→风险\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及执行确认但未锚定FB-AVP-FD-3或具体ACK机制\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3/4均与指令持续/时机/缺失相关\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确执行确认对应FB-AVP-FD-3，并说明ACK丢失如何导致PM错误信念\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-6__dup5",
+      "scenario_id_raw": "CS-6",
+      "scores": {
+        "A": 2,
+        "B1": 2,
+        "B2": 2,
+        "B3": 2,
+        "B4": 2
+      },
+      "total_score": 10,
+      "label": "合理可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "明确‘路径通信丢包’为上位机路径通信问题",
+        "B2": "链条：丢包→路径信息错误→错误指令→越界/UCA",
+        "B3": "锚定FB-AVP-FD-4（上位机路径通信丢包）导致PM-AVP-FD-2错误",
+        "B4": "UCA-2/3与描述一致"
+      },
+      "judge_label_raw": "合理可用",
+      "label_mismatch": false,
+      "issues": [],
+      "suggested_fix": "",
+      "candidate_scenario": {
+        "scenario_id": "CS-6__dup5",
+        "scenario_id_raw": "CS-6",
+        "description": "路径通信丢包，导致控制器接收到不完整或过时的路径信息，发出不适当的前进驱动指令，造成越界或财产损失。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 5,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "76d17de5-c793-907c-ab4d-5c4d15fd3321",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-6__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 2, \"rationale\": \"明确‘路径通信丢包’为上位机路径通信问题\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条：丢包→路径信息错误→错误指令→越界/UCA\"},\n    \"B3\": {\"score\": 2, \"rationale\": \"锚定FB-AVP-FD-4（上位机路径通信丢包）导致PM-AVP-FD-2错误\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3与描述一致\"}\n  },\n  \"total_score\": 10,\n  \"label\": \"合理可用\",\n  \"issues\": [],\n  \"suggested_fix\": \"\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-5__dup5",
+      "scenario_id_raw": "CS-5",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段齐全，含触发、因果和UCA",
+        "B1": "提到'接近目标终点'但未指明具体反馈或阈值",
+        "B2": "含上下文→决策失误→行为→UCA完整链",
+        "B3": "未锚定具体FB/PM/CA，仅泛称控制器",
+        "B4": "UCA-2/UCA-4与越界/时机不当一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足2",
+        "B3不足2",
+        "总分<9"
+      ],
+      "suggested_fix": "明确使用FB-AVP-FD-2(CAN回读)或CA-AVP-FD-2(边界停止逻辑)等具体锚点",
+      "candidate_scenario": {
+        "scenario_id": "CS-5__dup5",
+        "scenario_id_raw": "CS-5",
+        "description": "车辆接近目标终点时，控制器未能及时停止前进驱动指令，导致车辆越界或停在不可接受位置。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 4,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "cbdfe69c-a152-9247-ad39-9078b3b5d0bb",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-5__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段齐全，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到'接近目标终点'但未指明具体反馈或阈值\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含上下文→决策失误→行为→UCA完整链\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"未锚定具体FB/PM/CA，仅泛称控制器\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/UCA-4与越界/时机不当一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足2\", \"B3不足2\", \"总分<9\"],\n  \"suggested_fix\": \"明确使用FB-AVP-FD-2(CAN回读)或CA-AVP-FD-2(边界停止逻辑)等具体锚点\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-3__dup5",
+      "scenario_id_raw": "CS-3",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA-4，描述有上下文+因果+结果",
+        "B1": "提到'底层状态反馈延迟'但未指明具体FB类型",
+        "B2": "链条清晰：反馈延迟→未及时停止→非预期运动→UCA-4",
+        "B3": "提及反馈延迟但未锚定具体FB或CA/PM",
+        "B4": "UCA-4明确对应时机/持续时间不当"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2",
+        "total_score<9"
+      ],
+      "suggested_fix": "明确‘底层状态反馈’为CAN回读(FB-AVP-FD-2)或ACK(FB-AVP-FD-3)，并关联CA-AVP-FD-2。",
+      "candidate_scenario": {
+        "scenario_id": "CS-3__dup5",
+        "scenario_id_raw": "CS-3",
+        "description": "车辆底层状态反馈延迟，导致控制器未能及时停止前进驱动指令，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 2,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "c26ad4f5-a872-94ce-9215-c839ef5a94c3",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-3__dup5\",\n  \"scores\": {\n    \"A\": {\n      \"score\": 2,\n      \"rationale\": \"字段完整，含有效UCA-4，描述有上下文+因果+结果\"\n    },\n    \"B1\": {\n      \"score\": 1,\n      \"rationale\": \"提到'底层状态反馈延迟'但未指明具体FB类型\"\n    },\n    \"B2\": {\n      \"score\": 2,\n      \"rationale\": \"链条清晰：反馈延迟→未及时停止→非预期运动→UCA-4\"\n    },\n    \"B3\": {\n      \"score\": 1,\n      \"rationale\": \"提及反馈延迟但未锚定具体FB或CA/PM\"\n    },\n    \"B4\": {\n      \"score\": 2,\n      \"rationale\": \"UCA-4明确对应时机/持续时间不当\"\n    }\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\", \"total_score<9\"],\n  \"suggested_fix\": \"明确‘底层状态反馈’为CAN回读(FB-AVP-FD-2)或ACK(FB-AVP-FD-3)，并关联CA-AVP-FD-2。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-7__dup5",
+      "scenario_id_raw": "CS-7",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA和基本因果",
+        "B1": "提到位置误判但未指明具体传感器或反馈源",
+        "B2": "含上下文→PM错误→决策→UCA链条",
+        "B3": "提及位置误判但未锚定具体FB/PM编号或通道",
+        "B4": "UCA-1/2与碰撞/越界后果一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1<2",
+        "B3<2",
+        "total_score<9"
+      ],
+      "suggested_fix": "明确位置误判源于哪类反馈（如超声波/FB-AVP-FD-1）或PM（如PM-AVP-FD-1），并说明如何导致错误决策。",
+      "candidate_scenario": {
+        "scenario_id": "CS-7__dup5",
+        "scenario_id_raw": "CS-7",
+        "description": "控制器误判车辆位置，认为前方可通行，但实际上存在障碍物，发出前进驱动指令，造成碰撞或驶入危险区域。",
+        "linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 6,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "4d5da952-842c-9cce-8480-b7a369611944",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-7__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA和基本因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到位置误判但未指明具体传感器或反馈源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含上下文→PM错误→决策→UCA链条\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及位置误判但未锚定具体FB/PM编号或通道\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-1/2与碰撞/越界后果一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1<2\", \"B3<2\", \"total_score<9\"],\n  \"suggested_fix\": \"明确位置误判源于哪类反馈（如超声波/FB-AVP-FD-1）或PM（如PM-AVP-FD-1），并说明如何导致错误决策。\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-8__dup5",
+      "scenario_id_raw": "CS-8",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含触发、因果和UCA",
+        "B1": "提到路径状态误判但未指明具体来源",
+        "B2": "含上下文→PM错误→错误指令→UCA链条",
+        "B3": "提及路径状态误判，隐含PM-AVP-FD-2但未明示",
+        "B4": "UCA-2/3与越界/未停一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定不明确"
+      ],
+      "suggested_fix": "明确路径状态误判源于上位机通信(FB-AVP-FD-4)或PM-AVP-FD-2信念错误",
+      "candidate_scenario": {
+        "scenario_id": "CS-8__dup5",
+        "scenario_id_raw": "CS-8",
+        "description": "控制器误判路径状态，认为车辆应继续前进，但实际上已到达目标位置，发出不适当的前进驱动指令，造成越界或财产损失。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 7,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "35832c59-9d4f-9944-9c6d-322c75e77e10",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-8__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含触发、因果和UCA\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到路径状态误判但未指明具体来源\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含上下文→PM错误→错误指令→UCA链条\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及路径状态误判，隐含PM-AVP-FD-2但未明示\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3与越界/未停一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定不明确\"],\n  \"suggested_fix\": \"明确路径状态误判源于上位机通信(FB-AVP-FD-4)或PM-AVP-FD-2信念错误\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-10__dup5",
+      "scenario_id_raw": "CS-10",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，含有效UCA-4，描述有因果结构",
+        "B1": "提到通信时延但未指明具体通道",
+        "B2": "含触发(通信时延)→决策错误→行为异常→UCA-4链条",
+        "B3": "提及通信时延但未锚定具体FB/PM/CA",
+        "B4": "UCA-4与描述完全一致"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确通信时延来源（如FB-AVP-FD-4上位机路径通信）并关联PM/CA",
+      "candidate_scenario": {
+        "scenario_id": "CS-10__dup5",
+        "scenario_id_raw": "CS-10",
+        "description": "控制器未能正确处理通信时延，导致前进驱动指令发出时机不当，造成非预期运动或风险上升。",
+        "linked_uca_ids": [
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 9,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "ae73fdb6-98e7-91ad-9b08-8c1b5c006781",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-10__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，含有效UCA-4，描述有因果结构\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到通信时延但未指明具体通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"含触发(通信时延)→决策错误→行为异常→UCA-4链条\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及通信时延但未锚定具体FB/PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-4与描述完全一致\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确通信时延来源（如FB-AVP-FD-4上位机路径通信）并关联PM/CA\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    },
+    {
+      "scenario_id": "CS-9__dup5",
+      "scenario_id_raw": "CS-9",
+      "scores": {
+        "A": 2,
+        "B1": 1,
+        "B2": 2,
+        "B3": 1,
+        "B4": 2
+      },
+      "total_score": 8,
+      "label": "合理不可用",
+      "reasons": {
+        "A": "字段完整，linked_uca_ids有效，description含因果",
+        "B1": "提到执行器回读不一致，但未指明具体反馈通道",
+        "B2": "链条清晰：回读异常→未检测→继续发指令→风险/UCA",
+        "B3": "提及回读不一致，但未锚定具体FB或PM/CA",
+        "B4": "UCA-2/3/4均与指令误发/漏停及时机相关"
+      },
+      "judge_label_raw": "合理不可用",
+      "label_mismatch": false,
+      "issues": [
+        "B1不足",
+        "B3锚定弱"
+      ],
+      "suggested_fix": "明确回读来源（如CAN轮速/FB-AVP-FD-2）及如何导致PM错误或CA失效",
+      "candidate_scenario": {
+        "scenario_id": "CS-9__dup5",
+        "scenario_id_raw": "CS-9",
+        "description": "执行器状态回读不一致，但控制器未能检测到此问题，继续发出前进驱动指令，导致执行失败或风险上升。",
+        "linked_uca_ids": [
+          "UCA-2",
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      "iteration": 5,
+      "scenario_source": "strict_json",
+      "index_in_list": 8,
+      "judge_debug": {
+        "status_code": 200,
+        "request_id": "c73b10bd-da2b-9b19-ade9-4983c9c8daf0",
+        "message": "",
+        "attempt": 1,
+        "base_url": "https://dashscope.aliyuncs.com/api/v1",
+        "raw": "{\n  \"scenario_id\": \"CS-9__dup5\",\n  \"scores\": {\n    \"A\": {\"score\": 2, \"rationale\": \"字段完整，linked_uca_ids有效，description含因果\"},\n    \"B1\": {\"score\": 1, \"rationale\": \"提到执行器回读不一致，但未指明具体反馈通道\"},\n    \"B2\": {\"score\": 2, \"rationale\": \"链条清晰：回读异常→未检测→继续发指令→风险/UCA\"},\n    \"B3\": {\"score\": 1, \"rationale\": \"提及回读不一致，但未锚定具体FB或PM/CA\"},\n    \"B4\": {\"score\": 2, \"rationale\": \"UCA-2/3/4均与指令误发/漏停及时机相关\"}\n  },\n  \"total_score\": 8,\n  \"label\": \"合理不可用\",\n  \"issues\": [\"B1不足\", \"B3锚定弱\"],\n  \"suggested_fix\": \"明确回读来源（如CAN轮速/FB-AVP-FD-2）及如何导致PM错误或CA失效\"\n}",
+        "parse": "strict"
+      },
+      "prompt_version": "v2026-02-15.logic_quality_only"
+    }
+  ],
+  "global_deduplication": {
+    "deduped_usable_scenarios": [
+      {
+        "scenario_id": "CS-1",
+        "summary": "超声波数据丢失致误判前方无障碍",
+        "mechanism_signature": "ultrasonic|anchors=FB-AVP-FD-1|key=超声丢失",
+        "merged_linked_uca_ids": [
+          "UCA-1",
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-2",
+        "summary": "环视摄像头干扰致路径误判",
+        "mechanism_signature": "camera|anchors=none|key=视觉干扰",
+        "merged_linked_uca_ids": [
+          "UCA-2"
+        ]
+      },
+      {
+        "scenario_id": "CS-6",
+        "summary": "路径通信丢包致指令错误或缺失",
+        "mechanism_signature": "upstream_comm|anchors=FB-AVP-FD-4|key=路径丢包",
+        "merged_linked_uca_ids": [
+          "UCA-2",
+          "UCA-3"
+        ]
+      },
+      {
+        "scenario_id": "CS-4__dup2",
+        "summary": "执行确认超时未停驱致非预期运动",
+        "mechanism_signature": "actuator|anchors=CA-AVP-FD-3,FB-AVP-FD-3|key=确认超时",
+        "merged_linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-10__dup3",
+        "summary": "路径通信状态处理错误致时机不当",
+        "mechanism_signature": "upstream_comm|anchors=FB-AVP-FD-4|key=时序错乱",
+        "merged_linked_uca_ids": [
+          "UCA-3",
+          "UCA-4"
+        ]
+      },
+      {
+        "scenario_id": "CS-9__dup3",
+        "summary": "CAN回读异常致驱动持续时间不当",
+        "mechanism_signature": "can_comm|anchors=FB-AVP-FD-2|key=CAN异常",
+        "merged_linked_uca_ids": [
+          "UCA-2",
+          "UCA-4"
+        ]
+      }
+    ],
+    "removed_as_duplicate": [
+      {
+        "removed_scenario_id": "CS-5__dup3",
+        "kept_scenario_id": "CS-6",
+        "reason": "context_inclusion"
+      },
+      {
+        "removed_scenario_id": "CS-3__dup4",
+        "kept_scenario_id": "CS-9__dup3",
+        "reason": "semantic_equivalent"
+      },
+      {
+        "removed_scenario_id": "CS-6__dup5",
+        "kept_scenario_id": "CS-6",
+        "reason": "same_text_diff_uca_merge"
+      }
+    ],
+    "coverage_count": 6
+  }
+}
